@@ -241,4 +241,5 @@
             @endcan
             <!--end::Container-->
         </div>
+    </div>
     @endsection
