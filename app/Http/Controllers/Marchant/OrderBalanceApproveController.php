@@ -28,7 +28,7 @@ class OrderBalanceApproveController extends Controller
             // Update the status of the currency
             $whitelist = $this->orderBalanceApproveService->updateOrderBalanceRequestStatus($request, $id);
 
-            return sendSuccessResponse(200, 'Order Balance status updated successfully.');
+            return sendSuccessResponse(200, 'Order Balance paid successfully.');
         } catch (Exception $e) {
             // Handle any exceptions during status update
             return sendErrorResponse('Internal Server Error: ', $e->getMessage(), $e->getCode() ?? 500);
