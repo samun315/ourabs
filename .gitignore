@@ -1,0 +1,40 @@
+# Ignore environment files (contains sensitive info)
+.env
+.env.* 
+
+# Ignore log files
+storage/logs/*.log
+
+# Ignore cache & debugbar
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/testing/*
+storage/framework/views/*
+bootstrap/cache/*
+debugbar/
+
+# Ignore compiled files
+/vendor
+/node_modules
+/public/storage
+/public/hot
+/public/mix-manifest.json
+/public/build
+/public/js/*.map
+/public/css/*.map
+
+# Ignore IDE/editor settings
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Ignore dependency manager lock files
+composer.lock
+npm-debug.log
+yarn.lock
+pnpm-lock.yaml
+.DS_Store
+Thumbs.db
+
+# Ignore PHPUnit test result files
+phpunit.result.cache
