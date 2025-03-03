@@ -24,7 +24,16 @@ class UserController extends Controller
 
     public function index(Request $request): View|JsonResponse
     {
-        $data['userRoles'] = UserRole::query()->orderBy('role_id', 'DESC')->get(['role_id', 'role_name']);
+        $user = Auth::user();
+
+        $query = UserRole::query()->orderBy('role_id', 'DESC')->select('role_id', 'role_name');
+        
+        // If the logged-in user is a distributor, fetch only the sub-distributor roles
+        if ($user->role_id === 2) {
+            $query->where('role_id', 3);
+        }
+        
+        $data['userRoles'] = $query->get();
 
         if ($request->ajax()) {
             return $this->userService->getUserList($request);

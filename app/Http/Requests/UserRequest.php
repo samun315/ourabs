@@ -70,7 +70,7 @@ class UserRequest extends FormRequest
         $inputData['diamond_per_usd'] =  (int) $this->input('diamond_per_usd');
         $inputData['active'] = $this->input('active');
 
-        if ($this->input('id')) {
+        if (!empty($this->input('id'))) {
             $inputData['updated_by'] = loggedInUserId();
             $inputData['updated_at'] = createdAtDateConvertToDB();
         } else {

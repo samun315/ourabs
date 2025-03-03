@@ -64,13 +64,32 @@ class UserService
         })
             ->select('users.*', 'user_roles.role_name');
 
+        $user = Auth::user();
+        if ($user->role_id === 2) {
+            $query->where('users.created_by', $user->id);
+        }
+
         return Datatables::of($query)
             ->addIndexColumn()
-            ->addColumn('action', function ($row) {
-                $changePassBtn = '<button data-id="' . $row->id . '" class="btn btn-warning btn-sm me-2 changePasswordBtn" data-bs-toggle="modal" data-bs-target="#kt_modal_change_password">Reset Password</button>';
+            ->addColumn('action', function ($row) use ($user) {
 
-                $editBtn = '<button data-id="' . $row->id . '" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm edit-user me-2" data-bs-toggle="modal" data-bs-target="#showModal"><i class="fas fa-edit"></i></button>';
-                return $editBtn . $changePassBtn;
+                $changePassBtn = '';
+                $editBtn = '';
+
+                if ($user->role_id != 1) {
+                    $changePassBtn = '';
+                    $editBtn = '';
+                } else {
+                    $changePassBtn = '<button data-id="' . $row->id . '" class="btn btn-warning btn-sm me-2 changePasswordBtn" data-bs-toggle="modal" data-bs-target="#kt_modal_change_password">Reset Password</button>';
+
+                    $editBtn = '<button data-id="' . $row->id . '" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm edit-user me-2" data-bs-toggle="modal" data-bs-target="#showModal"><i class="fas fa-edit"></i></button>';
+                }
+
+                $button = '<div class="btn-group" role="group" aria-label="Basic example">
+                ' . $editBtn . '
+                ' . $changePassBtn . '
+                </div>';
+                return $button;
             })
             ->rawColumns(['action'])
             ->make(true);

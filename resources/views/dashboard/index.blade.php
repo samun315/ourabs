@@ -239,6 +239,78 @@
                     </div>
                 </div>
             @endcan
+            @can('dashboard.sub.distributor')
+            <div class="post d-flex flex-column-fluid" id="kt_post">
+                <!--begin::Container-->
+                <div id="kt_content_container" class="container-fluid">
+                    <div class="card shadow-sm">
+                        <!-- Cover Image -->
+                        <div class="card-body p-0 position-relative">
+                            <img src="{{ asset('assets/media/background/background10.jpg') }}"
+                                class="w-100 h-250px object-cover" alt="Cover Image">
+                            <div class="position-absolute top-100 start-50 translate-middle">
+                                @if (!empty(getLoggedInUserInfo('logged_session_data.profile_img')))
+                                    <img src="{{ asset('uploads/user/profile/' . getLoggedInUserInfo('logged_session_data.profile_img')) }}"
+                                        class="rounded-circle border border-white shadow-lg" width="100"
+                                        height="100" alt="Profile Image" />
+                                @else
+                                    <img src="{{ asset('assets/media/avatars/300-1.jpg') }}"
+                                        class="rounded-circle border border-white shadow-lg" width="100"
+                                        height="100" alt="Profile Image" />
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Profile Info -->
+                        <div class="card-body text-center mt-10">
+                            <h3 class="fw-bold text-gray-800"> {{ getLoggedInUserInfo('logged_session_data.full_name') }}
+                            </h3>
+                            <p class="text-muted">{{ getLoggedInUserInfo('logged_session_data.email') }}</p>
+
+
+                            <!-- Stats Section -->
+                            <div class="row mt-10 bg-primary text-white pt-4">
+                                <div class="col">
+                                    <span class="fas fa-gem fa-2x"></span>
+                                    <p class="d-none d-md-block">Diamonds Balance</p>
+                                    <p class="d-md-none">Balance</p>
+                                    <h4 class="fw-bolder">
+                                        @if (isset($user_diamond->current_balance))
+                                            {{ $user_diamond?->current_balance }}
+                                        @else
+                                            0
+                                        @endif
+                                    </h4>
+                                </div>
+                                <div class="col">
+                                    <span class="fas fa-shopping-bag fa-2x"></span>
+                                    <p>Requests</p>
+                                    <h4 class="fw-bolder">
+                                        @if (isset($user_request))
+                                            {{ $user_request }}
+                                        @else
+                                            0
+                                        @endif
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- Buttons Section -->
+                    <div class="row mt-5 mb-10 justify-content-center">
+                        <div class="col-md-4 mb-4">
+                            <a href="{{ route('marchant.balance.request.index') }}"
+                                class="card text-center bg-info text-white py-8 shadow-lg">
+                                <i class="fas fa-gift fa-2x text-white"></i>
+                                <h5 class="mt-2">Send Diamond to End User</h5>
+                            </a>
+                        </div>
+                    </div>
+                    <!--end::Container-->
+                </div>
+            </div>
+        @endcan
             <!--end::Container-->
         </div>
     </div>
