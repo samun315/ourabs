@@ -172,10 +172,10 @@
 
 
                                 <!-- Stats Section -->
-                                <div class="row mt-10 bg-primary pt-4">
+                                <div class="row mt-10 bg-primary text-white pt-4">
                                     <div class="col">
                                         <span class="fas fa-object-group fa-2x"></span>
-                                        <p class="text-muted">Orders</p>
+                                        <p>Orders</p>
                                         <h4 class="fw-bolder">
                                             @if (isset($user_order))
                                                 {{ $user_order }}
@@ -186,8 +186,8 @@
                                     </div>
                                     <div class="col">
                                         <span class="fas fa-gem fa-2x"></span>
-                                        <p class="text-muted d-none d-md-block">Diamonds Balance</p>
-                                        <p class="text-muted d-md-none">Balance</p>
+                                        <p class="d-none d-md-block">Diamonds Balance</p>
+                                        <p class="d-md-none">Balance</p>
                                         <h4 class="fw-bolder">
                                             @if (isset($user_diamond->current_balance))
                                                 {{ $user_diamond?->current_balance }}
@@ -198,7 +198,7 @@
                                     </div>
                                     <div class="col">
                                         <span class="fas fa-shopping-bag fa-2x"></span>
-                                        <p class="text-muted">Requests</p>
+                                        <p>Requests</p>
                                         <h4 class="fw-bolder">
                                             @if (isset($user_request))
                                                 {{ $user_request }}
