@@ -6,6 +6,7 @@ use App\Http\Requests\Marchant\OrderBalanceRequest;
 use App\Models\Marchant\OrderBalance;
 use App\Models\Payment\Account;
 use App\Models\Payment\PaymentGateway;
+use App\Models\Report\TransactionHistory;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
@@ -72,6 +73,8 @@ class OrderBalanceApproveService
     {
         DB::beginTransaction();
         try {
+            // Find the order list by its ID or fail if not found.
+            $order = OrderBalance::query()->where('id', $id)->first();
 
             $data = [
                 'user_id' => $request->input('user_id'),
@@ -83,21 +86,40 @@ class OrderBalanceApproveService
                 'status' => $request->input('status')
             ];
 
-            $account = Account::query()->where('user_id',$data['user_id'])->first();
+            $account = Account::query()->where('user_id', $data['user_id'])->first();
 
+            $gateway = OrderBalance::query()
+            ->leftJoin('payment_gateways','orders.payment_gateway_id','=','payment_gateways.id')
+            ->where('orders.id', $id)->first();
+
+            $transactionHistory = [
+                'user_id' => $data['user_id'],
+                'type' => 'ORDER',
+                'refference' => $gateway?->gateway_name,
+                'amount' => $order->amount,
+                'before_balance' => $account?->current_balance,
+                'refference_table' => 'orders',
+                'refference_id' => $id,
+                'created_by' => loggedInUserId(),
+            ];
+   
             if (!empty($account)) {
                 $old_balance = $account?->current_balance;
                 if ($orderStatus['status'] == 'Paid') {
                     $data['current_balance'] = $old_balance + $data['current_balance'];
-                }else{
+                    $transactionHistory['after_balance'] = $data['current_balance'];
+                } else {
                     $data['current_balance'] = $old_balance - $data['current_balance'];
                 }
+ 
                 $account->update($data);
-            }else{
+            } else {
                 Account::query()->create($data);
             }
-            // Find the order list by its ID or fail if not found.
-            $order = OrderBalance::query()->where('id', $id)->first();
+
+            if (!empty($transactionHistory)) {
+                TransactionHistory::query()->create($transactionHistory);
+            }
 
             // Update the order with the provided data.
             $order->update($orderStatus);
