@@ -29,7 +29,7 @@ class TransferService
                         ->orWhere('tu.full_name', 'like', '%' . $searchKeyword . '%')
                         ->orWhere('tu.email', 'like', '%' . $searchKeyword . '%');
                 });
-                $query->where('balance_transfers.created_by',loggedInUserId());
+                $query->where('balance_transfers.created_by', loggedInUserId());
             })
             ->select('balance_transfers.*', 'fu.role_id as fu_role', 'fu.full_name as fu_name', 'fu.phone as fu_phone', 'fu.email as fu_email', 'tu.role_id as tu_role', 'tu.full_name as tu_name', 'tu.phone as tu_phone', 'tu.email as tu_email')
             ->latest();
@@ -63,25 +63,33 @@ class TransferService
     }
 
     public function storeTransferBalance(array $data): Transfer|JsonResponse|bool
-    {   
+    {
         try {
             $data['transfer_from_user'] = $data['created_by'];
             $data['status'] = 'Transferred';
 
-            $account = Account::query()->where('user_id',$data['transfer_from_user'])->first();
-            
-            if ($account && $data['amount'] < $account->current_balance) {
+            $fromUserAccount = Account::query()->where('user_id', $data['transfer_from_user'])->first();
 
-                $from_user['current_balance'] = $account?->current_balance - $data['amount'];
+            if ($fromUserAccount && $data['amount'] < $fromUserAccount->current_balance) {
+
+                $from_user['current_balance'] = $fromUserAccount?->current_balance - $data['amount'];
                 $from_user['updated_by'] = loggedInUserId();
 
-                $account->update($from_user);
+                $fromUserAccount->update($from_user);
+
+                $toUserAccount = Account::query()->where('user_id', $data['transfer_to_user'])->first();
+
+                if (!empty($toUserAccount)) {
+                    $to_user['current_balance'] = $toUserAccount?->current_balance + $data['amount'];
+                    $to_user['updated_by'] = loggedInUserId();
+
+                    $toUserAccount->update($to_user);
+                }
 
                 return Transfer::create($data);
             }
 
             return false;
-        
         } catch (Exception $exception) {
             report($exception);
             return response()->json(['error' => 'Something went wrong'], 500);
