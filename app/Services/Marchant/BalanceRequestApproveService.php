@@ -4,6 +4,8 @@ namespace App\Services\Marchant;
 
 use App\Models\Marchant\BalanceRequest;
 use App\Models\Payment\Account;
+use App\Models\Report\TransactionHistory;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
@@ -72,6 +74,10 @@ class BalanceRequestApproveService
             // Find the whitelist by its ID or fail if not found.
             $balance = BalanceRequest::query()->where('id', $id)->first();
 
+            $fromUserInfo = User::query()->where('id', $balance?->user_id)->first();
+
+            $account = Account::query()->where('user_id', $balance?->user_id)->first();
+       
             if (!empty($balance)) {
                 $givenAmount = $balance->amount;
                 $fromUser = $balance->created_by;
@@ -82,6 +88,24 @@ class BalanceRequestApproveService
                 ];
 
                 if ($request->input('status') == 'Transferred') {
+
+                    // Transaction history make data
+                    $transactionHistory = [
+                        'user_id' => $balance?->user_id,
+                        'type' => 'REQUEST',
+                        'refference' => $fromUserInfo?->email . ' TO ' . $balance?->mobile_number,
+                        'amount' => $balance?->amount,
+                        'before_balance' => $account?->current_balance + $balance?->amount,
+                        'after_balance' => $account?->current_balance,
+                        'refference_table' => 'balance_requests',
+                        'refference_id' => $id,
+                        'created_by' => loggedInUserId(),
+                    ];
+
+
+                    if (!empty($transactionHistory)) {
+                        TransactionHistory::query()->create($transactionHistory);
+                    }
 
                     // Update the whitelist with the provided data.
                     $balance->update($requestStatus);

@@ -23,16 +23,16 @@ class TransferApproveController extends Controller
         return view('marchant.transferApprove.index');
     }
 
-    public function updateStatus(Request $request, int $id): JsonResponse
-    {
-        try {
-            // Update the status of the currency
-            $whitelist = $this->transferApproveService->updateTransferBalanceStatus($request, $id);
+    // public function updateStatus(Request $request, int $id): JsonResponse
+    // {
+    //     try {
+    //         // Update the status of the currency
+    //         $whitelist = $this->transferApproveService->updateTransferBalanceStatus($request, $id);
 
-            return sendSuccessResponse(200, 'Transfer balance status updated successfully.');
-        } catch (Exception $e) {
-            // Handle any exceptions during status update
-            return sendErrorResponse('Internal Server Error: ', $e->getMessage(), $e->getCode() ?? 500);
-        }
-    }
+    //         return sendSuccessResponse(200, 'Transfer balance status updated successfully.');
+    //     } catch (Exception $e) {
+    //         // Handle any exceptions during status update
+    //         return sendErrorResponse('Internal Server Error: ', $e->getMessage(), $e->getCode() ?? 500);
+    //     }
+    // }
 }

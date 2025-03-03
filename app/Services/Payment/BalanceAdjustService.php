@@ -5,6 +5,8 @@ namespace App\Services\Payment;
 use App\Models\Payment\Account;
 use App\Models\Payment\BalanceAdjust;
 use App\Models\Payment\PaymentGateway;
+use App\Models\Report\TransactionHistory;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,12 +24,26 @@ class BalanceAdjustService
         DB::beginTransaction();
         try {
             $account = Account::query()->where('user_id', $data['user_id'])->first();
+            $fromUser = User::query()->where('id',loggedInUserId())->first();
+            $toUser = User::query()->where('id',$data['user_id'])->first();
 
             $data['before_balance'] = $account->current_balance;
+
+            $transactionHistory = [
+                'user_id' => $data['user_id'],
+                'type' => 'TRANSFER',
+                'refference' => $fromUser?->email .' TO '.$toUser?->email,
+                'amount' => $data['balance'],
+                'before_balance' => $account->current_balance,
+                'refference_table' => 'balance_adjust',
+                'created_by' => loggedInUserId(),
+            ];
 
             if ($data['type'] == 'add') {
                 $data['type'] = 'credit';
                 $data['after_balance'] = $data['before_balance'] + $data['balance'];
+
+                $transactionHistory['after_balance'] =  $data['after_balance'];
 
                 $currentAccount['current_balance'] = $account->current_balance + $data['balance'];
             } else {
@@ -35,12 +51,20 @@ class BalanceAdjustService
                     $data['type'] = 'debit';
                     $data['after_balance'] = $data['before_balance'] - $data['balance'];
 
+                    $transactionHistory['after_balance'] =  $data['after_balance'];
+
                     $currentAccount['current_balance'] = $account->current_balance - $data['balance'];
                 }
             }
             $updateAccount = $account->update($currentAccount);
 
-            BalanceAdjust::query()->create($data);
+            $balanceAdjust = BalanceAdjust::query()->create($data);
+
+            $transactionHistory['refference_id'] =  $balanceAdjust->id;
+
+            if (!empty($transactionHistory)) {
+                TransactionHistory::query()->create($transactionHistory);
+            }
 
             DB::commit();
 
@@ -65,7 +89,7 @@ class BalanceAdjustService
                         ->orWhere('users.phone', 'like', "%$searchKeyword%");
                 });
             })
-            ->select('balance_adjust.*', 'users.role_id', 'users.full_name', 'users.phone', 'users.email');
+            ->select('balance_adjust.*', 'users.role_id', 'users.full_name', 'users.phone', 'users.email')->latest();
 
         return Datatables::of($query)
             ->addIndexColumn()

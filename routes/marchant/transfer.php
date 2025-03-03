@@ -14,5 +14,5 @@ Route::group(['prefix' => 'transfer/balance'], function () {
 // marchant.transfer.balance.approve.index
 Route::group(['prefix' => 'all/transfer/balance', 'as' => 'approve.'], function () {
     Route::get('/', [TransferApproveController::class, 'index'])->name('index');
-    Route::put('/update-status/{id}', [TransferApproveController::class, 'updateStatus'])->name('updateStatus');
+    // Route::put('/update-status/{id}', [TransferApproveController::class, 'updateStatus'])->name('updateStatus');
 });

@@ -76,52 +76,52 @@ class TransferApproveService
     }
 
 
-    public function updateTransferBalanceStatus(Request $request, int $id): Model|Builder|bool
-    {
-        DB::beginTransaction();
-        try {
+    // public function updateTransferBalanceStatus(Request $request, int $id): Model|Builder|bool
+    // {
+    //     DB::beginTransaction();
+    //     try {
 
-            $transferInfo = Transfer::query()->where('id', $id)->first();
+    //         $transferInfo = Transfer::query()->where('id', $id)->first();
 
-            if (!empty($transferInfo)) {
-                $givenAmount = $transferInfo->amount;
-                $fromUser = $transferInfo->transfer_from_user;
-                $toUser = $transferInfo->transfer_to_user;
+    //         if (!empty($transferInfo)) {
+    //             $givenAmount = $transferInfo->amount;
+    //             $fromUser = $transferInfo->transfer_from_user;
+    //             $toUser = $transferInfo->transfer_to_user;
 
-                $transferStatus = [
-                    'status' => $request->input('status'),
-                    'updated_by' => loggedInUserId(),
-                ];
+    //             $transferStatus = [
+    //                 'status' => $request->input('status'),
+    //                 'updated_by' => loggedInUserId(),
+    //             ];
 
-                if ($request->input('status') == 'Transferred') {
-                    $fromUserAccount = Account::query()->where('user_id', $fromUser)->first();
+    //             if ($request->input('status') == 'Transferred') {
+    //                 $fromUserAccount = Account::query()->where('user_id', $fromUser)->first();
 
-                    if (!empty($fromUserAccount)) {
-                        $from_user['current_balance'] = $fromUserAccount?->current_balance - $givenAmount;
-                        $from_user['updated_by'] = loggedInUserId();
+    //                 if (!empty($fromUserAccount)) {
+    //                     $from_user['current_balance'] = $fromUserAccount?->current_balance - $givenAmount;
+    //                     $from_user['updated_by'] = loggedInUserId();
 
-                        $fromUserAccount->update($from_user);
-                    }
+    //                     $fromUserAccount->update($from_user);
+    //                 }
 
-                    $toUserAccount = Account::query()->where('user_id', $toUser)->first();
+    //                 $toUserAccount = Account::query()->where('user_id', $toUser)->first();
 
-                    if (!empty($toUserAccount)) {
-                        $to_user['current_balance'] = $toUserAccount?->current_balance + $givenAmount;
-                        $to_user['updated_by'] = loggedInUserId();
+    //                 if (!empty($toUserAccount)) {
+    //                     $to_user['current_balance'] = $toUserAccount?->current_balance + $givenAmount;
+    //                     $to_user['updated_by'] = loggedInUserId();
                         
-                        $toUserAccount->update($to_user);
-                    }
-                }
+    //                     $toUserAccount->update($to_user);
+    //                 }
+    //             }
 
-                $transferInfo->update($transferStatus);
-            }
+    //             $transferInfo->update($transferStatus);
+    //         }
 
-            DB::commit();
+    //         DB::commit();
 
-            return $transferInfo;
-        } catch (Exception $exception) {
-            DB::rollBack();
-            throw $exception;
-        }
-    }
+    //         return $transferInfo;
+    //     } catch (Exception $exception) {
+    //         DB::rollBack();
+    //         throw $exception;
+    //     }
+    // }
 }

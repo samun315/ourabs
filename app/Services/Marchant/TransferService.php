@@ -77,7 +77,7 @@ class TransferService
             $transactionHistoryFromUser = [
                 'user_id' => $data['transfer_from_user'],
                 'type' => 'TRANSFER',
-                'refference' => $fromUserInfo?->email,
+                'refference' => $fromUserInfo?->email .' TO '. $toUserInfo?->email,
                 'amount' => $data['amount'],
                 'before_balance' => $fromUserAccount?->current_balance,
                 'refference_table' => 'balance_transfers',
@@ -87,7 +87,7 @@ class TransferService
             $transactionHistoryToUser = [
                 'user_id' => $data['transfer_to_user'],
                 'type' => 'TRANSFER',
-                'refference' => $toUserInfo?->email,
+                'refference' => $toUserInfo?->email.' FROM '. $fromUserInfo?->email,
                 'amount' => $data['amount'],
                 'refference_table' => 'balance_transfers',
                 'created_by' => loggedInUserId(),
@@ -130,7 +130,7 @@ class TransferService
                 return $transfer;
             }
 
-            return false;
+            return true;
         } catch (Exception $exception) {
             report($exception);
             return response()->json(['error' => 'Something went wrong'], 500);
