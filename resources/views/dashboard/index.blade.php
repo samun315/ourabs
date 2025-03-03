@@ -172,7 +172,7 @@
 
 
                                 <!-- Stats Section -->
-                                <div class="row mt-10 bg-light pt-4">
+                                <div class="row mt-10 bg-primary pt-4">
                                     <div class="col">
                                         <span class="fas fa-object-group fa-2x"></span>
                                         <p class="text-muted">Orders</p>
