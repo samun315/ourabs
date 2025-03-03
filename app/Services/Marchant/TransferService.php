@@ -4,6 +4,8 @@ namespace App\Services\Marchant;
 
 use App\Models\Marchant\Transfer;
 use App\Models\Payment\Account;
+use App\Models\Report\TransactionHistory;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
@@ -69,11 +71,34 @@ class TransferService
             $data['status'] = 'Transferred';
 
             $fromUserAccount = Account::query()->where('user_id', $data['transfer_from_user'])->first();
+            $fromUserInfo = User::query()->where('id', $data['transfer_from_user'])->first();
+            $toUserInfo = User::query()->where('id', $data['transfer_to_user'])->first();
+
+            $transactionHistoryFromUser = [
+                'user_id' => $data['transfer_from_user'],
+                'type' => 'TRANSFER',
+                'refference' => $fromUserInfo?->email,
+                'amount' => $data['amount'],
+                'before_balance' => $fromUserAccount?->current_balance,
+                'refference_table' => 'balance_transfers',
+                'created_by' => loggedInUserId(),
+            ];
+
+            $transactionHistoryToUser = [
+                'user_id' => $data['transfer_to_user'],
+                'type' => 'TRANSFER',
+                'refference' => $toUserInfo?->email,
+                'amount' => $data['amount'],
+                'refference_table' => 'balance_transfers',
+                'created_by' => loggedInUserId(),
+            ];
 
             if ($fromUserAccount && $data['amount'] < $fromUserAccount->current_balance) {
 
                 $from_user['current_balance'] = $fromUserAccount?->current_balance - $data['amount'];
                 $from_user['updated_by'] = loggedInUserId();
+
+                $transactionHistoryFromUser['after_balance'] = $from_user['current_balance'];
 
                 $fromUserAccount->update($from_user);
 
@@ -83,10 +108,26 @@ class TransferService
                     $to_user['current_balance'] = $toUserAccount?->current_balance + $data['amount'];
                     $to_user['updated_by'] = loggedInUserId();
 
+                    $transactionHistoryToUser['before_balance'] = $toUserAccount->current_balance;
+                    $transactionHistoryToUser['after_balance'] = $to_user['current_balance'];
+
                     $toUserAccount->update($to_user);
                 }
 
-                return Transfer::create($data);
+                $transfer =  Transfer::create($data);
+
+                $transactionHistoryFromUser['refference_id'] = $transfer->id;
+                $transactionHistoryToUser['refference_id'] =  $transfer->id;
+
+                if (!empty($transactionHistoryFromUser)) {
+                    TransactionHistory::query()->create($transactionHistoryFromUser);
+                }
+
+                if (!empty($transactionHistoryToUser)) {
+                    TransactionHistory::query()->create($transactionHistoryToUser);
+                }
+
+                return $transfer;
             }
 
             return false;
