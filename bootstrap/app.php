@@ -55,6 +55,13 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->group(base_path('routes/marchant/balanceRequest.php'));
             //End Balance Request Route
 
+            //Start End User Balance Request Route
+            Route::middleware(['web', 'preventBackHistory', 'user'])
+                ->prefix('marchant')
+                ->name('marchant.sub-distributor.balance.request.')
+                ->group(base_path('routes/marchant/endUserBalanceRequest.php'));
+            //End End User Balance Request Route
+            
             //Start ORDER Route
             Route::middleware(['web', 'preventBackHistory', 'user'])
                 ->prefix('marchant')
