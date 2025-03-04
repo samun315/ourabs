@@ -13,21 +13,21 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         then: function () {
 
-            //User Route
+            //Start User Route
             Route::middleware(['web', 'preventBackHistory', 'user'])
                 ->prefix('users')
                 ->name('user.')
                 ->group(base_path('routes/user/user.php'));
             //End User Route
 
-            //Common master Route
+            //Start Common master Route
             Route::middleware(['web', 'preventBackHistory', 'user'])
                 ->prefix('common')
                 ->name('common.master.')
                 ->group(base_path('routes/common/master.php'));
             //End Sales Common master Route
 
-            //Menu master Route
+            //Start Menu master Route
             Route::middleware(['web', 'preventBackHistory', 'user'])
                 ->prefix('menu')
                 ->name('menu.master.')
@@ -82,6 +82,14 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->name('payment.adjust.balance.')
                 ->group(base_path('routes/payment/adjustBalance.php'));
             //End Balance adjust Route
+
+
+            //Start Report Route
+            Route::middleware(['web', 'preventBackHistory', 'user'])
+                ->prefix('report')
+                ->name('report.')
+                ->group(base_path('routes/report/report.php'));
+            //End Report Route
 
             //****Start Api Route******//
             Route::middleware(['api'])
