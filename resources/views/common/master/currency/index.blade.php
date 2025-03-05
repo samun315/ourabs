@@ -7,6 +7,7 @@
     <x-toolbar-component title="Currency List" :breadcrumbs="[
         ['label' => 'Home', 'url' => route('dashboard')],
         ['label' => 'Wallet Management', 'url' => 'javascript:void(0)'],
+        ['label' => 'Currency', 'url' => route('payment.manual.currency.index')],
         ['label' => 'Currency List', 'active' => true],
     ]" />
     <!--end::Toolbar -->

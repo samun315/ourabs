@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Common\Master;
 
 use App\Http\Controllers\Controller;
 use App\Services\Common\Currency\CurrencyService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -33,7 +34,7 @@ class CurrencyController extends Controller
             $this->currencyService->updateCurrencyStatus(['active' => $active], $id);
 
             return sendSuccessResponse(200, 'Currency status updated successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Handle any exceptions during status update
             return sendErrorResponse('Internal Server Error: ', $e->getMessage(), $e->getCode() ?? 500);
         }

@@ -1,0 +1,127 @@
+<?php
+
+namespace App\Services\Marchant;
+
+use App\Http\Requests\Marchant\EndUserBalanceRequest;
+use App\Models\Marchant\BalanceRequest;
+use App\Models\Marchant\EndUserBalance;
+use App\Models\Marchant\RequestWhitelist;
+use App\Models\Payment\Account;
+use App\Models\Report\TransactionHistory;
+use App\Models\User;
+use Exception;
+use FontLib\Table\Type\name;
+use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\DataTables;
+
+class EndUserBalanceApproveService
+{
+    public function getBalanceInfo(Request $request): JsonResponse|Model|Builder
+    {
+        $searchKeyword = $request->input('search');
+
+        $query = EndUserBalance::query()
+            ->where(function ($query) use ($searchKeyword) {
+                $query->where(function ($q) use ($searchKeyword) {
+                    $q->where('phone_number', 'like', "%$searchKeyword%")
+                        ->orWhere('imo_id', 'like', "%$searchKeyword%")
+                        ->orWhere('amount', 'like', "%$searchKeyword%")
+                        ->orWhere('status', 'like', "%$searchKeyword%");
+                });
+            })->latest();
+
+        return Datatables::of($query)
+            ->addIndexColumn()
+            ->addColumn('action', function ($row) {
+                $transferBtn = '';
+                $cancelBtn = '';
+
+                if ($row->status == 'Transferred' || $row->status == 'Cancelled') {
+                    $transferBtn = '';
+                    $cancelBtn = '';
+                } else {
+                    $transferBtn = '<button type="button" data-id="' . $row->balance_transfer_id . '"  data-status="Transferred" class="btn btn-success btn-sm ms-lg-2 transferredBtn">Transfer</button>';
+                    $cancelBtn = '<button type="button" data-id="' . $row->balance_transfer_id . '" data-status="Cancelled" class="btn btn-danger btn-sm ms-lg-2 cancelledBtn">Cancel</button>';
+                }
+
+                $button = '<div class="btn-group" role="group" aria-label="Basic example">
+                ' . $transferBtn . '
+                ' . $cancelBtn . '
+                </div>';
+                return $button;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+    }
+
+
+    public function updateBalanceRequestStatus(Request $request, int $id): Model|Builder|bool
+    {
+        DB::beginTransaction();
+        try {
+
+            // Find the whitelist by its ID or fail if not found.
+            $balance = EndUserBalance::query()->where('balance_transfer_id', $id)->first();
+
+            $fromUserInfo = User::query()->where('id', $balance?->request_by)->first();
+
+            $account = Account::query()->where('user_id', $balance?->request_by)->first();
+
+            if (!empty($balance)) {
+                $givenAmount = $balance->amount;
+                $fromUser = $balance->request_by;
+
+                $requestStatus = [
+                    'status' => $request->input('status'),
+                    'updated_by' => loggedInUserId(),
+                ];
+
+                if ($request->input('status') == 'Transferred') {
+
+                    // Transaction history make data
+                    $transactionHistory = [
+                        'user_id' => $balance?->request_by,
+                        'type' => 'REQUEST',
+                        'refference' => $fromUserInfo?->email . ' TO ' . $balance?->imo_id,
+                        'amount' => $balance?->amount,
+                        'before_balance' => $account?->current_balance + $balance?->amount,
+                        'after_balance' => $account?->current_balance,
+                        'refference_table' => 'end_user_balance_transfers',
+                        'refference_id' => $id,
+                        'created_by' => loggedInUserId(),
+                    ];
+
+
+                    if (!empty($transactionHistory)) {
+                        TransactionHistory::query()->create($transactionHistory);
+                    }
+
+                    // Update the whitelist with the provided data.
+                    $balance->update($requestStatus);
+                } else {
+                    $fromUserAccount = Account::query()->where('user_id', $fromUser)->first();
+
+                    if (!empty($fromUserAccount)) {
+                        $from_user['current_balance'] = $fromUserAccount?->current_balance + $givenAmount;
+                        $from_user['updated_by'] = loggedInUserId();
+
+                        $fromUserAccount->update($from_user);
+                    }
+                    $balance->update($requestStatus);
+                }
+            }
+
+            DB::commit();
+
+            return $balance;
+        } catch (Exception $exception) {
+            DB::rollBack();
+            throw $exception;
+        }
+    }
+}
