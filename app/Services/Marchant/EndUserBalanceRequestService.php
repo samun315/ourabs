@@ -54,7 +54,7 @@ class EndUserBalanceRequestService
 
             $account = Account::query()->where('user_id', $data['user_id'])->first();
 
-            if ($account && $data['amount'] < $account->current_balance) {
+            if ($account && $data['amount'] <= $account->current_balance) {
 
                 $from_user['current_balance'] = $account?->current_balance - $data['amount'];
                 $from_user['updated_by'] = loggedInUserId();
@@ -65,7 +65,7 @@ class EndUserBalanceRequestService
             }
 
             DB::commit();
-            
+
             return $balance;
         } catch (Exception $exception) {
             DB::rollBack();
