@@ -19,6 +19,7 @@ class Transfer extends Model
         'id',
         'transfer_from_user',
         'transfer_to_user',
+        'role_id',
         'amount',
         'status',
         'created_by',

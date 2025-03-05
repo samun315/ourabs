@@ -31,7 +31,7 @@ class TransferService
                         ->orWhere('tu.full_name', 'like', '%' . $searchKeyword . '%')
                         ->orWhere('tu.email', 'like', '%' . $searchKeyword . '%');
                 });
-                $query->where('balance_transfers.created_by', loggedInUserId());
+                $query->where(['balance_transfers.created_by'=> loggedInUserId(),'balance_transfers.role_id' => 2]);
             })
             ->select('balance_transfers.*', 'fu.role_id as fu_role', 'fu.full_name as fu_name', 'fu.phone as fu_phone', 'fu.email as fu_email', 'tu.role_id as tu_role', 'tu.full_name as tu_name', 'tu.phone as tu_phone', 'tu.email as tu_email')
             ->latest();
@@ -68,6 +68,7 @@ class TransferService
     {
         try {
             $data['transfer_from_user'] = $data['created_by'];
+            $data['role_id'] = 2;
             $data['status'] = 'Transferred';
 
             $fromUserAccount = Account::query()->where('user_id', $data['transfer_from_user'])->first();
