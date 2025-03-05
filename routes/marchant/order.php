@@ -3,6 +3,7 @@
 use App\Http\Controllers\Marchant\OrderBalanceApproveController;
 use App\Http\Controllers\Marchant\OrderBalanceController;
 use Illuminate\Support\Facades\Route;
+
 // marchant.order.balance.index
 
 Route::group(['prefix' => 'order/balance'], function () {

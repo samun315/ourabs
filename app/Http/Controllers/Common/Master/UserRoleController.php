@@ -70,7 +70,7 @@ class UserRoleController extends Controller
 
 
             return sendSuccessResponse(200, 'User role updated successfolly.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Redirect back with error message if an exception occurs
             return sendErrorResponse('Internal Server Error: ', $e->getMessage(), $e->getCode() ?? 500);
         }
@@ -88,7 +88,7 @@ class UserRoleController extends Controller
             $this->userRoleService->updateUserRole(['active' => $active], $userRoleId);
 
             return sendSuccessResponse(200, 'User role status updated successfolly.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return sendErrorResponse('Internal Server Error: ', $e->getMessage(), $e->getCode() ?? 500);
         }
     }

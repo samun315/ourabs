@@ -24,6 +24,7 @@ class UserController extends Controller
 
     public function index(Request $request): View|JsonResponse
     {
+        Gate::authorize('user.index');
         $user = Auth::user();
 
         $query = UserRole::query()->orderBy('role_id', 'DESC')->select('role_id', 'role_name');
@@ -44,6 +45,7 @@ class UserController extends Controller
 
     public function store(UserRequest $request): JsonResponse
     {
+        Gate::authorize('user.index');
         try {
 
             $storeUserInfo = $this->userService->storeUserInfo($request->fields());
@@ -61,6 +63,7 @@ class UserController extends Controller
 
     public function edit(int $userId): JsonResponse
     {
+        Gate::authorize('user.edit');
         try {
             $userInfo = $this->userService->getUserInfoById($userId);
 
@@ -72,6 +75,7 @@ class UserController extends Controller
 
     public function update(UserRequest $request, int $userId): JsonResponse
     {
+        Gate::authorize('user.edit');
         try {
 
             $updateUserInfo = $this->userService->updateUserInfo($request->fields(), $userId);
@@ -89,6 +93,7 @@ class UserController extends Controller
 
     public function resetPassword(Request $request, int $userId): JsonResponse
     {
+        Gate::authorize('user.resetPassword');
         try {
 
             $updateUserInfo = $this->userService->resetPassword($request, $userId);
@@ -106,7 +111,8 @@ class UserController extends Controller
 
     public function viewProfile(): View
     {
-        // Gate::authorize('user.profile.viewProfile');
+          Gate::authorize('user.profile.viewProfile');
+
         $userId = (int) getLoggedInUserInfo('logged_session_data.id');
 
         $data['personalInfoData'] = $this->userService->getUserInfoById($userId);
@@ -116,7 +122,8 @@ class UserController extends Controller
 
     public function editProfile(): View
     {
-        // Gate::authorize('user.profile.editProfile');
+        Gate::authorize('user.profile.editProfile');
+
         $userId = (int) getLoggedInUserInfo('logged_session_data.id');
 
         $data['editModeData'] = $this->userService->getUserInfoById($userId);
@@ -126,7 +133,7 @@ class UserController extends Controller
 
     public function profileUpdate(UserProfileRequest $request, int $userId): RedirectResponse
     {
-        // Gate::authorize('user.profile.editProfile');
+        Gate::authorize('user.profile.editProfile');
         try {
             $this->userService->updateUserProfile($request, $userId);
 
@@ -141,14 +148,14 @@ class UserController extends Controller
 
     public function changePassword(): View
     {
-        // Gate::authorize('user.profile.changePassword');
+        Gate::authorize('user.profile.changePassword');
 
         return view('user.profile.changePassword');
     }
 
     public function updatePassword(Request $request): RedirectResponse
     {
-        // Gate::authorize('user.profile.changePassword');
+        Gate::authorize('user.profile.changePassword');
 
         $userId = Auth::user()->id;
 

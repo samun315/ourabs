@@ -7,6 +7,7 @@ use App\Services\Common\Currency\CurrencyService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class CurrencyController extends Controller
@@ -17,6 +18,8 @@ class CurrencyController extends Controller
 
     public function index(Request $request):View|JsonResponse
     {
+        Gate::authorize('payment.manual.currency.index');
+
         if ($request->ajax()) {
             return $this->currencyService->getCurrencyList($request);
         }
@@ -25,6 +28,7 @@ class CurrencyController extends Controller
 
     public function updateStatus(Request $request): JsonResponse
     {
+        Gate::authorize('payment.manual.currency.index');
         // Get currency ID and status from the request
         $id = $request->input('id');
         $active = $request->input('active');

@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'transfer/balance'], function () {
     Route::get('/', [TransferController::class, 'index'])->name('index');
     Route::post('/store', [TransferController::class, 'store'])->name('store');
-    
 });
 
 // marchant.transfer.balance.approve.index
@@ -23,7 +22,6 @@ Route::group(['prefix' => 'all/transfer/balance', 'as' => 'approve.'], function 
 Route::group(['prefix' => 'sub-distributor/transfer/balance', 'as' => 'sub-distributor.'], function () {
     Route::get('/', [TransferSubDistributorController::class, 'index'])->name('index');
     Route::post('/store', [TransferSubDistributorController::class, 'store'])->name('store');
-    
 });
 
 // marchant.transfer.balance.sub-distributor.approve.allTransfer

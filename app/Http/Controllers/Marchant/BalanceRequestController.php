@@ -11,6 +11,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class BalanceRequestController extends Controller
@@ -19,6 +20,8 @@ class BalanceRequestController extends Controller
 
     public function index(Request $request): View|JsonResponse
     {
+        Gate::authorize('marchant.balance.request.index');
+
         if ($request->ajax()) {
             return $this->balanceRequestService->getRequestInfo($request);
         }

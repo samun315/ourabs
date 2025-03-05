@@ -13,6 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class TransferSubDistributorController extends Controller
@@ -21,6 +22,8 @@ class TransferSubDistributorController extends Controller
 
     public function index(Request $request): View|JsonResponse
     {
+        Gate::authorize('marchant.transfer.balance.sub-distributor.index');
+
         if ($request->ajax()) {
             return $this->transferSubDistributorService->getTransferBalanceInfo($request);
         }
@@ -38,6 +41,8 @@ class TransferSubDistributorController extends Controller
 
     public function store(TransferRequest $request): JsonResponse
     {
+        Gate::authorize('marchant.transfer.balance.sub-distributor.index');
+
         try {
 
             $storeUserInfo = $this->transferSubDistributorService->storeTransferBalance($request->fields());
@@ -59,6 +64,7 @@ class TransferSubDistributorController extends Controller
 
     public function allTransfer(Request $request): View|JsonResponse
     {
+        Gate::authorize('marchant.transfer.balance.sub-distributor.approve.allTransfer');
         if ($request->ajax()) {
             return $this->transferSubDistributorService->getAllTransferBalanceInfo($request);
         }

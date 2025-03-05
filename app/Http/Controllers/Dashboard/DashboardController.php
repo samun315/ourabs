@@ -12,11 +12,14 @@ use App\Models\Marchant\OrderBalance;
 use App\Models\Marchant\BalanceRequest;
 use App\Models\Marchant\RequestWhitelist;
 use App\Models\Payment\Account;
+use Illuminate\Support\Facades\Gate;
 
 class DashboardController extends Controller
 {
     public function index(): View
     {
+        Gate::authorize('dashboard');
+        
         $data=[];
         $data['pending_order'] = OrderBalance::where('status', 'Pending')->count();
         $data['pending_request'] = BalanceRequest::where('status', 'Pending')->count();

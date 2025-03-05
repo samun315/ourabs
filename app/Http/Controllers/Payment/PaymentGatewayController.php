@@ -10,6 +10,7 @@ use App\Services\Payment\PaymentGatewayService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class PaymentGatewayController extends Controller
@@ -19,6 +20,8 @@ class PaymentGatewayController extends Controller
 
     public function index(Request $request): View|JsonResponse
     {
+        Gate::authorize('payment.manual.gateway.index');
+        
         if ($request->ajax()) {
             return $this->paymentGatewayService->getPaymentGateway($request);
         }
@@ -30,6 +33,8 @@ class PaymentGatewayController extends Controller
 
     public function store(PaymentGatewayRequest $request): JsonResponse
     {
+        Gate::authorize('payment.manual.gateway.index');
+
         try {
 
             $storeGatewayInfo = $this->paymentGatewayService->storeGateway($request->fields());
@@ -58,6 +63,8 @@ class PaymentGatewayController extends Controller
 
     public function edit(int $id): JsonResponse
     {
+        Gate::authorize('payment.manual.gateway.edit');
+
         try {
             $gatewayInfo = PaymentGateway::query()->where('id',$id)->first();
 
@@ -69,6 +76,8 @@ class PaymentGatewayController extends Controller
 
     public function update(PaymentGatewayRequest $request, int $gatewayId): JsonResponse
     {
+        Gate::authorize('payment.manual.gateway.edit');
+
         try {
 
             $updateGatewayInfo = $this->paymentGatewayService->updateGatewayInfo($request->fields(), $gatewayId);
@@ -87,6 +96,8 @@ class PaymentGatewayController extends Controller
     
     public function destroy(int $gatewayId): JsonResponse|bool
     {
+        Gate::authorize('payment.manual.gateway.destroy');
+
         try {
             $gatewayItem = PaymentGateway::query()->where('id', $gatewayId)->first();
 
