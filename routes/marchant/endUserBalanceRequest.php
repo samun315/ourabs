@@ -3,8 +3,9 @@
 use App\Http\Controllers\Marchant\EndUserBalanceRequestApproveController;
 use App\Http\Controllers\Marchant\EndUserBalanceRequestController;
 use Illuminate\Support\Facades\Route;
-// marchant.balance.request.index
 
+
+// marchant.balance.request.index
 Route::group(['prefix' => 'end-user/balance/request'], function () {
     Route::get('/', [EndUserBalanceRequestController::class, 'index'])->name('index');
     Route::get('/create', [EndUserBalanceRequestController::class, 'create'])->name('create');

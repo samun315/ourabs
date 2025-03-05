@@ -19,14 +19,14 @@ Route::group(['prefix' => 'all/transfer/balance', 'as' => 'approve.'], function 
 });
 
 
-// marchant.transfer.sub-distributor.balance.index
-Route::group(['prefix' => 'sub-distributor/transfer/balance'], function () {
+// marchant.transfer.balance.sub-distributor.index
+Route::group(['prefix' => 'sub-distributor/transfer/balance', 'as' => 'sub-distributor.'], function () {
     Route::get('/', [TransferSubDistributorController::class, 'index'])->name('index');
     Route::post('/store', [TransferSubDistributorController::class, 'store'])->name('store');
     
 });
 
-// marchant.transfer.sub-distributor.balance.approve.allTransfer
-Route::group(['prefix' => 'all/sub-distributor/transfer/balance', 'as' => 'approve.'], function () {
+// marchant.transfer.balance.sub-distributor.approve.allTransfer
+Route::group(['prefix' => 'all/sub-distributor/transfer/balance', 'as' => 'sub-distributor.approve.'], function () {
     Route::get('/', [TransferSubDistributorController::class, 'allTransfer'])->name('allTransfer');
 });

@@ -221,14 +221,14 @@
                                 </a>
                             </div>
                             <div class="col-md-4 mb-4">
-                                <a href="{{ route('marchant.balance.request.index') }}"
+                                <a href="{{ route('marchant.transfer.balance.sub-distributor.index') }}"
                                     class="card text-center bg-info text-white py-8 shadow-lg">
                                     <i class="fas fa-star-half-alt fa-2x text-white"></i>
                                     <h5 class="mt-2">Send Diamond to Sub Distributor</h5>
                                 </a>
                             </div>
                             <div class="col-md-4 mb-4">
-                                <a href="{{ route('marchant.transfer.balance.index') }}"
+                                <a href="{{ route('marchant.balance.request.index') }}"
                                     class="card text-center bg-primary text-white py-8 shadow-lg">
                                     <i class="fas fa-gem fa-2x text-white"></i>
                                     <h5 class="mt-2">Transfer Diamonds to IMO</h5>
