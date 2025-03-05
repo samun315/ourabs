@@ -19,6 +19,8 @@ class EndUserBalance extends Model
         'balance_transfer_id',
         'amount',
         'request_by',
+        'imo_id',
+        'phone_number',
         'request_to',
         'status',
         'created_by',

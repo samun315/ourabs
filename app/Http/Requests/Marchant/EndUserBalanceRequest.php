@@ -11,7 +11,7 @@ class EndUserBalanceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,24 @@ class EndUserBalanceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'imo_id' => 'required',
+            'amount' => 'required',
+            'phone_number' => 'nullable',
         ];
+    }
+
+    public function fields(): array
+    {
+        $inputData = [];
+
+        $inputData['imo_id'] = $this->input('imo_id');
+        $inputData['amount'] = $this->input('amount');
+        $inputData['phone_number'] = $this->input('phone_number') ?? null;
+
+        $inputData['request_by'] = loggedInUserId();
+        $inputData['created_by'] = loggedInUserId();
+        $inputData['created_at'] = createdAtDateConvertToDB();
+
+        return $inputData;
     }
 }

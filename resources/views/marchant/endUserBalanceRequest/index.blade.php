@@ -39,6 +39,7 @@
                 <!--end::Card header-->
                 <!--begin::Card body-->
                 <div class="card-body py-4">
+                    @include('message')
                     <!--begin::Table-->
                     <div id="kt_table_users_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
                         <div class="table-responsive">
@@ -49,10 +50,12 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start text-muted text-uppercase fw-bolder fs-7 gs-0">
                                         <th>#</th>
-                                        <th>Mobile Number</th>
+                                        <th>Imo Id</th>
+                                        <th>Phone</th>
                                         <th>Amount</th>
                                         <th>Status</th>
                                         <th>Date</th>
+                                        {{-- <th>Action</th> --}}
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -73,8 +76,8 @@
 @section('page_script')
 
     <!-- begin::Page Custom Stylesheets(used by this page) -->
-    <script src="{{ asset('assets/custom/js/marchant/balanceRequest/index.js') }}"
-        {{ Sri::html('assets/custom/js/marchant/balanceRequest/index.js') }}></script>
+    <script src="{{ asset('assets/custom/js/marchant/endUserBalanceRequest/index.js') }}"
+        {{ Sri::html('assets/custom/js/marchant/endUserBalanceRequest/index.js') }}></script>
     <!--end::Page Custom Stylesheets(used by this page)-->
 
 @endsection

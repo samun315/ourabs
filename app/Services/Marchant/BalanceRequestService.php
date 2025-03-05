@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
 class BalanceRequestService
@@ -38,6 +39,7 @@ class BalanceRequestService
 
     public function storeBalanceRequest(array $data): Model|JsonResponse|bool
     {
+        DB::beginTransaction();
         try {
             $data['user_id'] = $data['created_by'];
 
@@ -50,11 +52,14 @@ class BalanceRequestService
 
                 $account->update($from_user);
 
-                return BalanceRequest::query()->create($data);
+                $balance = BalanceRequest::query()->create($data);
             }
 
-            return false;
+            DB::commit();
+
+            return $balance;
         } catch (Exception $exception) {
+            DB::rollBack();
             report($exception);
             return response()->json(['error' => 'Something went wrong'], 500);
         }

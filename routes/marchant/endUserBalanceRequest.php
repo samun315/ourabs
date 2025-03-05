@@ -11,8 +11,7 @@ Route::group(['prefix' => 'end-user/balance/request'], function () {
     Route::post('/store', [EndUserBalanceRequestController::class, 'store'])->name('store');
 });
 
-
-Route::group(['prefix' => 'all/balance/request', 'as' => 'approve.'], function () {
+Route::group(['prefix' => 'all/end-user/balance', 'as' => 'approve.'], function () {
     Route::get('/', [EndUserBalanceRequestApproveController::class, 'index'])->name('index');
     Route::put('/update-status/{id}', [EndUserBalanceRequestApproveController::class, 'updateStatus'])->name('updateStatus');
 });
