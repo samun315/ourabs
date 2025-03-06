@@ -97,7 +97,7 @@ let table = $("#kt_table_end_user_balance").DataTable({
         {
             data: "created_at",
             render: formatDate,
-        }, 
+        },
         //     {
         //     data: "action",
         //     name: "action",
@@ -167,6 +167,10 @@ let approveTable = $("#kt_table_end_user_balance_approve").DataTable({
             searchable: false,
         },
         {
+            data: "user",
+            name: "user",
+        },
+        {
             data: "imo_id",
             name: "imo_id",
         },
@@ -199,7 +203,7 @@ let approveTable = $("#kt_table_end_user_balance_approve").DataTable({
         {
             data: "created_at",
             render: formatDate,
-        }, 
+        },
             {
             data: "action",
             name: "action",
@@ -279,7 +283,7 @@ function updateBalanceRequestStatus(status, id) {
                         if (response?.statusCode === 200) {
                             toastr.success(response?.message, "Success!");
                             approveTable.draw();
-                        } 
+                        }
                     },
                     error: function (data) {
                         toastr.error(

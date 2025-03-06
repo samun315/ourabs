@@ -26,17 +26,28 @@ class EndUserBalanceApproveService
         $searchKeyword = $request->input('search');
 
         $query = EndUserBalance::query()
+            ->leftJoin('users', 'end_user_balance_transfers.request_by', '=', 'users.id')
+            ->leftJoin('user_roles', 'users.role_id', '=', 'user_roles.role_id')
             ->where(function ($query) use ($searchKeyword) {
                 $query->where(function ($q) use ($searchKeyword) {
-                    $q->where('phone_number', 'like', "%$searchKeyword%")
-                        ->orWhere('imo_id', 'like', "%$searchKeyword%")
-                        ->orWhere('amount', 'like', "%$searchKeyword%")
-                        ->orWhere('status', 'like', "%$searchKeyword%");
+                    $q->where('end_user_balance_transfers.phone_number', 'like', "%$searchKeyword%")
+                        ->orWhere('end_user_balance_transfers.imo_id', 'like', "%$searchKeyword%")
+                        ->orWhere('end_user_balance_transfers.amount', 'like', "%$searchKeyword%")
+                        ->orWhere('end_user_balance_transfers.status', 'like', "%$searchKeyword%");
                 });
-            })->latest();
+            })->select('end_user_balance_transfers.*', 'users.role_id', 'users.full_name', 'users.phone', 'users.email','user_roles.role_name')
+            ->latest();
 
         return Datatables::of($query)
             ->addIndexColumn()
+            ->addColumn('user', function ($row) {
+                $name = $row->full_name ?? '';
+                $phone = $row->phone ?? '';
+                $email = $row->email ?? '';
+                $role = $row->role_name ?? '';
+                $user = $name . '<br>' . $phone . '<br>' . $email . '<br> <p class="badge badge-success ">'. $role .'</p>';
+                return $user;
+            })
             ->addColumn('action', function ($row) {
                 $transferBtn = '';
                 $cancelBtn = '';
@@ -55,7 +66,7 @@ class EndUserBalanceApproveService
                 </div>';
                 return $button;
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['action','user'])
             ->make(true);
     }
 
