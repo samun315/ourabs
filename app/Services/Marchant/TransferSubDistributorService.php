@@ -32,7 +32,11 @@ class TransferSubDistributorService
                         ->orWhere('tu.full_name', 'like', '%' . $searchKeyword . '%')
                         ->orWhere('tu.email', 'like', '%' . $searchKeyword . '%');
                 });
-                $query->where(['balance_transfers.created_by' => loggedInUserId(), 'balance_transfers.role_id' => 3]);
+                if (Auth::user()->role_id == 3) {
+                    $query->where(['balance_transfers.transfer_to_user' => loggedInUserId(), 'balance_transfers.role_id' => 3]);
+                } else if (Auth::user()->role_id == 2) {
+                    $query->where(['balance_transfers.created_by' => loggedInUserId(), 'balance_transfers.role_id' => 3]);
+                }
             })
             ->select('balance_transfers.*', 'fu.role_id as fu_role', 'fu.full_name as fu_name', 'fu.phone as fu_phone', 'fu.email as fu_email', 'tu.role_id as tu_role', 'tu.full_name as tu_name', 'tu.phone as tu_phone', 'tu.email as tu_email')
             ->latest();
@@ -156,7 +160,6 @@ class TransferSubDistributorService
                         ->orWhere('tu.email', 'like', '%' . $searchKeyword . '%');
                 });
                 $query->where(['balance_transfers.role_id' => 3]);
-           
             })
             ->select('balance_transfers.*', 'fu.role_id as fu_role', 'fu.full_name as fu_name', 'fu.phone as fu_phone', 'fu.email as fu_email', 'tu.role_id as tu_role', 'tu.full_name as tu_name', 'tu.phone as tu_phone', 'tu.email as tu_email')
             ->latest();

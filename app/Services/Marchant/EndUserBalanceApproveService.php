@@ -3,9 +3,11 @@
 namespace App\Services\Marchant;
 
 use App\Http\Requests\Marchant\EndUserBalanceRequest;
+use App\Models\Marchant\ApiDiamondTransaction;
 use App\Models\Marchant\BalanceRequest;
 use App\Models\Marchant\EndUserBalance;
 use App\Models\Marchant\RequestWhitelist;
+use App\Models\Marchant\Uuid;
 use App\Models\Payment\Account;
 use App\Models\Report\TransactionHistory;
 use App\Models\User;
@@ -17,6 +19,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
 
 class EndUserBalanceApproveService
@@ -35,7 +38,7 @@ class EndUserBalanceApproveService
                         ->orWhere('end_user_balance_transfers.amount', 'like', "%$searchKeyword%")
                         ->orWhere('end_user_balance_transfers.status', 'like', "%$searchKeyword%");
                 });
-            })->select('end_user_balance_transfers.*', 'users.role_id', 'users.full_name', 'users.phone', 'users.email','user_roles.role_name')
+            })->select('end_user_balance_transfers.*', 'users.role_id', 'users.full_name', 'users.phone', 'users.email', 'user_roles.role_name')
             ->latest();
 
         return Datatables::of($query)
@@ -45,7 +48,7 @@ class EndUserBalanceApproveService
                 $phone = $row->phone ?? '';
                 $email = $row->email ?? '';
                 $role = $row->role_name ?? '';
-                $user = $name . '<br>' . $phone . '<br>' . $email . '<br> <p class="badge badge-success ">'. $role .'</p>';
+                $user = $name . '<br>' . $phone . '<br>' . $email . '<br> <p class="badge badge-success ">' . $role . '</p>';
                 return $user;
             })
             ->addColumn('action', function ($row) {
@@ -66,7 +69,7 @@ class EndUserBalanceApproveService
                 </div>';
                 return $button;
             })
-            ->rawColumns(['action','user'])
+            ->rawColumns(['action', 'user'])
             ->make(true);
     }
 
@@ -92,28 +95,57 @@ class EndUserBalanceApproveService
                     'updated_by' => loggedInUserId(),
                 ];
 
+                $uuidData['uuid'] = Str::uuid()->toString();
+
+                Uuid::query()->create($uuidData);
+
                 if ($request->input('status') == 'Transferred') {
 
-                    // Transaction history make data
-                    $transactionHistory = [
-                        'user_id' => $balance?->request_by,
-                        'type' => 'REQUEST',
-                        'refference' => $fromUserInfo?->email . ' TO ' . $balance?->imo_id,
-                        'amount' => $balance?->amount,
-                        'before_balance' => $account?->current_balance + $balance?->amount,
-                        'after_balance' => $account?->current_balance,
-                        'refference_table' => 'end_user_balance_transfers',
-                        'refference_id' => $id,
-                        'created_by' => loggedInUserId(),
+                    $params = [
+                        'key'     => 'gMstVvRZ_tGG4QpBi410_1LTlsESyQcReqd0t9VLX-g',
+                        'product' => 'imo',
+                        'id'      => $balance?->imo_id,
+                        'user'    => 'sivarsivar648@gmail.com',
+                        'pass'    => 'Abc@%23$000',
+                        'amount'  => (int)$balance?->amount,
+                        'uuid'    => $uuidData['uuid'],
                     ];
 
+                    $url = 'https://private-anon-381aec7222-m7card.apiary-proxy.com/new?' . http_build_query($params);
 
-                    if (!empty($transactionHistory)) {
-                        TransactionHistory::query()->create($transactionHistory);
+                    $getData = $this->fetchApiData($url);
+
+                    $result = json_decode($getData, true);
+                    $params['imo_id'] = $balance?->imo_id;
+                    $params['order_id'] = $result['order_id'];
+                    $params['result'] = $result['result'];
+                    $params['api_key'] = 'gMstVvRZ_tGG4QpBi410_1LTlsESyQcReqd0t9VLX-g';
+                    $params['created_by'] = loggedInUserId();
+
+                    $diamondTransaction = ApiDiamondTransaction::query()->create($params);
+
+                    if ($result['result'] == 'success') {
+                        // Transaction history make data
+                        $transactionHistory = [
+                            'user_id' => $balance?->request_by,
+                            'type' => 'REQUEST',
+                            'refference' => $fromUserInfo?->email . ' TO ' . $balance?->imo_id,
+                            'amount' => $balance?->amount,
+                            'before_balance' => $account?->current_balance + $balance?->amount,
+                            'after_balance' => $account?->current_balance,
+                            'refference_table' => 'end_user_balance_transfers',
+                            'refference_id' => $id,
+                            'created_by' => loggedInUserId(),
+                        ];
+
+
+                        if (!empty($transactionHistory)) {
+                            TransactionHistory::query()->create($transactionHistory);
+                        }
+
+                        // Update the whitelist with the provided data.
+                        $balance->update($requestStatus);
                     }
-
-                    // Update the whitelist with the provided data.
-                    $balance->update($requestStatus);
                 } else {
                     $fromUserAccount = Account::query()->where('user_id', $fromUser)->first();
 
@@ -134,5 +166,19 @@ class EndUserBalanceApproveService
             DB::rollBack();
             throw $exception;
         }
+    }
+
+    public function fetchApiData(string $url): string
+    {
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_HEADER, FALSE);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        return $response;
     }
 }
