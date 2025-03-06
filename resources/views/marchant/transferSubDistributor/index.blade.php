@@ -1,12 +1,14 @@
 @extends('master')
 @section('title', 'Transfer Balance')
 @section('content')
-    <x-toolbar-component title="Transfer Balance List" :breadcrumbs="[
-        ['label' => 'Home', 'url' => route('dashboard')],
-        ['label' => 'Transfer Management', 'url' => 'javascript:void(0)'],
-        ['label' => 'Transfer Balance List', 'active' => true],
-    ]" modalTarget="openTransferBalanceModal"
-        actionIcon="fas fa-plus-circle" actionLabel="Create" />
+    @can('marchant.transfer.balance.sub-distributor.create')
+        <x-toolbar-component title="Transfer Balance List" :breadcrumbs="[
+            ['label' => 'Home', 'url' => route('dashboard')],
+            ['label' => 'Transfer Management', 'url' => 'javascript:void(0)'],
+            ['label' => 'Transfer Balance List', 'active' => true],
+        ]" modalTarget="openTransferBalanceModal"
+            actionIcon="fas fa-plus-circle" actionLabel="Create" />
+    @endcan
     <div class="post d-flex flex-column-fluid" id="kt_post">
         <!--begin::Container-->
         <div id="kt_content_container" class="container-fluid">
