@@ -7,6 +7,7 @@ use App\Services\Marchant\EndUserBalanceApproveService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class EndUserBalanceRequestApproveController extends Controller
@@ -15,6 +16,7 @@ class EndUserBalanceRequestApproveController extends Controller
 
     public function index(Request $request): View|JsonResponse
     {
+        Gate::authorize('marchant.sub-distributor.balance.request.approve.index');
         if ($request->ajax()) {
             return $this->endUserBalanceApproveService->getBalanceInfo($request);
         }
@@ -24,9 +26,8 @@ class EndUserBalanceRequestApproveController extends Controller
 
     public function updateStatus(Request $request, int $id): JsonResponse
     {
-        // Get currency ID and status from the request
-        $status = $request->input('status');
-
+        Gate::authorize('marchant.sub-distributor.balance.request.approve.index');
+   
         try {
             // Update the status of the currency
             $whitelist = $this->endUserBalanceApproveService->updateBalanceRequestStatus($request, $id);

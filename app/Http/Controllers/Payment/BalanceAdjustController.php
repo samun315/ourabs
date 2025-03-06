@@ -13,6 +13,7 @@ use App\Services\Payment\BalanceAdjustService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class BalanceAdjustController extends Controller
@@ -22,6 +23,8 @@ class BalanceAdjustController extends Controller
 
     public function index(Request $request): View|JsonResponse
     {
+        Gate::authorize('payment.adjust.balance.index');
+
         if ($request->ajax()) {
             return $this->balanceAdjustService->getBalanceAdjustList($request);
         }
@@ -33,6 +36,8 @@ class BalanceAdjustController extends Controller
 
     public function store(BalanceAdjustRequest $request): JsonResponse
     {
+        Gate::authorize('payment.adjust.balance.index');
+        
         try {
 
             $storeBalanceInfo = $this->balanceAdjustService->storeAdjustBalance($request->fields());
@@ -50,6 +55,8 @@ class BalanceAdjustController extends Controller
 
     public function getAccount(int $userId): JsonResponse
     {
+        Gate::authorize('payment.adjust.balance.index');
+
         try {
             $account = Account::query()->where('user_id', $userId)->first();
 

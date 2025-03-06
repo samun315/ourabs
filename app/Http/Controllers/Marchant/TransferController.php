@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class TransferController extends Controller
@@ -20,6 +21,8 @@ class TransferController extends Controller
 
     public function index(Request $request): View|JsonResponse
     {
+        Gate::authorize('marchant.transfer.balance.index');
+
         if ($request->ajax()) {
             return $this->transferService->getTransferBalanceInfo($request);
         }
@@ -37,6 +40,7 @@ class TransferController extends Controller
 
     public function store(TransferRequest $request): JsonResponse
     {
+        Gate::authorize('marchant.transfer.balance.index');
         try {
 
             $storeUserInfo = $this->transferService->storeTransferBalance($request->fields());

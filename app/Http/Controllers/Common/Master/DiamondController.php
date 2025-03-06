@@ -8,6 +8,7 @@ use App\Services\Common\Master\DiamondService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class DiamondController extends Controller
@@ -18,6 +19,8 @@ class DiamondController extends Controller
 
     public function index(Request $request):View|JsonResponse
     {
+        Gate::authorize('common.master.diamond.index');
+
         if ($request->ajax()) {
             return $this->diamondService->getDiamondList($request);
         }
@@ -26,6 +29,7 @@ class DiamondController extends Controller
 
     public function store(DiamondRequest $request): JsonResponse
     {
+        Gate::authorize('common.master.diamond.create');
         try {
 
             $diamond = $this->diamondService->storeDiamond($request->fields());
@@ -44,6 +48,8 @@ class DiamondController extends Controller
     
     public function edit(int $diamondId): JsonResponse
     {
+        Gate::authorize('common.master.diamond.edit');
+
         try {
             $diamondInfo = $this->diamondService->getDiamondInfoById($diamondId);
 
@@ -55,6 +61,7 @@ class DiamondController extends Controller
 
     public function update(DiamondRequest $request, int $diamondId): JsonResponse
     {
+        Gate::authorize('common.master.diamond.edit');
         try {
 
             $diamond = $this->diamondService->updateDiamondInfo($request->fields(), $diamondId);
@@ -72,6 +79,7 @@ class DiamondController extends Controller
 
     public function updateStatus(Request $request): JsonResponse
     {
+        Gate::authorize('common.master.diamond.edit');
         // Get currency ID and status from the request
         $diamondId = $request->input('id');
         $active = $request->input('active');

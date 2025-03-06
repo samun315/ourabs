@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class TransferApproveController extends Controller
@@ -16,6 +17,8 @@ class TransferApproveController extends Controller
 
     public function index(Request $request): View|JsonResponse
     {
+        Gate::authorize('marchant.transfer.balance.approve.index');
+        
         if ($request->ajax()) {
             return $this->transferApproveService->getTransferBalanceInfo($request);
         }

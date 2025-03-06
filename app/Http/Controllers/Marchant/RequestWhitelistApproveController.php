@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class RequestWhitelistApproveController extends Controller
 {
@@ -17,6 +18,8 @@ class RequestWhitelistApproveController extends Controller
 
     public function index(Request $request):View|JsonResponse
     {
+        Gate::authorize('marchant.request.approve.whitelist.index');
+        
         if ($request->ajax()) {
             return $this->requestWhitelistApproveService->getWhitelistRequest($request);
         }
@@ -26,6 +29,8 @@ class RequestWhitelistApproveController extends Controller
 
     public function updateStatus(Request $request, int $id): JsonResponse
     {
+        Gate::authorize('marchant.request.approve.whitelist.index');
+        
         // Get currency ID and status from the request
         $status = $request->input('status');
 

@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class RequestWhitelistController extends Controller
 {
@@ -16,7 +17,8 @@ class RequestWhitelistController extends Controller
 
     public function index(Request $request):View|JsonResponse
     {
-        
+        Gate::authorize('marchant.request.whitelist.index');
+
         if ($request->ajax()) {
             return $this->requestWhitelistService->getWhitelistRequest($request);
         }
@@ -26,6 +28,7 @@ class RequestWhitelistController extends Controller
 
     public function store(RequestWhitelistRequest $request): JsonResponse
     {
+        Gate::authorize('marchant.request.whitelist.index');
         try {
 
             $storeUserInfo = $this->requestWhitelistService->storeWhitelistRequest($request->fields());

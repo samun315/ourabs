@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class OrderBalanceController extends Controller
@@ -18,6 +19,8 @@ class OrderBalanceController extends Controller
 
     public function index(Request $request): View|JsonResponse
     {
+        Gate::authorize('marchant.order.balance.index');
+
         if ($request->ajax()) {
             return $this->orderBalanceService->getOrderBalanceInfo($request);
         }
@@ -26,6 +29,8 @@ class OrderBalanceController extends Controller
 
     public function create(): View
     {
+        Gate::authorize('marchant.order.balance.create');
+
         $data['paymentGateways'] = PaymentGateway::query()->where('active', 'YES')->get();
 
         return view('marchant.order.create', $data);
@@ -33,6 +38,7 @@ class OrderBalanceController extends Controller
 
     public function gatewayInfo(int $gatewayId): JsonResponse
     {
+        // Gate::authorize('marchant.order.balance.gatewayInfo');
         try {
             $data = $this->orderBalanceService->gatewayInfo($gatewayId);
 
@@ -44,6 +50,7 @@ class OrderBalanceController extends Controller
 
     public function getOrderDetails(int $orderId): JsonResponse
     {
+        // Gate::authorize('marchant.order.balance.getOrderDetails');
         try {
             $data = $this->orderBalanceService->getOrderDetails($orderId);
 // dd($data);
@@ -55,6 +62,7 @@ class OrderBalanceController extends Controller
 
     public function store(OrderBalanceRequest $request): RedirectResponse
     {
+        Gate::authorize('marchant.order.balance.create');
         try {
 
             $storeUserInfo = $this->orderBalanceService->storeOrderBalance($request);

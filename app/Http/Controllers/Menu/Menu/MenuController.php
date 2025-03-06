@@ -8,6 +8,7 @@ use App\Services\Menu\Menu\MenuService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class MenuController extends Controller
@@ -18,6 +19,8 @@ class MenuController extends Controller
 
     public function index(Request $request): View|JsonResponse
     {
+        Gate::authorize('menu.menu.index');
+        
         if ($request->ajax()) {
             return $this->menuService->getMenuList($request);
         }
@@ -27,6 +30,8 @@ class MenuController extends Controller
 
     public function store(MenuRequest $request): JsonResponse
     {
+        Gate::authorize('menu.menu.create');
+
         try {
 
             $this->menuService->createMenu($request->fields());
@@ -38,12 +43,16 @@ class MenuController extends Controller
 
     public function edit(int $menuId):JsonResponse
     {
+        Gate::authorize('menu.menu.edit');
+
         $data = $this->menuService->getMenuById($menuId);
         return sendSuccessResponse(200, '', 'menuInfo', $data);
     }
 
     public function update(MenuRequest $request, int $menuId): JsonResponse
     {
+        Gate::authorize('menu.menu.edit');
+
         try {
 
             $this->menuService->updateMenu($request->fields(), $menuId);

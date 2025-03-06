@@ -4,6 +4,8 @@ use App\Http\Controllers\Common\Master\CurrencyController;
 use App\Http\Controllers\Payment\PaymentGatewayController;
 use Illuminate\Support\Facades\Route;
 
+// payment.manual.gateway.index
+
 Route::group(['prefix' => 'manual/gateway', 'as' => 'gateway.'], function () {
     Route::get('/', [PaymentGatewayController::class, 'index'])->name('index');
     Route::post('/store', [PaymentGatewayController::class, 'store'])->name('store');
@@ -13,6 +15,7 @@ Route::group(['prefix' => 'manual/gateway', 'as' => 'gateway.'], function () {
     Route::delete('/destroy/{id}', [PaymentGatewayController::class, 'destroy'])->name('destroy');
 });
 
+// payment.manual.currency.index
 Route::group(['prefix' => 'currency', 'as' => 'currency.'], function () {
     Route::get('/', [CurrencyController::class, 'index'])->name('index');
     Route::put('/update-status', [CurrencyController::class, 'updateStatus'])->name('update.status');

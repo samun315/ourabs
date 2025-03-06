@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class EndUserBalanceRequestController extends Controller
@@ -20,15 +21,19 @@ class EndUserBalanceRequestController extends Controller
 
     public function index(Request $request): View|JsonResponse
     {
+        Gate::authorize('marchant.sub-distributor.balance.request.index');
+
         if ($request->ajax()) {
             return $this->endUserBalanceRequestService->getRequestInfo($request);
         }
-       
+
         return view('marchant.endUserBalanceRequest.index');
     }
 
     public function create(): View
-    {        
+    {
+        Gate::authorize('marchant.sub-distributor.balance.request.create');
+
         $userId = Auth::user()->id;
         $data['account'] = Account::query()->where('user_id', $userId)->first();
         $data['diamonds'] = Diamond::query()->where('active', 'YES')->get();
@@ -38,6 +43,7 @@ class EndUserBalanceRequestController extends Controller
 
     public function store(EndUserBalanceRequest $request): RedirectResponse
     {
+        Gate::authorize('marchant.sub-distributor.balance.request.create');
         try {
 
             $storeUserInfo = $this->endUserBalanceRequestService->storeBalance($request->fields());

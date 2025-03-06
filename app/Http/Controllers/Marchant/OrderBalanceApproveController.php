@@ -7,6 +7,7 @@ use App\Services\Marchant\OrderBalanceApproveService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class OrderBalanceApproveController extends Controller
@@ -15,6 +16,8 @@ class OrderBalanceApproveController extends Controller
 
     public function index(Request $request): View|JsonResponse
     {
+        Gate::authorize('marchant.order.balance.approve.index');
+
         if ($request->ajax()) {
             return $this->orderBalanceApproveService->getOrderBalanceInfo($request);
         }
@@ -24,6 +27,7 @@ class OrderBalanceApproveController extends Controller
 
     public function updateStatus(Request $request, int $id): JsonResponse
     {
+        Gate::authorize('marchant.order.balance.approve.index');
         try {
             // Update the status of the currency
             $whitelist = $this->orderBalanceApproveService->updateOrderBalanceRequestStatus($request, $id);

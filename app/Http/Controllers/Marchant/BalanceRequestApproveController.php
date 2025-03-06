@@ -7,6 +7,7 @@ use App\Services\Marchant\BalanceRequestApproveService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class BalanceRequestApproveController extends Controller
@@ -15,6 +16,7 @@ class BalanceRequestApproveController extends Controller
 
     public function index(Request $request):View|JsonResponse
     {
+        Gate::authorize('marchant.balance.request.approve.index');
         if ($request->ajax()) {
             return $this->balanceRequestApproveService->getBalanceRequest($request);
         }

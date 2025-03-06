@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Payment\BalanceAdjustController;
 use Illuminate\Support\Facades\Route;
-// marchant.balance.request.index
+
+
+// payment.adjust.balance.index
 
 Route::group(['prefix' => 'adjust/balance'], function () {
     Route::get('/', [BalanceAdjustController::class, 'index'])->name('index');
