@@ -6,7 +6,7 @@ use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('showLoginForm');
-//Route::get('login', [LoginController::class, 'showLoginForm'])->name('showLoginForm');
+Route::get('login', [LoginController::class, 'showLoginForm'])->name('showLoginForm');
 Route::post('login', [LoginController::class, 'login'])->name('login');
 
 Route::get('/module-list', function () {
