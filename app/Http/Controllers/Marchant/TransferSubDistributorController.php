@@ -31,7 +31,7 @@ class TransferSubDistributorController extends Controller
         $userId = Auth::user()->id;
 
         $data['emails'] = User::where('role_id', $userRole)
-            ->where('id', '!=', $userId)
+            ->where('created_by', '=', $userId)
             ->get();
 
         $data['account'] = Account::query()->where('user_id', $userId)->first();
@@ -68,7 +68,7 @@ class TransferSubDistributorController extends Controller
         if ($request->ajax()) {
             return $this->transferSubDistributorService->getAllTransferBalanceInfo($request);
         }
-  
+
         return view('marchant.transferSubDistributorApprove.index');
     }
 }
