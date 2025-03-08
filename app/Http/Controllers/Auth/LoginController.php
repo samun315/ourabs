@@ -60,7 +60,7 @@ class LoginController extends Controller
 
     public function logout(): RedirectResponse
     {
-        Session::flush();
+        //Session::flush();
         Auth::logout(); // Properly log out the user
         Session::invalidate(); // Invalidate session
         Session::regenerateToken(); // Regenerate CSRF token
