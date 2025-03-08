@@ -51,28 +51,27 @@ class EndUserBalanceApproveService
                 $user = $name . '<br>' . $phone . '<br>' . $email . '<br> <p class="badge badge-success ">' . $role . '</p>';
                 return $user;
             })
-            ->addColumn('action', function ($row) {
-                $transferBtn = '';
-                $cancelBtn = '';
+            // ->addColumn('action', function ($row) {
+            //     $transferBtn = '';
+            //     $cancelBtn = '';
 
-                if ($row->status == 'Transferred' || $row->status == 'Cancelled') {
-                    $transferBtn = '';
-                    $cancelBtn = '';
-                } else {
-                    $transferBtn = '<button type="button" data-id="' . $row->balance_transfer_id . '"  data-status="Transferred" class="btn btn-success btn-sm ms-lg-2 transferredBtn">Transfer</button>';
-                    $cancelBtn = '<button type="button" data-id="' . $row->balance_transfer_id . '" data-status="Cancelled" class="btn btn-danger btn-sm ms-lg-2 cancelledBtn">Cancel</button>';
-                }
+            //     if ($row->status == 'Transferred' || $row->status == 'Cancelled') {
+            //         $transferBtn = '';
+            //         $cancelBtn = '';
+            //     } else {
+            //         $transferBtn = '<button type="button" data-id="' . $row->balance_transfer_id . '"  data-status="Transferred" class="btn btn-success btn-sm ms-lg-2 transferredBtn">Transfer</button>';
+            //         $cancelBtn = '<button type="button" data-id="' . $row->balance_transfer_id . '" data-status="Cancelled" class="btn btn-danger btn-sm ms-lg-2 cancelledBtn">Cancel</button>';
+            //     }
 
-                $button = '<div class="btn-group" role="group" aria-label="Basic example">
-                ' . $transferBtn . '
-                ' . $cancelBtn . '
-                </div>';
-                return $button;
-            })
-            ->rawColumns(['action', 'user'])
+            //     $button = '<div class="btn-group" role="group" aria-label="Basic example">
+            //     ' . $transferBtn . '
+            //     ' . $cancelBtn . '
+            //     </div>';
+            //     return $button;
+            // })
+            ->rawColumns([ 'user'])
             ->make(true);
     }
-
 
     public function updateBalanceRequestStatus(Request $request, int $id): Model|Builder|bool
     {
