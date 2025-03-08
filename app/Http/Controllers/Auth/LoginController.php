@@ -44,7 +44,7 @@ class LoginController extends Controller
 
                     // Bind the authenticated user to Laravel's authentication system
                     auth()->login($user);
-            
+                    session()->regenerate();
                     session()->put('logged_session_data', $authenticateUserInfo);
                     return redirect(route('dashboard'));
                 } else {
@@ -61,6 +61,9 @@ class LoginController extends Controller
     public function logout(): RedirectResponse
     {
         Session::flush();
+        Auth::logout(); // Properly log out the user
+        Session::invalidate(); // Invalidate session
+        Session::regenerateToken(); // Regenerate CSRF token
         return redirect(url('/'))->with('success', 'logout successful ..!');
     }
 }
