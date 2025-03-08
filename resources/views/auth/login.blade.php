@@ -14,6 +14,7 @@
     <meta property="og:locale" content="en_US" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="OurAbs" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <meta property="og:site_name" content="OurAbs" />
 
