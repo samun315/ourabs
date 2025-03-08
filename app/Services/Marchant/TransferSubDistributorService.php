@@ -99,7 +99,7 @@ class TransferSubDistributorService
                 'created_by' => loggedInUserId(),
             ];
 
-            if ($fromUserAccount && $data['amount'] < $fromUserAccount->current_balance) {
+            if ($fromUserAccount && $data['amount'] <= $fromUserAccount->current_balance) {
 
                 $from_user['current_balance'] = $fromUserAccount?->current_balance - $data['amount'];
                 $from_user['updated_by'] = loggedInUserId();
