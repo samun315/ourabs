@@ -32,6 +32,7 @@ class TransferSubDistributorController extends Controller
 
         $data['emails'] = User::where('role_id', $userRole)
             ->where('created_by', '=', $userId)
+            ->where('active', 'YES')
             ->get();
 
         $data['account'] = Account::query()->where('user_id', $userId)->first();
