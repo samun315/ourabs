@@ -74,7 +74,7 @@
                 <!--end::Card body-->
             </div>
             <!--end::Card-->
-            
+
             {{-- start:: show order modal --}}
             @include('marchant.orderApprove.modal.showOrderModal')
             {{-- end:: show order modal --}}
@@ -88,6 +88,8 @@
     <!-- begin::Page Custom Stylesheets(used by this page) -->
     <script src="{{ asset('assets/custom/js/marchant/order/index.js') }}"
         {{ Sri::html('assets/custom/js/marchant/order/index.js') }}></script>
+        <script src="{{ asset('assets/custom/js/marchant/endUserBalanceRequest/page.js') }}"
+        {{ Sri::html('assets/custom/js/marchant/endUserBalanceRequest/page.js') }}></script>
     <!--end::Page Custom Stylesheets(used by this page)-->
 
 @endsection
