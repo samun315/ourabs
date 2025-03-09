@@ -15,6 +15,9 @@
     <meta property="og:type" content="article" />
     <meta property="og:title" content="OurAbs" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
 
     <meta property="og:site_name" content="OurAbs" />
 
