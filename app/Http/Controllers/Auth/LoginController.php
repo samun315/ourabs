@@ -25,6 +25,7 @@ class LoginController extends Controller
 
     public function login(LoginRequest $loginRequest): RedirectResponse
     {
+
         try {
 
             $user = User::query()->where('email', $loginRequest->input('email'))
