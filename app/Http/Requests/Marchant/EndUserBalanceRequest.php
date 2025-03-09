@@ -24,7 +24,7 @@ class EndUserBalanceRequest extends FormRequest
         return [
             'imo_id' => 'required',
             'amount' => 'required',
-            'phone_number' => 'nullable',
+            // 'phone_number' => 'nullable',
         ];
     }
 
@@ -34,7 +34,7 @@ class EndUserBalanceRequest extends FormRequest
 
         $inputData['imo_id'] = $this->input('imo_id');
         $inputData['amount'] = $this->input('amount');
-        $inputData['phone_number'] = $this->input('phone_number') ?? null;
+        // $inputData['phone_number'] = $this->input('phone_number') ?? null;
 
         $inputData['request_by'] = loggedInUserId();
         $inputData['created_by'] = loggedInUserId();

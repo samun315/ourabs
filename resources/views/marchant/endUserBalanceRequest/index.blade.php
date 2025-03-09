@@ -50,8 +50,8 @@
                                     <!--begin::Table row-->
                                     <tr class="text-start text-muted text-uppercase fw-bolder fs-7 gs-0">
                                         <th>#</th>
-                                        <th>Imo Id</th>
-                                        <th>Phone</th>
+                                        <th>Imo Id/Phone Number</th>
+                                        {{-- <th>Phone</th> --}}
                                         <th>Amount</th>
                                         <th>Status</th>
                                         <th>Date</th>

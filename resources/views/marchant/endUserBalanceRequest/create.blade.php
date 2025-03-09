@@ -28,7 +28,7 @@
 
                         <div class="row">
                             <div class="col-md-6 fv-row mb-5">
-                                <label class="required fs-5 fw-bold mb-2">IMO Id</label>
+                                <label class="required fs-5 fw-bold mb-2">IMO Id/Phone Number</label>
                                 <input type="text" name="imo_id" id="kt_imo_id"
                                     class="form-control form-control-solid imo_id bg-gradient @error('imo_id') is-invalid @enderror"
                                     placeholder="Enter IMO Id" autocomplete="off" required />
@@ -36,7 +36,7 @@
                                     <span class="text-danger mt-2">{{ $message }}</span>
                                 @enderror
                             </div>
-                            <div class="col-md-6 fv-row mb-5">
+                            {{-- <div class="col-md-6 fv-row mb-5">
                                 <label class="fs-5 fw-bold mb-2">Phone Number</label>
                                 <input type="text" name="phone_number" id="kt_phone_number"
                                     class="form-control form-control-solid phone_number bg-gradient @error('phone_number') is-invalid @enderror"
@@ -44,7 +44,7 @@
                                 @error('phone_number')
                                     <span class="text-danger mt-2">{{ $message }}</span>
                                 @enderror
-                            </div>
+                            </div> --}}
                             <div class="col-md-12">
                                 <label class="required fs-5 fw-bold mb-2">Diamonds</label>
                                 <div class="row">

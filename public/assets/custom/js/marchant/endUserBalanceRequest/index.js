@@ -68,10 +68,10 @@ let table = $("#kt_table_end_user_balance").DataTable({
             data: "imo_id",
             name: "imo_id",
         },
-        {
-            data: "phone_number",
-            name: "phone_number",
-        },
+        // {
+        //     data: "phone_number",
+        //     name: "phone_number",
+        // },
         {
             data: "amount",
             name: "amount",
