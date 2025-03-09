@@ -45,7 +45,7 @@ class BalanceRequestService
 
             $account = Account::query()->where('user_id', $data['created_by'])->first();
 
-            if ($account && $data['amount'] < $account->current_balance) {
+            if ($account && $data['amount'] <= $account->current_balance) {
 
                 $from_user['current_balance'] = $account?->current_balance - $data['amount'];
                 $from_user['updated_by'] = loggedInUserId();
