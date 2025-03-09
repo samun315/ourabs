@@ -14,8 +14,12 @@ use Throwable;
 
 class LoginController extends Controller
 {
-    public function showLoginForm(): View
+    public function showLoginForm(): RedirectResponse|View
     {
+        if (Auth::check()) {
+            return redirect()->route('dashboard'); // Redirect to dashboard if already logged in
+        }
+
         return view('auth.login');
     }
 
@@ -63,6 +67,7 @@ class LoginController extends Controller
         //Session::flush();
 
         Auth::logout(); // Properly log out the user
+        Session::flush();
         Session::invalidate(); // Invalidate session
         Session::regenerateToken(); // Regenerate CSRF token
         return redirect(url('/'))->with('success', 'logout successful ..!');
