@@ -28,4 +28,15 @@ class TransactionHistoryController extends Controller
         return view('report.transactionHistory.index',$data);
     }
 
+    public function totalDiamond(Request $request): View|JsonResponse
+    {
+        Gate::authorize('report.total.diamond.index');
+        if ($request->ajax()) {
+            return $this->transactionHistoryService->getTotalDiamondList($request);
+        }
+
+        return view('report.diamond.index');
+    }
+    
+
 }

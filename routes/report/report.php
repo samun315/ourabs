@@ -9,3 +9,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'transaction-history', 'as' => 'transaction.history.'], function () {
     Route::get('/', [TransactionHistoryController::class, 'index'])->name('index');
 });
+
+Route::group(['prefix' => 'total-diamonds', 'as' => 'total.diamond.'], function () {
+    Route::get('/', [TransactionHistoryController::class, 'totalDiamond'])->name('index');
+});

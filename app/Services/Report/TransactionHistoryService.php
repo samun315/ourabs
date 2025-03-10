@@ -2,6 +2,7 @@
 
 namespace App\Services\Report;
 
+use App\Models\Payment\Account;
 use App\Models\Report\TransactionHistory;
 use Carbon\Carbon;
 use Exception;
@@ -39,6 +40,23 @@ class TransactionHistoryService
             }
         })
             ->select('transaction_histories.*', 'users.full_name');
+
+        return Datatables::of($query)
+            ->addIndexColumn()
+            ->make(true);
+    }
+
+    public function getTotalDiamondList(Request $request): JsonResponse
+    {
+        $searchKeyword = $request->input('search');
+
+        $query = Account::query()->leftJoin('users', 'accounts.user_id', '=', 'users.id')
+        ->leftJoin('user_roles', 'users.role_id', '=', 'user_roles.role_id')
+        ->where(function ($query) use ($searchKeyword) {
+            $query->where('users.full_name', 'like', "%$searchKeyword%")
+            ->orWhere('user_roles.role_name', 'like', "%$searchKeyword%");
+        })
+            ->select('accounts.*', 'users.full_name','user_roles.role_name');
 
         return Datatables::of($query)
             ->addIndexColumn()
