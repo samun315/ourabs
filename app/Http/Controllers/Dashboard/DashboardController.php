@@ -30,6 +30,8 @@ class DashboardController extends Controller
         $data['user_diamond'] = Account::query()->where('user_id',loggedInUserId())->first(['current_balance']);
         $data['user_request'] = BalanceRequest::query()->where('created_by',loggedInUserId())->count();
 
+        $data['total_balance'] = Account::query()->sum('current_balance');
+  
         return view('dashboard.index', $data);
     }
 }
