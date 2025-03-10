@@ -56,7 +56,7 @@ class EndUserBalanceRequestService
         DB::beginTransaction();
         try {
             $data['user_id'] = $data['request_by'];
-            $data['status'] = 'Transferred';
+            $data['status'] = 'Processing';
 
             $fromUserInfo = User::query()->where('id', $data['user_id'])->first();
 
@@ -101,6 +101,7 @@ class EndUserBalanceRequestService
                 if ($result['result'] == 'success') {
 
                     $account->update($from_user);
+                    $data['order_id'] = $result['order_id'];
 
                     $balance = EndUserBalance::query()->create($data);
 

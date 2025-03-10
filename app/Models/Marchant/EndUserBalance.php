@@ -22,6 +22,8 @@ class EndUserBalance extends Model
         'imo_id',
         'phone_number',
         'request_to',
+        'order_id',
+        'message',
         'status',
         'created_by',
         'updated_by',
