@@ -204,10 +204,9 @@ selectedForm.submit(function (event) {
         processData: false,
         success: function (response) {
             if (response?.statusCode === 200 || response?.statusCode === 201) {
-                toastr.success(response?.message);
-                setInterval(function () {
-                    window.location.reload();
-                }, 500);
+                $("#showModal").modal("hide");
+                window.location.reload();
+                toastr.success(response?.message); 
             }
         },
         error: handleError,
