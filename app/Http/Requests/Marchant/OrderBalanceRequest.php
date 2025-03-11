@@ -24,7 +24,7 @@ class OrderBalanceRequest extends FormRequest
         return [
             'payment_gateway_id' => 'required',
             'amount' => 'required',
-            'transaction_id' => 'required',
+            'transaction_id' => 'required|unique:orders',
             'attachment_url' => 'required',
             'diamond_quantity' => 'nullable',
         ];

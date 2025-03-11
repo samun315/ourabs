@@ -47,6 +47,11 @@
                             </td>
                         </tr>
                         <tr>
+                            <td class="ps-2">Transaction Id</td>
+                            <td class="kt_transaction_id">
+                            </td>
+                        </tr>
+                        <tr>
                             <td class="ps-2">Date Time</td>
                             <td class="kt_date_time">
                             </td>
@@ -56,7 +61,9 @@
                         </tr>
                         <tr>
                             <td colspan="2">
-                                <img id="uploaded_photo" src="" alt="Image Preview">
+                                <a id="link_image" target="_blank">
+                                    <img id="uploaded_photo" src="" alt="Image Preview">
+                                </a>
                             </td>
                         </tr>
                     </table>

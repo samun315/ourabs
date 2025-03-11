@@ -236,6 +236,7 @@ function getOrderBalanceDetails(id) {
                 }
                 let kt_status = `<span class="${orderStatus}">${orderDetails?.status}</span>`;
 
+                $(".kt_transaction_id").html(orderDetails?.transaction_id);
                 $(".kt_status").html(kt_status);
                 $(".kt_date_time").html(formatDate(orderDetails?.updated_at));
                 $(".bd_amount").html(orderDetails?.amount);
@@ -243,6 +244,11 @@ function getOrderBalanceDetails(id) {
 
                 // $("#uploaded_photo").html();
                 document.getElementById("uploaded_photo").src =
+                    window.location.origin +
+                    "/uploads/order/" +
+                    orderDetails?.attachment_url;
+
+                document.getElementById("link_image").href =
                     window.location.origin +
                     "/uploads/order/" +
                     orderDetails?.attachment_url;
@@ -376,7 +382,7 @@ $(document).on("click", ".paidBtn,.cancelledBtn", function () {
     updateOrderBalanceRequestStatus(id, user_id, status, order_amount);
 });
 
-function updateOrderBalanceRequestStatus(id, user_id, status, order_amount ) {
+function updateOrderBalanceRequestStatus(id, user_id, status, order_amount) {
     Swal.fire({
         html: `Are you want to ${status} this?`,
         icon: "info",
