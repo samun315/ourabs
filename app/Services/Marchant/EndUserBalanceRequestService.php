@@ -104,24 +104,6 @@ class EndUserBalanceRequestService
                     $data['order_id'] = $result['order_id'];
 
                     $balance = EndUserBalance::query()->create($data);
-
-                    // Transaction history make data
-                    $transactionHistory = [
-                        'user_id' => $data['user_id'],
-                        'type' => 'REQUEST',
-                        'refference' => $fromUserInfo?->email . ' TO ' . $data['imo_id'],
-                        'amount' => $data['amount'],
-                        'before_balance' => $account?->current_balance + $data['amount'],
-                        'after_balance' => $account?->current_balance,
-                        'refference_table' => 'end_user_balance_transfers',
-                        'refference_id' => $balance->balance_transfer_id,
-                        'created_by' => loggedInUserId(),
-                    ];
-
-
-                    if (!empty($transactionHistory)) {
-                        TransactionHistory::query()->create($transactionHistory);
-                    }
                 }
             }
 

@@ -4,10 +4,12 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote')->hourly();
+// Artisan::command('app:check-end-user-diamond-transfer-status', function () {
+//     $this->comment(Inspiring::quote());
+// })->purpose('Display an inspiring quote')->everyTwoMinutes();
+
+// Schedule::command('app:check-end-user-diamond-transfer-status')->everyTwoMinutes();
 
 return function (Schedule $schedule) {
-    $schedule->command('app:check-end-user-diamond-transfer-status')->everyMinute();
+    $schedule->command('app:diamond-transfer-status')->everyTwoMinutes();
 };
