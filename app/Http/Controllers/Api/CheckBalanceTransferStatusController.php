@@ -10,6 +10,7 @@ use App\Models\Payment\Account;
 use App\Models\Report\TransactionHistory;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -17,14 +18,10 @@ use Illuminate\Support\Facades\Gate;
 
 class CheckBalanceTransferStatusController extends Controller
 {
-    public function index(){
+    public function index(Request $request){
 
-        //Gate::authorize('dashboard');
-
-        //dd(loggedInUserId());
-
-        dd(session('logged_session_data'));
-
+        Gate::authorize('dashboard');
+        
         DB::beginTransaction();
         try {
             EndUserBalance::where('status', 'Processing')
@@ -44,7 +41,7 @@ class CheckBalanceTransferStatusController extends Controller
                             $data = $response->json();
                             // Log::info($data);
                             if (!isset($data['result']) || $data['result'] !== 'success' || empty($data['response'])) {
-                                $this->info("Order {$transfer->order_id} response not received properly.");
+                                Log::info("Order {$transfer->order_id} response not received properly.");
                                 continue;
                             }
 
@@ -86,9 +83,9 @@ class CheckBalanceTransferStatusController extends Controller
                                 ]);
                             }
 
-                            $this->info("Order {$transfer->order_id} status updated to {$transfer->status}.");
+                            Log::info("Order {$transfer->order_id} status updated to {$transfer->status}.");
                         } catch (Exception $e) {
-                            $this->error("Error processing Order ID: {$transfer->order_id}. Message: " . $e->getMessage());
+                            Log::error("Error processing Order ID: {$transfer->order_id}. Message: " . $e->getMessage());
                             continue; // Continue processing other records
                         }
                     }
@@ -98,7 +95,7 @@ class CheckBalanceTransferStatusController extends Controller
             return 0;
         } catch (Exception $exception) {
             DB::rollBack();
-            $this->error("Transaction failed: " . $exception->getMessage());
+            Log::error("Transaction failed: " . $exception->getMessage());
             throw $exception;
         }
     }

@@ -137,7 +137,6 @@ class EndUserBalanceApproveService
                             'created_by' => loggedInUserId(),
                         ];
 
-
                         if (!empty($transactionHistory)) {
                             TransactionHistory::query()->create($transactionHistory);
                         }

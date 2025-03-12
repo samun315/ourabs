@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Marchant\EndUserBalanceRequestApproveController;
 use App\Http\Controllers\Marchant\EndUserBalanceRequestController;
+use App\Http\Controllers\Api\CheckBalanceTransferStatusController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -16,4 +17,9 @@ Route::group(['prefix' => 'end-user/balance/request'], function () {
 Route::group(['prefix' => 'all/end-user/balance', 'as' => 'approve.'], function () {
     Route::get('/', [EndUserBalanceRequestApproveController::class, 'index'])->name('index');
     Route::put('/update-status/{id}', [EndUserBalanceRequestApproveController::class, 'updateStatus'])->name('updateStatus');
+});
+
+
+Route::group(['prefix' => '/all/end-user/balance'], function () {
+    Route::get('/status', [CheckBalanceTransferStatusController::class, 'index'])->name('end-user.balance.status');
 });
