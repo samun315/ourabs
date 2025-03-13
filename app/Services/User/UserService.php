@@ -50,10 +50,11 @@ class UserService
     public function getUserList(Request $request): JsonResponse
     {
         $searchKeyword = $request->input('search');
+        $roleId = $request->input('role_id');
 
         $query = User::query()->leftJoin('user_roles', function ($join) {
             $join->on('users.role_id', '=', 'user_roles.role_id');
-        })->where(function ($query) use ($searchKeyword) {
+        })->where(function ($query) use ($searchKeyword, $roleId) {
             $query->where(function ($q) use ($searchKeyword) {
                 $q->where('full_name', 'like', "%$searchKeyword%")
                     ->orWhere('user_name', 'like', "%$searchKeyword%")
@@ -61,6 +62,10 @@ class UserService
                     ->orWhere('phone', 'like', "%$searchKeyword%")
                     ->orWhere('user_roles.role_name', 'like', "%$searchKeyword%");
             });
+
+            if ($roleId) {
+                $query->where('users.role_id', '=', $roleId);
+            }
         })
             ->select('users.*', 'user_roles.role_name');
 

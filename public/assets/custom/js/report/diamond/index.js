@@ -3,6 +3,7 @@
 const BASE_URL = window.location.origin + "/report/total-diamonds";
 
 let search = $("#search");
+let role_id = $("#kt_role_id");
 
 const formatDate = (data) => {
     if (!data) return "";
@@ -44,6 +45,7 @@ let table = $("#kt_total_diamonds_table").DataTable({
         url: BASE_URL + "/",
         data: function (d) {
             d.search = search.val();
+            d.role_id = role_id.val();
         },
     },
     columns: [
@@ -105,10 +107,10 @@ let table = $("#kt_total_diamonds_table").DataTable({
     ],
 });
 
-type.change(function () {
+search.keyup(function () {
     table.draw();
 });
 
-date.change(function () {
+role_id.change(function () {
     table.draw();
 });

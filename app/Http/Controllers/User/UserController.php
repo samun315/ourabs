@@ -27,11 +27,13 @@ class UserController extends Controller
         Gate::authorize('user.index');
         $user = Auth::user();
 
-        $query = UserRole::query()->orderBy('role_id', 'DESC')->select('role_id', 'role_name');
+        $query = UserRole::query()->orderBy('role_id', 'ASC')->select(['role_id', 'role_name']);
         
         // If the logged-in user is a distributor, fetch only the sub-distributor roles
         if ($user->role_id === 2) {
             $query->where('role_id', 3);
+        }else{
+            $query->whereNot('role_id', 1);
         }
         
         $data['userRoles'] = $query->get();
