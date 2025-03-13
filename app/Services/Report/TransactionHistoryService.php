@@ -49,14 +49,21 @@ class TransactionHistoryService
     public function getTotalDiamondList(Request $request): JsonResponse
     {
         $searchKeyword = $request->input('search');
+        $roleId = $request->input('role_id');
 
         $query = Account::query()->leftJoin('users', 'accounts.user_id', '=', 'users.id')
-        ->leftJoin('user_roles', 'users.role_id', '=', 'user_roles.role_id')
-        ->where(function ($query) use ($searchKeyword) {
-            $query->where('users.full_name', 'like', "%$searchKeyword%")
-            ->orWhere('user_roles.role_name', 'like', "%$searchKeyword%");
-        })
-            ->select('accounts.*', 'users.full_name','user_roles.role_name');
+            ->leftJoin('user_roles', 'users.role_id', '=', 'user_roles.role_id')
+            ->where(function ($query) use ($searchKeyword, $roleId) {
+                $query->where(function ($q) use ($searchKeyword) {
+                    $q->where('users.full_name', 'like', "%$searchKeyword%")
+                        ->orWhere('user_roles.role_name', 'like', "%$searchKeyword%");
+                });
+
+                if ($roleId) {
+                    $query->where('users.role_id', '=', $roleId);
+                }
+            })
+            ->select('accounts.*', 'users.full_name', 'user_roles.role_name');
 
         return Datatables::of($query)
             ->addIndexColumn()

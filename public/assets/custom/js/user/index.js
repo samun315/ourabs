@@ -11,6 +11,7 @@ let selectedPasswordForm = $("#passwordChangeForm");
 const BASE_URL = window.location.origin + "/users";
 
 let search = $("#search");
+let role_id = $("#kt_role_id");
 
 let validate = selectedForm.validate({
     rules: {
@@ -96,6 +97,7 @@ let table = $("#kt_table_users").DataTable({
         url: BASE_URL + "/index",
         data: function (d) {
             d.search = search.val();
+            d.role_id = role_id.val();
         },
     },
     columns: [
@@ -133,6 +135,10 @@ let table = $("#kt_table_users").DataTable({
 });
 
 search.keyup(function () {
+    table.draw();
+});
+
+role_id.change(function () {
     table.draw();
 });
 
