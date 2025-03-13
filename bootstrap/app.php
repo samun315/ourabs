@@ -14,77 +14,77 @@ return Application::configure(basePath: dirname(__DIR__))
         then: function () {
 
             //Start User Route
-            Route::middleware(['web', 'preventBackHistory', 'user'])
+            Route::middleware(['web', 'preventBackHistory', 'user', 'RedirectIfSessionExpired'])
                 ->prefix('users')
                 ->name('user.')
                 ->group(base_path('routes/user/user.php'));
             //End User Route
 
             //Start Common master Route
-            Route::middleware(['web', 'preventBackHistory', 'user'])
+            Route::middleware(['web', 'preventBackHistory', 'user', 'RedirectIfSessionExpired'])
                 ->prefix('common')
                 ->name('common.master.')
                 ->group(base_path('routes/common/master.php'));
             //End Sales Common master Route
 
             //Start Menu master Route
-            Route::middleware(['web', 'preventBackHistory', 'user'])
+            Route::middleware(['web', 'preventBackHistory', 'user', 'RedirectIfSessionExpired'])
                 ->prefix('menu')
                 ->name('menu.master.')
                 ->group(base_path('routes/menu/master.php'));
             //End Sales Menu master Route
 
             //Start Menu Menu-item Route
-            Route::middleware(['web', 'preventBackHistory', 'user'])
+            Route::middleware(['web', 'preventBackHistory', 'user', 'RedirectIfSessionExpired'])
                 ->prefix('menu')
                 ->name('menu.')
                 ->group(base_path('routes/menu/menu.php'));
             //End Menu Menu-item Route
 
             //Start Request whitelist Route
-            Route::middleware(['web', 'preventBackHistory', 'user'])
+            Route::middleware(['web', 'preventBackHistory', 'user', 'RedirectIfSessionExpired'])
                 ->prefix('marchant')
                 ->name('marchant.request.')
                 ->group(base_path('routes/marchant/whitelist.php'));
             //End Request whitelist Route
 
             //Start Balance Request Route
-            Route::middleware(['web', 'preventBackHistory', 'user'])
+            Route::middleware(['web', 'preventBackHistory', 'user', 'RedirectIfSessionExpired'])
                 ->prefix('marchant')
                 ->name('marchant.balance.request.')
                 ->group(base_path('routes/marchant/balanceRequest.php'));
             //End Balance Request Route
 
             //Start End User Balance Request Route
-            Route::middleware(['web', 'preventBackHistory', 'user'])
+            Route::middleware(['web', 'preventBackHistory', 'user', 'RedirectIfSessionExpired'])
                 ->prefix('marchant')
                 ->name('marchant.sub-distributor.balance.request.')
                 ->group(base_path('routes/marchant/endUserBalanceRequest.php'));
             //End End User Balance Request Route
-            
+
             //Start ORDER Route
-            Route::middleware(['web', 'preventBackHistory', 'user'])
+            Route::middleware(['web', 'preventBackHistory', 'user', 'RedirectIfSessionExpired'])
                 ->prefix('marchant')
                 ->name('marchant.order.balance.')
                 ->group(base_path('routes/marchant/order.php'));
             //End ORDER Route
 
             //Start Transfer Route
-            Route::middleware(['web', 'preventBackHistory', 'user'])
+            Route::middleware(['web', 'preventBackHistory', 'user', 'RedirectIfSessionExpired'])
                 ->prefix('marchant')
                 ->name('marchant.transfer.balance.')
                 ->group(base_path('routes/marchant/transfer.php'));
             //End Transfer Route
 
             //Start Payment Gateway Route
-            Route::middleware(['web', 'preventBackHistory', 'user'])
+            Route::middleware(['web', 'preventBackHistory', 'user', 'RedirectIfSessionExpired'])
                 ->prefix('payment')
                 ->name('payment.manual.')
                 ->group(base_path('routes/payment/paymentGateway.php'));
             //End Payment Gateway Route
 
             //Start Balance adjust Route
-            Route::middleware(['web', 'preventBackHistory', 'user'])
+            Route::middleware(['web', 'preventBackHistory', 'user', 'RedirectIfSessionExpired'])
                 ->prefix('payment')
                 ->name('payment.adjust.balance.')
                 ->group(base_path('routes/payment/adjustBalance.php'));
@@ -92,7 +92,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
 
             //Start Report Route
-            Route::middleware(['web', 'preventBackHistory', 'user'])
+            Route::middleware(['web', 'preventBackHistory', 'user', 'RedirectIfSessionExpired'])
                 ->prefix('report')
                 ->name('report.')
                 ->group(base_path('routes/report/report.php'));
@@ -110,6 +110,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'user' => \App\Http\Middleware\UserAuth::class,
             'preventBackHistory' => \App\Http\Middleware\PreventBackHistory::class,
+            'RedirectIfSessionExpired' => \App\Http\Middleware\RedirectIfSessionExpired::class,
         ])->web(append: [
             \App\Http\Middleware\GenerateCSPNonce::class,
             \App\Http\Middleware\AuthGates::class
