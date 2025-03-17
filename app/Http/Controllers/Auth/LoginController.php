@@ -29,7 +29,7 @@ class LoginController extends Controller
         try {
 
             $user = User::query()->where('email', $loginRequest->input('email'))
-                // ->where('active', ActiveStatus::YES)
+                ->where('active', 'YES')
                 ->first(['id',  'full_name', 'email', 'role_id', 'phone', 'password','profile_img']);
 
             if (!empty($user)) {
