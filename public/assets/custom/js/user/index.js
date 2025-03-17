@@ -11,7 +11,7 @@ let selectedPasswordForm = $("#passwordChangeForm");
 const BASE_URL = window.location.origin + "/users";
 
 let search = $("#search");
-let role_id = $("#kt_role_id");
+let role_id = $("#kt_search_role_id");
 
 let validate = selectedForm.validate({
     rules: {
@@ -128,6 +128,36 @@ let table = $("#kt_table_users").DataTable({
             name: "role_name",
         },
         {
+            data: "active",
+            render: function (data, type, full, meta) {
+                const checked = data === "YES" ? "checked" : "";
+                const toggleStatus = data === "YES" ? "NO" : "YES";
+                const checkbox =
+                    '<input class="form-check-input activeStatus" data-id=' +
+                    full.id +
+                    ' name="status" type="checkbox" value="' +
+                    data +
+                    '" ' +
+                    checked +
+                    "/>" +
+                    '<input type="hidden" id="toggleData_' +
+                    full.id +
+                    '" value="' +
+                    toggleStatus +
+                    '"';
+                const label =
+                    '<span class="form-check-label fw-bold text-muted">' +
+                    data +
+                    "</span>";
+                return (
+                    '<label class="form-check form-switch form-check-custom form-check-solid">' +
+                    checkbox +
+                    label +
+                    "</label>"
+                );
+            },
+        },
+        {
             data: "action",
             name: "action",
         },
@@ -147,7 +177,6 @@ $(document).on("click", ".edit-user, .view-user", function () {
     editUserInfo(user_id);
 });
 
-
 function editUserInfo(userId) {
     loader(selectedForm, true);
     $(".error").remove();
@@ -158,7 +187,7 @@ function editUserInfo(userId) {
         success: function (response) {
             loader(selectedForm, false);
             const data = response.userInfo;
-            // console.log(data.item);
+            // console.log(data.role_id);
             if (response?.success && response?.statusCode === 200 && data) {
                 $("#kt_user_id").val(data.id);
                 $("#kt_role_id").val(data.role_id).change();
@@ -179,7 +208,6 @@ function editUserInfo(userId) {
         },
     });
 }
-
 
 $(document).on("click", ".changePasswordBtn", function () {
     var id = $(this).attr("data-id");
@@ -217,7 +245,7 @@ selectedPasswordForm.submit(function (event) {
         processData: false,
         success: function (response) {
             if (response?.statusCode === 200 || response?.statusCode === 201) {
-                $("#kt_modal_change_password").modal('hide');
+                $("#kt_modal_change_password").modal("hide");
                 toastr.success(response?.message);
                 table.draw();
             }
@@ -248,7 +276,7 @@ $(".passwordIcon").addClass("fas fa-eye");
 // Apply function to each button and field
 togglePasswordVisibility(".togglePasswordBtn", ".kt_password", ".passwordIcon");
 
-$(".kt_password").on("keyup",function(){
+$(".kt_password").on("keyup", function () {
     if ($(this).val() == "") {
         $(".togglePasswordBtn").hide();
     } else {
@@ -256,3 +284,32 @@ $(".kt_password").on("keyup",function(){
     }
 });
 
+$(document).on("change", ".activeStatus", function () {
+    let id = $(this).attr("data-id");
+    let active = $("#toggleData_" + id).val();
+    updateActiveStatus(active, id);
+});
+
+function updateActiveStatus(active, id) {
+    console.log(id);
+    $.ajax({
+        type: "PUT",
+        url: BASE_URL + "/update-status",
+        data: {
+            id: id,
+            active: active,
+            _token: setCSRFToken(),
+        },
+        dataType: "json",
+        success: function (response) {
+            if (response?.statusCode === 200) {
+                toastr.success(response?.message, "Success!");
+                table.ajax.reload();
+            } else {
+                toastr.error(
+                    response?.message || "An unexpected error occurred."
+                );
+            }
+        },
+    });
+}

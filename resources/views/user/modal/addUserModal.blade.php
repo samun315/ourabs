@@ -65,7 +65,7 @@
                                     <div class="col-md-6 fv-row mb-5 role_id">
                                         <label class="required fs-5 fw-bold mb-2">User Role</label>
                                         <select name="role_id" id="kt_role_id"
-                                            class="form-select form-select-solid bg-gradient @error('role_id') is-invalid @enderror"
+                                            class="form-select form-select-solid @error('role_id') is-invalid @enderror"
                                             data-control="select2" data-placeholder="Select Role"
                                             data-dropdown-parent="#showModal" required>
                                             <option value=""></option>
@@ -145,7 +145,7 @@
                                     <div class="col-md-6 fv-row mb-5 active">
                                         <label class="required fs-5 fw-bold mb-2">Active</label>
                                         <select name="active" id="kt_active" data-placeholder="Select active Status"
-                                            class="form-select form-select-solid bg-gradient @error('active') is-invalid @enderror"
+                                            class="form-select form-select-solid @error('active') is-invalid @enderror"
                                             data-control="select2" data-dropdown-parent="#showModal">
                                             <option value=""></option>
                                             <option value="YES">YES</option>

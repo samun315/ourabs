@@ -32,8 +32,6 @@ class UserController extends Controller
         // If the logged-in user is a distributor, fetch only the sub-distributor roles
         if ($user->role_id === 2) {
             $query->where('role_id', 3);
-        }else{
-            $query->whereNot('role_id', 1);
         }
         
         $data['userRoles'] = $query->get();
@@ -108,6 +106,23 @@ class UserController extends Controller
             );
         } catch (Exception $exception) {
             return sendErrorResponse('Internal Server Error: ', $exception->getMessage(), $exception->getCode() ?? 500);
+        }
+    }
+
+    
+    public function updateStatus(Request $request): JsonResponse
+    {
+
+        $userId = $request->input('id');
+        $active = $request->input('active');
+
+        try {
+
+            $this->userService->updateUserStatus(['active' => $active], $userId);
+
+            return sendSuccessResponse(200, 'User status updated successfolly.');
+        } catch (Exception $e) {
+            return sendErrorResponse('Internal Server Error: ', $e->getMessage(), $e->getCode() ?? 500);
         }
     }
 

@@ -10,6 +10,7 @@ Route::post('/store',[UserController::class, 'store'])->name('store');
 Route::get('/edit/{user_id}',[UserController::class, 'edit'])->name('edit');
 Route::put('/update/{user_id}',[UserController::class, 'update'])->name('update');
 Route::put('/reset-password/{user_id}',[UserController::class, 'resetPassword'])->name('resetPassword');
+Route::put('/update-status', [UserController::class, 'updateStatus'])->name('update.status');
 
 
 // user profile route user.profile.viewProfile

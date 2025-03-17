@@ -49,7 +49,7 @@
                                     <div class="col-md-4">
                                         <div class="d-flex flex-column mb-5 fv-row">
                                             <select name="role_id" data-control="select2" data-placeholder="Type"
-                                                data-allow-clear="true" id="kt_role_id"
+                                                data-allow-clear="true" id="kt_search_role_id"
                                                 class="form-select form-select-solid role_id">
                                                 <option value=""></option>
                                                 @foreach ($userRoles as $userRole)
@@ -81,6 +81,7 @@
                                         <th>Email</th>
                                         <th>Phone Number</th>
                                         <th>Role</th>
+                                        <th>Active</th>
                                         <th class="text-center">Action</th>
                                     </tr>
                                     <!--end::Table row-->

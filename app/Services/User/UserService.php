@@ -113,6 +113,13 @@ class UserService
         return $user->update($updateData);
     }
 
+    public function updateUserStatus(array $updateData, int $userId): bool
+    {
+       $user = $this->getUserInfoById($userId);
+
+        return $user->update($updateData);
+    }
+
     public function resetPassword(Request $request, int $userId): bool
     {
         $user = $this->getUserInfoById($userId);
