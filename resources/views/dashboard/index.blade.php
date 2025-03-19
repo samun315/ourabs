@@ -11,24 +11,28 @@
         <div id="kt_content_container" class="container-fluid">
             @can('dashboard.admin')
                 <div class="row g-5 g-xl-8">
-                    
+
                     @can('report.total.diamond.index')
                         <div class="col-xl-3">
                             <!--begin::Statistics Widget 5-->
-                            <a href="{{route('report.total.diamond.index')}}" class="card bg-success hoverable card-xl-stretch mb-5 mb-xl-8">
+                            <a href="{{ route('report.total.diamond.index') }}"
+                                class="card bg-success hoverable card-xl-stretch mb-5 mb-xl-8">
                                 <!--begin::Body-->
                                 <div class="card-body">
                                     <!--begin::Svg Icon | path: icons/duotune/graphs/gra005.svg-->
-                                    <span class="svg-icon svg-icon-white svg-icon-3x"><!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2021-05-14-112058/theme/html/demo1/dist/../src/media/svg/icons/Design/Sketch.svg--><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-                                        <title>Stockholm-icons / Design / Sketch</title>
-                                        <desc>Created with Sketch.</desc>
-                                        <defs/>
-                                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                            <rect x="0" y="0" width="24" height="24"/>
-                                            <polygon fill="#000000" opacity="0.3" points="5 3 19 3 23 8 1 8"/>
-                                            <polygon fill="#000000" points="23 8 12 20 1 8"/>
-                                        </g>
-                                    </svg><!--end::Svg Icon--></span>
+                                    <span
+                                        class="svg-icon svg-icon-white svg-icon-3x"><!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2021-05-14-112058/theme/html/demo1/dist/../src/media/svg/icons/Design/Sketch.svg--><svg
+                                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                            width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                            <title>Stockholm-icons / Design / Sketch</title>
+                                            <desc>Created with Sketch.</desc>
+                                            <defs />
+                                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                <rect x="0" y="0" width="24" height="24" />
+                                                <polygon fill="#000000" opacity="0.3" points="5 3 19 3 23 8 1 8" />
+                                                <polygon fill="#000000" points="23 8 12 20 1 8" />
+                                            </g>
+                                        </svg><!--end::Svg Icon--></span>
                                     <!--end::Svg Icon-->
                                     <div class="text-white fw-bolder fs-2 mb-2 mt-5">Total Balance</div>
                                     <div class="fw-bold text-white">{{ $total_balance }}</div>
@@ -41,7 +45,8 @@
                     @can('marchant.order.balance.approve.index')
                         <div class="col-xl-3">
                             <!--begin::Statistics Widget 5-->
-                            <a href="{{route('marchant.order.balance.approve.index')}}" class="card bg-danger hoverable card-xl-stretch mb-xl-8">
+                            <a href="{{ route('marchant.order.balance.approve.index') }}"
+                                class="card bg-danger hoverable card-xl-stretch mb-xl-8">
                                 <!--begin::Body-->
                                 <div class="card-body">
                                     <!--begin::Svg Icon | path: icons/duotune/ecommerce/ecm002.svg-->
@@ -74,7 +79,8 @@
                     @can('marchant.balance.request.approve.index')
                         <div class="col-xl-3">
                             <!--begin::Statistics Widget 5-->
-                            <a href="{{route('marchant.balance.request.approve.index')}}" class="card bg-primary hoverable card-xl-stretch mb-xl-8">
+                            <a href="{{ route('marchant.balance.request.approve.index') }}"
+                                class="card bg-primary hoverable card-xl-stretch mb-xl-8">
                                 <!--begin::Body-->
                                 <div class="card-body">
                                     <!--begin::Svg Icon | path: icons/duotune/ecommerce/ecm008.svg-->
@@ -106,7 +112,8 @@
                     @can('marchant.request.approve.whitelist.index')
                         <div class="col-xl-3">
                             <!--begin::Statistics Widget 5-->
-                            <a href="{{route('marchant.request.approve.whitelist.index')}}" class="card bg-info hoverable card-xl-stretch mb-5 mb-xl-8">
+                            <a href="{{ route('marchant.request.approve.whitelist.index') }}"
+                                class="card bg-info hoverable card-xl-stretch mb-5 mb-xl-8">
                                 <!--begin::Body-->
                                 <div class="card-body">
                                     <span
@@ -127,6 +134,34 @@
                                         </svg><!--end::Svg Icon--></span>
                                     <div class="text-white fw-bolder fs-2 mb-2 mt-5">Pending Whitelist</div>
                                     <div class="fw-bold text-white">{{ $pending_whitelist }}</div>
+                                </div>
+                                <!--end::Body-->
+                            </a>
+                            <!--end::Statistics Widget 5-->
+                        </div>
+                    @endcan
+                    @can('marchant.sub-distributor.balance.request.approve.index')
+                        <div class="col-xl-3">
+                            <!--begin::Statistics Widget 5-->
+                            <a href="{{ route('marchant.sub-distributor.balance.request.approve.index') }}"
+                                class="card bg-warning hoverable card-xl-stretch mb-5 mb-xl-8">
+                                <!--begin::Body-->
+                                <div class="card-body">
+                                    <span
+                                        class="svg-icon svg-icon-white svg-icon-3x"><!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2021-05-14-112058/theme/html/demo1/dist/../src/media/svg/icons/Design/Sketch.svg--><svg
+                                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                            width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                            <title>Stockholm-icons / Design / Sketch</title>
+                                            <desc>Created with Sketch.</desc>
+                                            <defs />
+                                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                <rect x="0" y="0" width="24" height="24" />
+                                                <polygon fill="#000000" opacity="0.3" points="5 3 19 3 23 8 1 8" />
+                                                <polygon fill="#000000" points="23 8 12 20 1 8" />
+                                            </g>
+                                        </svg><!--end::Svg Icon--></span>
+                                    <div class="text-white fw-bolder fs-2 mb-2 mt-5">Todays Transfer</div>
+                                    <div class="fw-bold text-white">{{ $todays_transfer_balance }}</div>
                                 </div>
                                 <!--end::Body-->
                             </a>
@@ -233,78 +268,78 @@
                 </div>
             @endcan
             @can('dashboard.sub.distributor')
-            <div class="post d-flex flex-column-fluid" id="kt_post">
-                <!--begin::Container-->
-                <div id="kt_content_container" class="container-fluid">
-                    <div class="card shadow-sm">
-                        <!-- Cover Image -->
-                        <div class="card-body p-0 position-relative">
-                            <img src="{{ asset('assets/media/background/background10.jpg') }}"
-                                class="w-100 h-250px object-cover" alt="Cover Image">
-                            <div class="position-absolute top-100 start-50 translate-middle">
-                                @if (!empty(getLoggedInUserInfo('logged_session_data.profile_img')))
-                                    <img src="{{ asset('uploads/user/profile/' . getLoggedInUserInfo('logged_session_data.profile_img')) }}"
-                                        class="rounded-circle border border-white shadow-lg" width="100"
-                                        height="100" alt="Profile Image" />
-                                @else
-                                    <img src="{{ asset('assets/media/avatars/300-1.jpg') }}"
-                                        class="rounded-circle border border-white shadow-lg" width="100"
-                                        height="100" alt="Profile Image" />
-                                @endif
-                            </div>
-                        </div>
-
-                        <!-- Profile Info -->
-                        <div class="card-body text-center mt-10">
-                            <h3 class="fw-bold text-gray-800"> {{ getLoggedInUserInfo('logged_session_data.full_name') }}
-                            </h3>
-                            <p class="text-muted">{{ getLoggedInUserInfo('logged_session_data.email') }}</p>
-
-
-                            <!-- Stats Section -->
-                            <div class="row mt-10 bg-primary text-white pt-4">
-                                <div class="col">
-                                    <span class="fas fa-gem fa-2x"></span>
-                                    <p class="d-none d-md-block">Diamonds Balance</p>
-                                    <p class="d-md-none">Balance</p>
-                                    <h4 class="fw-bolder">
-                                        @if (isset($user_diamond->current_balance))
-                                            {{ $user_diamond?->current_balance }}
-                                        @else
-                                            0
-                                        @endif
-                                    </h4>
-                                </div>
-                                <div class="col">
-                                    <span class="fas fa-shopping-bag fa-2x"></span>
-                                    <p>Requests</p>
-                                    <h4 class="fw-bolder">
-                                        @if (isset($user_request))
-                                            {{ $user_request }}
-                                        @else
-                                            0
-                                        @endif
-                                    </h4>
+                <div class="post d-flex flex-column-fluid" id="kt_post">
+                    <!--begin::Container-->
+                    <div id="kt_content_container" class="container-fluid">
+                        <div class="card shadow-sm">
+                            <!-- Cover Image -->
+                            <div class="card-body p-0 position-relative">
+                                <img src="{{ asset('assets/media/background/background10.jpg') }}"
+                                    class="w-100 h-250px object-cover" alt="Cover Image">
+                                <div class="position-absolute top-100 start-50 translate-middle">
+                                    @if (!empty(getLoggedInUserInfo('logged_session_data.profile_img')))
+                                        <img src="{{ asset('uploads/user/profile/' . getLoggedInUserInfo('logged_session_data.profile_img')) }}"
+                                            class="rounded-circle border border-white shadow-lg" width="100"
+                                            height="100" alt="Profile Image" />
+                                    @else
+                                        <img src="{{ asset('assets/media/avatars/300-1.jpg') }}"
+                                            class="rounded-circle border border-white shadow-lg" width="100"
+                                            height="100" alt="Profile Image" />
+                                    @endif
                                 </div>
                             </div>
-                        </div>
 
-                    </div>
-                    <!-- Buttons Section -->
-                    <div class="row mt-5 mb-10 justify-content-center">
-                        <div class="col-md-4 mb-4">
-                            <a href="{{ route('marchant.sub-distributor.balance.request.index') }}"
-                                class="card text-center bg-info text-white py-8 shadow-lg">
-                                <i class="fas fa-gift fa-2x text-white"></i>
-                                <h5 class="mt-2">Send Diamond to End User</h5>
-                            </a>
+                            <!-- Profile Info -->
+                            <div class="card-body text-center mt-10">
+                                <h3 class="fw-bold text-gray-800"> {{ getLoggedInUserInfo('logged_session_data.full_name') }}
+                                </h3>
+                                <p class="text-muted">{{ getLoggedInUserInfo('logged_session_data.email') }}</p>
+
+
+                                <!-- Stats Section -->
+                                <div class="row mt-10 bg-primary text-white pt-4">
+                                    <div class="col">
+                                        <span class="fas fa-gem fa-2x"></span>
+                                        <p class="d-none d-md-block">Diamonds Balance</p>
+                                        <p class="d-md-none">Balance</p>
+                                        <h4 class="fw-bolder">
+                                            @if (isset($user_diamond->current_balance))
+                                                {{ $user_diamond?->current_balance }}
+                                            @else
+                                                0
+                                            @endif
+                                        </h4>
+                                    </div>
+                                    <div class="col">
+                                        <span class="fas fa-shopping-bag fa-2x"></span>
+                                        <p>Requests</p>
+                                        <h4 class="fw-bolder">
+                                            @if (isset($user_request))
+                                                {{ $user_request }}
+                                            @else
+                                                0
+                                            @endif
+                                        </h4>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
+                        <!-- Buttons Section -->
+                        <div class="row mt-5 mb-10 justify-content-center">
+                            <div class="col-md-4 mb-4">
+                                <a href="{{ route('marchant.sub-distributor.balance.request.index') }}"
+                                    class="card text-center bg-info text-white py-8 shadow-lg">
+                                    <i class="fas fa-gift fa-2x text-white"></i>
+                                    <h5 class="mt-2">Send Diamond to End User</h5>
+                                </a>
+                            </div>
+                        </div>
+                        <!--end::Container-->
                     </div>
-                    <!--end::Container-->
                 </div>
-            </div>
-        @endcan
+            @endcan
             <!--end::Container-->
         </div>
     </div>
-    @endsection
+@endsection

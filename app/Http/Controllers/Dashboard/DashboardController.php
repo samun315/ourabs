@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Models\Marchant\OrderBalance;
 use App\Models\Marchant\BalanceRequest;
+use App\Models\Marchant\EndUserBalance;
 use App\Models\Marchant\RequestWhitelist;
 use App\Models\Payment\Account;
 use Illuminate\Support\Facades\Gate;
@@ -19,19 +20,24 @@ class DashboardController extends Controller
     public function index(): View
     {
         Gate::authorize('dashboard');
-        
-        $data=[];
+
+        $data = [];
         $data['pending_order'] = OrderBalance::where('status', 'Pending')->count();
         $data['pending_request'] = BalanceRequest::where('status', 'Pending')->count();
         $data['pending_whitelist'] = RequestWhitelist::where('status', 'Pending')->count();
         $data['pending_transfer'] = OrderBalance::where('status', 'Pending')->count();
 
-        $data['user_order'] = OrderBalance::query()->where('ordered_by',loggedInUserId())->count();
-        $data['user_diamond'] = Account::query()->where('user_id',loggedInUserId())->first(['current_balance']);
-        $data['user_request'] = BalanceRequest::query()->where('created_by',loggedInUserId())->count();
+        $data['user_order'] = OrderBalance::query()->where('ordered_by', loggedInUserId())->count();
+        $data['user_diamond'] = Account::query()->where('user_id', loggedInUserId())->first(['current_balance']);
+        $data['user_request'] = BalanceRequest::query()->where('created_by', loggedInUserId())->count();
 
         $data['total_balance'] = Account::query()->sum('current_balance');
-  
+
+        $data['todays_transfer_balance'] = EndUserBalance::query()
+            ->where('status', 'Transferred')
+            ->whereDate('created_at', now()->toDateString()) // Ensures 'Y-m-d' format
+            ->sum('amount');
+
         return view('dashboard.index', $data);
     }
 }

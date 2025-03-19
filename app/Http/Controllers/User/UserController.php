@@ -35,7 +35,7 @@ class UserController extends Controller
         }
         
         $data['userRoles'] = $query->get();
-
+        $data['users'] = User::query()->where('role_id','!=',3)->get(['id','full_name']);
         if ($request->ajax()) {
             return $this->userService->getUserList($request);
         }

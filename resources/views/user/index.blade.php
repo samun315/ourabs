@@ -59,6 +59,19 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="col-md-4">
+                                        <div class="d-flex flex-column mb-5 fv-row">
+                                            <select name="user_id" data-control="select2" data-placeholder="Created By"
+                                                data-allow-clear="true" id="kt_search_user_id"
+                                                class="form-select form-select-solid user_id">
+                                                <option value=""></option>
+                                                @foreach ($users as $user)
+                                                    <option value="{{ $user?->id }}">
+                                                        {{ $user?->full_name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         <!--end::Search-->
@@ -81,6 +94,7 @@
                                         <th>Email</th>
                                         <th>Phone Number</th>
                                         <th>Role</th>
+                                        <th>Created By</th>
                                         <th>Active</th>
                                         <th class="text-center">Action</th>
                                     </tr>

@@ -51,23 +51,29 @@ class UserService
     {
         $searchKeyword = $request->input('search');
         $roleId = $request->input('role_id');
+        $search_user_id = $request->input('search_user_id');
 
-        $query = User::query()->leftJoin('user_roles', function ($join) {
-            $join->on('users.role_id', '=', 'user_roles.role_id');
-        })->where(function ($query) use ($searchKeyword, $roleId) {
-            $query->where(function ($q) use ($searchKeyword) {
-                $q->where('full_name', 'like', "%$searchKeyword%")
-                    ->orWhere('user_name', 'like', "%$searchKeyword%")
-                    ->orWhere('email', 'like', "%$searchKeyword%")
-                    ->orWhere('phone', 'like', "%$searchKeyword%")
-                    ->orWhere('user_roles.role_name', 'like', "%$searchKeyword%");
-            });
+        $query = User::query()
+            ->leftJoin('user_roles', 'users.role_id', '=', 'user_roles.role_id')
+            ->leftJoin('users as ucb', 'users.created_by', '=', 'ucb.id')
+            ->leftJoin('user_roles as ucbr', 'ucb.role_id', '=', 'ucbr.role_id')
+            ->where(function ($query) use ($searchKeyword, $roleId, $search_user_id) {
+                $query->where(function ($q) use ($searchKeyword) {
+                    $q->where('users.full_name', 'like', "%$searchKeyword%")
+                        ->orWhere('users.user_name', 'like', "%$searchKeyword%")
+                        ->orWhere('users.email', 'like', "%$searchKeyword%")
+                        ->orWhere('users.phone', 'like', "%$searchKeyword%")
+                        ->orWhere('user_roles.role_name', 'like', "%$searchKeyword%");
+                });
 
-            if ($roleId) {
-                $query->where('users.role_id', '=', $roleId);
-            }
-        })
-            ->select('users.*', 'user_roles.role_name');
+                if ($roleId) {
+                    $query->where('users.role_id', '=', $roleId);
+                }
+                if ($search_user_id) {
+                    $query->where('users.created_by', '=', $search_user_id);
+                }
+            })
+            ->select('users.*', 'user_roles.role_name', 'ucb.full_name as added_by', 'ucbr.role_name as ucbr_role');
 
         $user = Auth::user();
         if ($user->role_id === 2) {
@@ -76,6 +82,12 @@ class UserService
 
         return Datatables::of($query)
             ->addIndexColumn()
+            ->addColumn('added_by', function ($row) {
+                $name = $row->added_by ?? '';
+                $role = $row->ucbr_role ?? '';
+                $userInfo = $name . '<br>(' . $role . ')';
+                return $userInfo;
+            })
             ->addColumn('action', function ($row) use ($user) {
 
                 $changePassBtn = '';
@@ -85,9 +97,9 @@ class UserService
                     $changePassBtn = '';
                     $editBtn = '';
                 } else {
-                    $changePassBtn = '<button data-id="' . $row->id . '" class="btn btn-warning btn-sm me-2 changePasswordBtn" data-bs-toggle="modal" data-bs-target="#kt_modal_change_password">Reset Password</button>';
+                    $changePassBtn = '<button data-id="' . $row->id . '" class="btn btn-icon btn-warning btn-sm me-2 changePasswordBtn" data-bs-toggle="modal" data-bs-target="#kt_modal_change_password" title="Reset Password"><i class="fas fa-key"></i></button>';
 
-                    $editBtn = '<button data-id="' . $row->id . '" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm edit-user me-2" data-bs-toggle="modal" data-bs-target="#showModal"><i class="fas fa-edit"></i></button>';
+                    $editBtn = '<button data-id="' . $row->id . '" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm edit-user me-2" data-bs-toggle="modal" data-bs-target="#showModal" title="Edit User"><i class="fas fa-edit"></i></button>';
                 }
 
                 $button = '<div class="btn-group" role="group" aria-label="Basic example">
@@ -96,7 +108,7 @@ class UserService
                 </div>';
                 return $button;
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['action', 'added_by'])
             ->make(true);
     }
 
@@ -115,7 +127,7 @@ class UserService
 
     public function updateUserStatus(array $updateData, int $userId): bool
     {
-       $user = $this->getUserInfoById($userId);
+        $user = $this->getUserInfoById($userId);
 
         return $user->update($updateData);
     }

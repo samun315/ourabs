@@ -12,6 +12,7 @@ const BASE_URL = window.location.origin + "/users";
 
 let search = $("#search");
 let role_id = $("#kt_search_role_id");
+let search_user_id = $("#kt_search_user_id");
 
 let validate = selectedForm.validate({
     rules: {
@@ -98,6 +99,7 @@ let table = $("#kt_table_users").DataTable({
         data: function (d) {
             d.search = search.val();
             d.role_id = role_id.val();
+            d.search_user_id = search_user_id.val();
         },
     },
     columns: [
@@ -126,6 +128,10 @@ let table = $("#kt_table_users").DataTable({
         {
             data: "role_name",
             name: "role_name",
+        },
+        {
+            data: "added_by",
+            name: "added_by",
         },
         {
             data: "active",
@@ -172,8 +178,12 @@ role_id.change(function () {
     table.draw();
 });
 
+search_user_id.change(function () {
+    table.draw();
+});
+
 $(document).on("click", ".edit-user, .view-user", function () {
-    var user_id = $(this).attr("data-id");
+    let user_id = $(this).attr("data-id");
     editUserInfo(user_id);
 });
 
