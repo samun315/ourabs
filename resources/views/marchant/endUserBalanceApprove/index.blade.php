@@ -51,7 +51,7 @@
                                         <th>#</th>
                                         <th>User</th>
                                         <th>Imo Id</th>
-                                        <th>Phone</th>
+                                        {{-- <th>Phone</th> --}}
                                         <th>Amount</th>
                                         <th>Status</th>
                                         <th>Date</th>
