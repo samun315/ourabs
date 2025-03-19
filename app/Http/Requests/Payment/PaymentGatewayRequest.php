@@ -26,6 +26,7 @@ class PaymentGatewayRequest extends FormRequest
             'details' => 'nullable',
             'currency_code' => 'required',
             'rate' => 'required',
+            'active' => 'required',
         ];
     }
 
@@ -37,7 +38,8 @@ class PaymentGatewayRequest extends FormRequest
         $inputData['details'] = $this->input('details') ?? null;
         $inputData['currency_code'] = $this->input('currency_code') ?? null;
         $inputData['rate'] = $this->input('rate') ?? null;
-        
+        $inputData['active'] = $this->input('active') ?? null;
+
         if ($this->input('id')) {
             $inputData['updated_by'] = loggedInUserId();
             $inputData['updated_at'] = createdAtDateConvertToDB();

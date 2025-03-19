@@ -68,7 +68,7 @@
                                         <th>Gateway</th>
                                         <th>Currency</th>
                                         <th>Rate</th>
-                                        <th>Status</th>
+                                        <th>Active</th>
                                         <th>Action</th>
                                     </tr>
                                     <!--end::Table row-->
@@ -98,7 +98,7 @@
 
     <script src="{{ asset('assets/plugins/custom/ckeditor/ckeditor-classic.bundle.js') }}"
         {{ Sri::html('assets/plugins/custom/ckeditor/ckeditor-classic.bundle.js') }}></script>
-        
+
     <!-- begin::Page Custom Stylesheets(used by this page) -->
     <script src="{{ asset('assets/custom/js/payment/paymentGateway/index.js') }}"
         {{ Sri::html('assets/custom/js/payment/paymentGateway/index.js') }}></script>

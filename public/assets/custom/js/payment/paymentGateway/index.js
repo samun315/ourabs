@@ -207,6 +207,8 @@ function editGatewayInfo(gatewayId) {
         url: BASE_URL + "/edit/" + gatewayId,
         type: "GET",
         success: function (response) {
+            console.log(response.gatewayInfo);
+
             loader(selectedForm, false);
             let gatewayInfo = response.gatewayInfo;
 
@@ -220,7 +222,7 @@ function editGatewayInfo(gatewayId) {
                 // $("#kt_details").val(gatewayInfo.details);
                 $("#kt_currency_code").val(gatewayInfo.currency_code).change();
                 $("#kt_rate").val(gatewayInfo.rate);
-                $("#kt_active").val(data.active).change();
+                $("#kt_active").val(gatewayInfo.active).change();
 
                 if (editorInstance) {
                     editorInstance.setData(gatewayInfo.details); // Set CKEditor content dynamically
