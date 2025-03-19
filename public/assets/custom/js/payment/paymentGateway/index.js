@@ -207,7 +207,6 @@ function editGatewayInfo(gatewayId) {
         url: BASE_URL + "/edit/" + gatewayId,
         type: "GET",
         success: function (response) {
-            console.log(response.gatewayInfo);
 
             loader(selectedForm, false);
             let gatewayInfo = response.gatewayInfo;
