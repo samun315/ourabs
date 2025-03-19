@@ -13,6 +13,7 @@ Route::group(['prefix' => 'manual/gateway', 'as' => 'gateway.'], function () {
     Route::get('/edit/{id}', [PaymentGatewayController::class, 'edit'])->name('edit');
     Route::put('/update/{id}', [PaymentGatewayController::class, 'update'])->name('update');
     Route::delete('/destroy/{id}', [PaymentGatewayController::class, 'destroy'])->name('destroy');
+    Route::put('/update-status', [PaymentGatewayController::class, 'updateStatus'])->name('update.status');
 });
 
 // payment.manual.currency.index

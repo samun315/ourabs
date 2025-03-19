@@ -76,6 +76,19 @@
                                             <span class="text-danger mt-2">{{ $message }}</span>
                                         @enderror
                                     </div>
+                                    <div class="col-md-12 fv-row mb-5 active">
+                                        <label class="required fs-5 fw-bold mb-2">Active</label>
+                                        <select name="active" id="kt_active" data-placeholder="Select active Status"
+                                            class="form-select form-select-solid @error('active') is-invalid @enderror"
+                                            data-control="select2" data-dropdown-parent="#showModal">
+                                            <option value=""></option>
+                                            <option value="YES">YES</option>
+                                            <option value="NO">NO</option>
+                                        </select>
+                                        @error('active')
+                                            <span class="text-danger mt-2">{{ $message }}</span>
+                                        @enderror
+                                    </div>
 
                                     <div class="col-md-12 d-flex justify-content-end mt-3">
                                         <button type="button" class="btn btn-light me-2 formReset"

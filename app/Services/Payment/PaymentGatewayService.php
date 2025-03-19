@@ -59,4 +59,13 @@ class PaymentGatewayService
 
         return $user->update($updateData);
     }
+
+    public function updatePaymentGatewayStatus(array $updateData, int $gatewayId): bool
+    {
+       $user = PaymentGateway::query()->where('id', $gatewayId)->first();;
+
+        return $user->update($updateData);
+    }
+
+
 }

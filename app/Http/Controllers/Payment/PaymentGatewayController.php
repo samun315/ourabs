@@ -21,7 +21,7 @@ class PaymentGatewayController extends Controller
     public function index(Request $request): View|JsonResponse
     {
         Gate::authorize('payment.manual.gateway.index');
-        
+
         if ($request->ajax()) {
             return $this->paymentGatewayService->getPaymentGateway($request);
         }
@@ -93,7 +93,7 @@ class PaymentGatewayController extends Controller
         }
     }
 
-    
+
     public function destroy(int $gatewayId): JsonResponse|bool
     {
         Gate::authorize('payment.manual.gateway.destroy');
@@ -110,5 +110,22 @@ class PaymentGatewayController extends Controller
             return sendErrorResponse('Internal Server Error: ', $exception->getMessage(), $exception->getCode() ?? 500);
         }
     }
-    
+
+
+    public function updateStatus(Request $request): JsonResponse
+    {
+
+        $paymentGatewayId = $request->input('id');
+        $active = $request->input('active');
+
+        try {
+
+            $this->paymentGatewayService->updatePaymentGatewayStatus(['active' => $active], $paymentGatewayId);
+
+            return sendSuccessResponse(200, 'Payment Gateway status updated successfolly.');
+        } catch (Exception $e) {
+            return sendErrorResponse('Internal Server Error: ', $e->getMessage(), $e->getCode() ?? 500);
+        }
+    }
+
 }

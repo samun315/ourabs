@@ -19,7 +19,7 @@ $(".formReset").on("click", function () {
 function formReset() {
     $("#submitForm").trigger("reset");
     $("#kt_currency_code").val("").trigger("change");
-    
+
     if (editorInstance) {
         editorInstance.setData(""); // Set CKEditor content dynamically
     }
@@ -118,18 +118,32 @@ let table = $("#kt_table_gateway").DataTable({
         },
         {
             data: "active",
-            render: function (data) {
-                if (!data) return "";
-
-                let statusValue = "";
-
-                if (data == "NO") {
-                    statusValue = "Inactive";
-                } else if (data == "YES") {
-                    statusValue = "Active";
-                }
-
-                return `${statusValue}`;
+            render: function (data, type, full, meta) {
+                const checked = data === "YES" ? "checked" : "";
+                const toggleStatus = data === "YES" ? "NO" : "YES";
+                const checkbox =
+                    '<input class="form-check-input activeStatus" data-id=' +
+                    full.id +
+                    ' name="status" type="checkbox" value="' +
+                    data +
+                    '" ' +
+                    checked +
+                    "/>" +
+                    '<input type="hidden" id="toggleData_' +
+                    full.id +
+                    '" value="' +
+                    toggleStatus +
+                    '"';
+                const label =
+                    '<span class="form-check-label fw-bold text-muted">' +
+                    data +
+                    "</span>";
+                return (
+                    '<label class="form-check form-switch form-check-custom form-check-solid">' +
+                    checkbox +
+                    label +
+                    "</label>"
+                );
             },
         },
         {
@@ -206,6 +220,7 @@ function editGatewayInfo(gatewayId) {
                 // $("#kt_details").val(gatewayInfo.details);
                 $("#kt_currency_code").val(gatewayInfo.currency_code).change();
                 $("#kt_rate").val(gatewayInfo.rate);
+                $("#kt_active").val(data.active).change();
 
                 if (editorInstance) {
                     editorInstance.setData(gatewayInfo.details); // Set CKEditor content dynamically
@@ -241,7 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (editorInstance) {
                         $("textarea.details").val(editorInstance.getData()); // Manually update textarea
                         let terms = $("textarea.details").val().trim();
-                
+
                         if (terms === "" || terms === "<p><br></p>") {
                             $(".terms_error")
                                 .text("Details field is required.")
@@ -255,7 +270,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         e.preventDefault();
                     }
                 });
-                
+
         });
     } else {
         console.warn("No elements with the class '.details' found.");
@@ -344,7 +359,7 @@ function deleteData(deleteId) {
                         if (response?.statusCode === 200) {
                             toastr.success(response?.message, "Success!");
                             table.draw();
-                        } 
+                        }
                     },
                     error: function (data) {
                         toastr.error(
@@ -360,4 +375,35 @@ function deleteData(deleteId) {
             return false;
         }
     );
+}
+
+
+$(document).on("change", ".activeStatus", function () {
+    let id = $(this).attr("data-id");
+    let active = $("#toggleData_" + id).val();
+    updateActiveStatus(active, id);
+});
+
+function updateActiveStatus(active, id) {
+    console.log(id);
+    $.ajax({
+        type: "PUT",
+        url: BASE_URL + "/update-status",
+        data: {
+            id: id,
+            active: active,
+            _token: setCSRFToken(),
+        },
+        dataType: "json",
+        success: function (response) {
+            if (response?.statusCode === 200) {
+                toastr.success(response?.message, "Success!");
+                table.ajax.reload();
+            } else {
+                toastr.error(
+                    response?.message || "An unexpected error occurred."
+                );
+            }
+        },
+    });
 }
