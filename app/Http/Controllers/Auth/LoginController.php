@@ -67,6 +67,7 @@ class LoginController extends Controller
     {
         //Session::flush();
 
+        Cache::flush(); // Clears all cache
         Auth::logout(); // Properly log out the user
         Session::flush();
         Session::invalidate(); // Invalidate session
