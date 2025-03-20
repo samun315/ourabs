@@ -96,6 +96,7 @@ let table = $("#kt_table_users").DataTable({
     serverSide: true,
     ajax: {
         url: BASE_URL + "/index",
+        cache: false, // Disable browser caching
         data: function (d) {
             d.search = search.val();
             d.role_id = role_id.val();
