@@ -31,7 +31,7 @@
                                 <label class="required fs-5 fw-bold mb-2">IMO Id/Phone Number</label>
                                 <input type="text" name="imo_id" id="kt_imo_id"
                                     class="form-control form-control-solid imo_id bg-gradient @error('imo_id') is-invalid @enderror"
-                                    placeholder="Enter IMO Id" autocomplete="off" required />
+                                    placeholder="Enter IMO Id" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '')" pattern="[0-9]*" inputmode="numeric" required />
                                 @error('imo_id')
                                     <span class="text-danger mt-2">{{ $message }}</span>
                                 @enderror
