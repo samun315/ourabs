@@ -310,3 +310,10 @@ $(".amount").on("change",function(){
         toastr.error('You have insufficient balance to your account', "Error!");
      }
 });
+
+
+document.getElementById("kt_imo_id").addEventListener("keypress", function (event) {
+    if (!/[0-9]/.test(event.key)) {
+        event.preventDefault(); // Block any non-numeric character
+    }
+});
