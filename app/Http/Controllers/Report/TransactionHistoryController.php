@@ -41,4 +41,9 @@ class TransactionHistoryController extends Controller
 
         return view('report.diamond.index', $data);
     }
+
+    public function getTransfer():View|JsonResponse
+    {
+        return view('report.transfer.index');
+    }
 }

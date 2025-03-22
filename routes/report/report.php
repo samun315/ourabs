@@ -14,3 +14,8 @@ Route::group(['prefix' => 'transaction-history', 'as' => 'transaction.history.']
 Route::group(['prefix' => 'total-diamonds', 'as' => 'total.diamond.'], function () {
     Route::get('/', [TransactionHistoryController::class, 'totalDiamond'])->name('index');
 });
+
+// route report.transfer.index
+Route::group(['prefix' => 'transfer', 'as' => 'transfer.'], function () {
+    Route::get('/', [TransactionHistoryController::class, 'getTransfer'])->name('index');
+});
