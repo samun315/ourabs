@@ -26,20 +26,15 @@
                     <!--begin::Table-->
                     <div id="kt_table_users_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
                         <div class="table-responsive">
-                            <table class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer"
+                            <table class="table align-middle table-row-dashed table-striped fs-6 gy-5 dataTable no-footer"
                                 id="kt_table_transfer_report">
                                 <!--begin::Table head-->
                                 <thead>
                                     <!--begin::Table row-->
                                     <tr class="text-start text-muted text-uppercase fw-bolder fs-7 gs-0">
                                         <th>#</th>
-                                        <th>User</th>
-                                        <th>Type</th>
-                                        <th>Reference</th>
-                                        <th>Amount</th>
-                                        <th>Before Balance</th>
-                                        <th>After Balance</th>
-                                        <th>Date Time</th>
+                                        <th>Date</th>
+                                        <th>Total Amount</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -60,8 +55,8 @@
 @section('page_script')
 
     <!-- begin::Page Custom Stylesheets(used by this page) -->
-    <script src="{{ asset('assets/custom/js/report/transactionHistory/index.js') }}"
-        {{ Sri::html('assets/custom/js/report/transactionHistory/index.js') }}></script>
+    <script src="{{ asset('assets/custom/js/report/transfer/index.js') }}"
+        {{ Sri::html('assets/custom/js/report/transfer/index.js') }}></script>
     <!--end::Page Custom Stylesheets(used by this page)-->
 
 @endsection

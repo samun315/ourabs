@@ -2,6 +2,7 @@
 
 namespace App\Services\Report;
 
+use App\Models\Marchant\EndUserBalance;
 use App\Models\Payment\Account;
 use App\Models\Report\TransactionHistory;
 use Carbon\Carbon;
@@ -64,6 +65,29 @@ class TransactionHistoryService
                 }
             })
             ->select('accounts.*', 'users.full_name', 'user_roles.role_name');
+
+        return Datatables::of($query)
+            ->addIndexColumn()
+            ->make(true);
+    }
+
+    public function getTransferReport(Request $request): JsonResponse
+    {
+        $date = $request->input('date');
+
+        $query = EndUserBalance::selectRaw('DATE(created_at) as created_date, SUM(amount) as total_amount')
+            ->where('status', 'Transferred')
+            ->groupBy('created_date');
+
+        if (!empty($date)) {
+            $dateRange = explode(' - ', $date);
+
+            if (count($dateRange) == 2) {
+                $startDate = Carbon::createFromFormat('d M, Y', trim($dateRange[0]))->startOfDay();
+                $endDate = Carbon::createFromFormat('d M, Y', trim($dateRange[1]))->endOfDay();
+                $query->whereBetween('created_at', [$startDate, $endDate]);
+            }
+        }
 
         return Datatables::of($query)
             ->addIndexColumn()
