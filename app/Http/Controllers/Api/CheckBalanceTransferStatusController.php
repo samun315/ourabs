@@ -21,7 +21,7 @@ class CheckBalanceTransferStatusController extends Controller
     public function index(Request $request){
 
         Gate::authorize('dashboard');
-        
+
         DB::beginTransaction();
         try {
             EndUserBalance::where('status', 'Processing')
@@ -33,8 +33,8 @@ class CheckBalanceTransferStatusController extends Controller
                             $account = Account::where('user_id', $transfer->request_by)->first();
 
                             // API request to check order status
-                            $response = Http::get('https://private-anon-91a347a717-m7card.apiary-proxy.com/checkid', [
-                                'key' => 'gMstVvRZ_tGG4QpBi410_1LTlsESyQcReqd0t9VLX-g',
+                            $response = Http::get('https://www.m7-sys.com/checkid', [
+                                'key' => '_vrjxzntE5mSBSKYVQPRZrLuN82ntTeEhlaF_CwtYdw',
                                 'id' => $transfer->order_id,
                             ]);
 

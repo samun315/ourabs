@@ -61,7 +61,7 @@ class EndUserBalanceRequestService
             $fromUserInfo = User::query()->where('id', $data['user_id'])->first();
 
             $account = Account::query()->where('user_id', $data['user_id'])->first();
-            
+
             if ($account && $data['amount'] <= $account->current_balance) {
 
                 $from_user['current_balance'] = $account?->current_balance - $data['amount'];
@@ -74,17 +74,17 @@ class EndUserBalanceRequestService
 
                 // set api parameter
                 $params = [
-                    'key'     => 'gMstVvRZ_tGG4QpBi410_1LTlsESyQcReqd0t9VLX-g',
+                    'key'     => '_vrjxzntE5mSBSKYVQPRZrLuN82ntTeEhlaF_CwtYdw',
                     'product' => 'imo',
                     'id'      => $data['imo_id'],
-                    'user'    => 'sivarsivar648@gmail.com',
-                    'pass'    => 'Abc@%23$000',
+                    'user'    => 'soft.technology2024@gmail.com',
+                    'pass'    => 'Ahnaf2018$',
                     'amount'  => (int)$data['amount'],
                     'uuid'    => $uuidData['uuid'],
                 ];
 
                 // api url
-                $url = 'https://private-anon-381aec7222-m7card.apiary-proxy.com/new?' . http_build_query($params);
+                $url = 'https://www.m7-sys.com/new?' . http_build_query($params);
 
                 $getData = $this->fetchApiData($url);
 
@@ -93,7 +93,7 @@ class EndUserBalanceRequestService
                 $params['imo_id'] = $data['imo_id'];
                 $params['order_id'] = $result['order_id'];
                 $params['result'] = $result['result'];
-                $params['api_key'] = 'gMstVvRZ_tGG4QpBi410_1LTlsESyQcReqd0t9VLX-g';
+                $params['api_key'] = '_vrjxzntE5mSBSKYVQPRZrLuN82ntTeEhlaF_CwtYdw';
                 $params['created_by'] = loggedInUserId();
 
                 $diamondTransaction = ApiDiamondTransaction::query()->create($params);
