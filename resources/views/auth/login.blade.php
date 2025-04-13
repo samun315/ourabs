@@ -86,7 +86,7 @@
                         @include('message')
 
                         <!--begin::Form-->
-                        <form class="form w-100" action="{{ route('login') }}" method="POST">
+                        <form class="form w-100" action="{{ route('login') }}" method="POST" id="myForm">
 
                             @csrf
 
@@ -150,7 +150,7 @@
 
                             <!--begin::Submit button-->
                             <div class="d-grid mb-10">
-                                <button type="submit" class="btn login-btn">
+                                <button type="submit" id="submitBtn" class="btn login-btn">
                                     Sign In
                                 </button>
                             </div>
@@ -207,6 +207,17 @@
 
         // Apply function to each button and field
         togglePasswordVisibility('#togglePasswordBtn', '#password', '.passwordIcon');
+
+        document.getElementById('myForm').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('submitBtn');
+
+            // Disable button and change text (optional)
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            // If you need to allow the form to submit naturally
+            // return true; or don't include e.preventDefault();
+        });
     </script>
     <!--end::Javascript-->
 </body>

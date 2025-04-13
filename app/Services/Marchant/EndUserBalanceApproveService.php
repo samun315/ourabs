@@ -101,16 +101,16 @@ class EndUserBalanceApproveService
                 if ($request->input('status') == 'Transferred') {
 
                     $params = [
-                        'key'     => 'gMstVvRZ_tGG4QpBi410_1LTlsESyQcReqd0t9VLX-g',
+                        'key'     => '_vrjxzntE5mSBSKYVQPRZrLuN82ntTeEhlaF_CwtYdw',
                         'product' => 'imo',
                         'id'      => $balance?->imo_id,
-                        'user'    => 'sivarsivar648@gmail.com',
-                        'pass'    => 'Abc@%23$000',
+                        'user'    => 'soft.technology2024@gmail.com',
+                        'pass'    => 'Ahnaf2018$',
                         'amount'  => (int)$balance?->amount,
                         'uuid'    => $uuidData['uuid'],
                     ];
 
-                    $url = 'https://private-anon-381aec7222-m7card.apiary-proxy.com/new?' . http_build_query($params);
+                    $url = 'https://www.m7-sys.com/new?' . http_build_query($params);
 
                     $getData = $this->fetchApiData($url);
 
@@ -118,7 +118,7 @@ class EndUserBalanceApproveService
                     $params['imo_id'] = $balance?->imo_id;
                     $params['order_id'] = $result['order_id'];
                     $params['result'] = $result['result'];
-                    $params['api_key'] = 'gMstVvRZ_tGG4QpBi410_1LTlsESyQcReqd0t9VLX-g';
+                    $params['api_key'] = '_vrjxzntE5mSBSKYVQPRZrLuN82ntTeEhlaF_CwtYdw';
                     $params['created_by'] = loggedInUserId();
 
                     $diamondTransaction = ApiDiamondTransaction::query()->create($params);
