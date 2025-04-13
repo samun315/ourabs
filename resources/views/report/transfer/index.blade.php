@@ -18,7 +18,8 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="d-flex flex-column mb-5 fv-row">
-                                    <input class="form-control form-control-solid" placeholder="Pick date range" id="kt_start_to_end_date"/>
+                                    <input class="form-control form-control-solid" placeholder="Pick date range"
+                                        id="kt_start_to_end_date" />
                                 </div>
                             </div>
                         </div>
