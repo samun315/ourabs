@@ -60,9 +60,11 @@ class OrderBalanceService
     {
         try {
             $orderData = $request->fields();
+      
             $orderData['attachment_url'] = $this->uploadMedia($request, 'attachment_url', 'order');
             $orderData['ordered_by'] = loggedInUserId();
-
+            $orderData['diamond_quantity'] = number_format(($orderData['amount'] / $orderData['rate']),2);
+            
             $order = OrderBalance::query()->create($orderData);
 
             return $order;

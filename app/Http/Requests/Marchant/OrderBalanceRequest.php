@@ -38,7 +38,8 @@ class OrderBalanceRequest extends FormRequest
         $inputData['amount'] = $this->input('amount');
         $inputData['transaction_id'] = $this->input('transaction_id');
         $inputData['attachment_url'] = $this->input('attachment_url');
-        $inputData['diamond_quantity'] = $this->input('diamond_quantity');
+        // $inputData['diamond_quantity'] = $this->input('diamond_quantity');
+        $inputData['rate'] = $this->input('rate');
 
         $inputData['created_by'] = loggedInUserId();
         $inputData['created_at'] = createdAtDateConvertToDB();
