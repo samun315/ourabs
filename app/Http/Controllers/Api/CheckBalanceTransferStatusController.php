@@ -27,7 +27,7 @@ class CheckBalanceTransferStatusController extends Controller
     public function index(Request $request)
     {
 
-        Gate::authorize('dashboard');
+        // Gate::authorize('dashboard');
 
         DB::beginTransaction();
         try {
@@ -170,6 +170,9 @@ class CheckBalanceTransferStatusController extends Controller
 
     public function getTransferBalanceHistory(Request $request)
     {
+
+        $status = $this->index($request);
+
         $validator = Validator::make($request->all(), [
             'email'     => 'required|email|exists:users,email',
             'password'  => 'required|string',
