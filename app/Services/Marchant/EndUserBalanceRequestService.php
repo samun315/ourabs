@@ -117,6 +117,72 @@ class EndUserBalanceRequestService
         }
     }
 
+    public function storeBalanceFromApi(array $data): Model|JsonResponse|array
+    {
+        DB::beginTransaction();
+        try {
+            $data['user_id'] = $data['request_by'];
+            $data['status'] = 'Processing';
+
+            $fromUserInfo = User::query()->where('id', $data['user_id'])->first();
+
+            $account = Account::query()->where('user_id', $data['user_id'])->first();
+
+            if ($account && $data['amount'] <= $account->current_balance) {
+
+                $from_user['current_balance'] = $account?->current_balance - $data['amount'];
+                $from_user['updated_by'] = $data['user_id'];
+
+                // generate uuid and store
+                $uuidData['uuid'] = Str::uuid()->toString();
+
+                Uuid::query()->create($uuidData);
+
+                // set api parameter
+                $params = [
+                    'key'     => '_vrjxzntE5mSBSKYVQPRZrLuN82ntTeEhlaF_CwtYdw',
+                    'product' => 'imo',
+                    'id'      => $data['imo_id'],
+                    'user'    => 'soft.technology2024@gmail.com',
+                    'pass'    => 'Ahnaf2018$',
+                    'amount'  => (int)$data['amount'],
+                    'uuid'    => $uuidData['uuid'],
+                ];
+
+                // api url
+                $url = 'https://www.m7-sys.com/new?' . http_build_query($params);
+
+                $getData = $this->fetchApiData($url);
+
+                // make api diamond transaction data and store
+                $result = json_decode($getData, true);
+                $params['imo_id'] = $data['imo_id'];
+                $params['order_id'] = $result['order_id'];
+                $params['result'] = $result['result'];
+                $params['api_key'] = '_vrjxzntE5mSBSKYVQPRZrLuN82ntTeEhlaF_CwtYdw';
+                $params['created_by'] = $data['user_id'];
+
+                $diamondTransaction = ApiDiamondTransaction::query()->create($params);
+
+                if ($result['result'] == 'success') {
+
+                    $account->update($from_user);
+                    $data['order_id'] = $result['order_id'];
+
+                    $balance = EndUserBalance::query()->create($data);
+                }
+            }
+
+            DB::commit();
+
+            return $result;
+        } catch (Exception $exception) {
+            DB::rollBack();
+            report($exception);
+            return response()->json(['error' => 'Something went wrong'], 500);
+        }
+    }
+
     public function fetchApiData(string $url): string
     {
         $ch = curl_init();

@@ -17,3 +17,8 @@ use App\Http\Controllers\Api\InboundCallController;
 Route::group(['prefix' => '/all/end-user/balance'], function () {
     Route::get('/status', [CheckBalanceTransferStatusController::class, 'index'])->name('end-user.balance.status');
 });
+
+Route::group(['prefix' => '/end-user/balance'], function () {
+    Route::post('/transfer', [CheckBalanceTransferStatusController::class, 'transferBalance'])->name('end-user.balance.transfer');
+    Route::get('/transfer/history', [CheckBalanceTransferStatusController::class, 'getTransferBalanceHistory'])->name('end-user.balance.transfer.histroy');
+});

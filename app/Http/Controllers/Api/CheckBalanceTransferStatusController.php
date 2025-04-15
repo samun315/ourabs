@@ -10,15 +10,22 @@ use App\Models\Payment\Account;
 use App\Models\Report\TransactionHistory;
 use App\Models\User;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Hash;
+use App\Services\Marchant\EndUserBalanceRequestService;
+use Illuminate\Support\Facades\Validator;
 
 class CheckBalanceTransferStatusController extends Controller
 {
-    public function index(Request $request){
+    public function __construct(protected EndUserBalanceRequestService $endUserBalanceRequestService) {}
+
+    public function index(Request $request)
+    {
 
         Gate::authorize('dashboard');
 
@@ -53,7 +60,6 @@ class CheckBalanceTransferStatusController extends Controller
                             // Prepare update data
                             if ($status === 'success') {
                                 $transfer->status = 'Transferred';
-
                             } elseif ($status === 'failed') {
                                 $transfer->status = 'Failed';
                                 $transfer->message = $errorMessage; // Store failure reason
@@ -100,4 +106,123 @@ class CheckBalanceTransferStatusController extends Controller
         }
     }
 
+    public function transferBalance(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email'     => 'required|email|exists:users,email',
+            'password'  => 'required|string',
+            'api_key'   => 'required|string',
+            'imo_id'    => 'required|string',
+            'amount'    => 'required|numeric|min:10',
+        ], [
+            'email.required'    => 'Email is required.',
+            'email.email'       => 'Email format is invalid.',
+            'email.exists'      => 'User not found.',
+            'password.required' => 'Password is required.',
+            'api_key.required'  => 'API key is required.',
+            'imo_id.required'   => 'IMO ID is required.',
+            'amount.required'   => 'Amount is required.',
+            'amount.numeric'    => 'Amount must be a number.',
+            'amount.min'        => 'Amount must be at least 10',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $user = User::where('email', $request->input('email'))
+                ->where('active', 'YES')
+                ->first(['id', 'email', 'password', 'api_key']);
+
+            if (!$user) {
+                return response()->json(['error' => 'Invalid credentials.'], 401);
+            }
+
+            if (!Hash::check($request->input('password'), $user->password)) {
+                return response()->json(['error' => 'Invalid credentials.'], 401);
+            }
+
+            if ($user->api_key !== $request->input('api_key')) {
+                return response()->json(['error' => 'Invalid API key.'], 403);
+            }
+
+            $inputData = [
+                'imo_id'     => $request->input('imo_id'),
+                'amount'     => $request->input('amount'),
+                'request_by' => $user->id,
+                'created_by' => $user->id,
+                'created_at' => createdAtDateConvertToDB(),
+            ];
+
+            $storeUserInfo = $this->endUserBalanceRequestService->storeBalanceFromApi($inputData);
+
+            return response()->json($storeUserInfo);
+        } catch (Exception $e) {
+            // Log the error if necessary: Log::error($e);
+            return response()->json(['error' => 'Something went wrong.'], 500);
+        }
+    }
+
+    public function getTransferBalanceHistory(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email'     => 'required|email|exists:users,email',
+            'password'  => 'required|string',
+            'api_key'   => 'required|string',
+            'start_date'    => 'nullable|date',
+            'end_date'    => 'nullable|date',
+        ], [
+            'email.required'    => 'Email is required.',
+            'email.email'       => 'Email format is invalid.',
+            'email.exists'      => 'User not found.',
+            'password.required' => 'Password is required.',
+            'api_key.required'  => 'API key is required.',
+            'start_date.date'    => 'Start date must be a date format.',
+            'end_date.date'    => 'End date must be a date format.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $user = User::where('email', $request->input('email'))
+                ->where('active', 'YES')
+                ->first(['id', 'email', 'password', 'api_key']);
+
+            if (!$user) {
+                return response()->json(['error' => 'Invalid credentials.'], 401);
+            }
+
+            if (!Hash::check($request->input('password'), $user->password)) {
+                return response()->json(['error' => 'Invalid credentials.'], 401);
+            }
+
+            if ($user->api_key !== $request->input('api_key')) {
+                return response()->json(['error' => 'Invalid API key.'], 403);
+            }
+
+            $startDate = $request->input('start_date'); // e.g., '2024-01-01'
+            $endDate   = $request->input('end_date');   // e.g., '2024-01-31'
+
+            $transferHistory = EndUserBalance::query()
+                ->where('request_by', $user->id)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->get(['imo_id', 'amount', 'status', 'created_at as date', 'order_id']);
+
+            return response()->json($transferHistory);
+        } catch (Exception $e) {
+            // Log the error if necessary: Log::error($e);
+            return response()->json(['error' => 'Something went wrong.'], 500);
+        }
+    }
 }
