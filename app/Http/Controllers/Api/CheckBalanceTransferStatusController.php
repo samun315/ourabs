@@ -161,7 +161,7 @@ class CheckBalanceTransferStatusController extends Controller
 
             $storeUserInfo = $this->endUserBalanceRequestService->storeBalanceFromApi($inputData);
 
-            return response()->json($storeUserInfo);
+            return response()->json($storeUserInfo, 200);
         } catch (Exception $e) {
             // Log the error if necessary: Log::error($e);
             return response()->json(['error' => 'Something went wrong.'], 500);
@@ -176,6 +176,7 @@ class CheckBalanceTransferStatusController extends Controller
             'api_key'   => 'required|string',
             'start_date'    => 'nullable|date',
             'end_date'    => 'nullable|date',
+            'order_id'    => 'nullable|numeric',
         ], [
             'email.required'    => 'Email is required.',
             'email.email'       => 'Email format is invalid.',
@@ -184,6 +185,7 @@ class CheckBalanceTransferStatusController extends Controller
             'api_key.required'  => 'API key is required.',
             'start_date.date'    => 'Start date must be a date format.',
             'end_date.date'    => 'End date must be a date format.',
+            'order_id.numeric'    => 'Order id must be a number.',
         ]);
 
         if ($validator->fails()) {
@@ -215,9 +217,18 @@ class CheckBalanceTransferStatusController extends Controller
             $endDate   = $request->input('end_date');   // e.g., '2024-01-31'
 
             $transferHistory = EndUserBalance::query()
-                ->where('request_by', $user->id)
-                ->whereBetween('created_at', [$startDate, $endDate])
-                ->get(['imo_id', 'amount', 'status', 'created_at as date', 'order_id']);
+                ->select(['imo_id', 'amount', 'status', 'created_at as date', 'order_id'])
+                ->where('request_by', $user->id);
+
+            if (!empty($startDate) && !empty($endDate)) {
+                $transferHistory->whereBetween('created_at', [$startDate, $endDate]);
+            }
+
+            if ($orderId = $request->input('order_id')) {
+                $transferHistory->where('order_id', $orderId);
+            }
+
+            $transferHistory = $transferHistory->get();
 
             return response()->json($transferHistory);
         } catch (Exception $e) {

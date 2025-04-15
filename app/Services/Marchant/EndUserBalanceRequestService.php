@@ -170,6 +170,8 @@ class EndUserBalanceRequestService
                     $data['order_id'] = $result['order_id'];
 
                     $balance = EndUserBalance::query()->create($data);
+
+                    $result['result'] = 'Processing';
                 }
             }
 
