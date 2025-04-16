@@ -237,17 +237,7 @@
                                     </div>
 
                                 </div>
-                                <!-- Buttons Section -->
-                                <div class="row mt-5 mb-10 justify-content-center">
-                                    <div class="col-md-4 mb-4">
-                                        <a href="{{ route('marchant.sub-distributor.balance.request.index') }}"
-                                            class="card text-center bg-info text-white py-8 shadow-lg">
-                                            <i class="fas fa-gift fa-2x text-white"></i>
-                                            <h5 class="mt-2">Send Diamond to End User</h5>
-                                        </a>
-                                    </div>
-                                </div>
-                                <!--end::Container-->
+
                             </div>
 
                         </div>
@@ -272,6 +262,17 @@
                                     class="card text-center bg-primary text-white py-8 shadow-lg">
                                     <i class="fas fa-gem fa-2x text-white"></i>
                                     <h5 class="mt-2">Transfer Diamonds to IMO</h5>
+                                </a>
+                            </div>
+                        </div>
+                        <!--end::Container-->
+                        <!-- Buttons Section -->
+                        <div class="row mt-5 mb-10 justify-content-center">
+                            <div class="col-md-4 mb-4">
+                                <a href="{{ route('marchant.sub-distributor.balance.request.index') }}"
+                                    class="card text-center bg-info text-white py-8 shadow-lg">
+                                    <i class="fas fa-gift fa-2x text-white"></i>
+                                    <h5 class="mt-2">Send Diamond to End User</h5>
                                 </a>
                             </div>
                         </div>
