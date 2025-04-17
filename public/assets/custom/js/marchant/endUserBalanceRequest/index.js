@@ -312,8 +312,8 @@ $(".amount").on("change",function(){
 });
 
 
-// document.getElementById("kt_imo_id").addEventListener("keypress", function (event) {
-//     if (!/[0-9]/.test(event.key)) {
-//         event.preventDefault(); // Block any non-numeric character
-//     }
-// });
+document.getElementById("kt_imo_id").addEventListener("keypress", function (event) {
+    if (!/[0-9]/.test(event.key)) {
+        event.preventDefault(); // Block any non-numeric character
+    }
+});

@@ -28,7 +28,7 @@
 
                         <div class="row">
                             <div class="col-md-6 fv-row mb-5">
-                                <label class="required fs-5 fw-bold mb-2">IMO Id/Phone Number</label>
+                                <label class="required fs-5 fw-bold mb-2">IMO Id</label>
                                 <input type="text" name="imo_id" id="kt_imo_id"
                                     class="form-control form-control-solid imo_id bg-gradient @error('imo_id') is-invalid @enderror"
                                     placeholder="Enter IMO Id" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '')" pattern="[0-9]*" inputmode="numeric" required />

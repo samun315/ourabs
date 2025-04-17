@@ -17,6 +17,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 
 class UserController extends Controller
 {
@@ -28,12 +29,12 @@ class UserController extends Controller
         $user = Auth::user();
 
         $query = UserRole::query()->orderBy('role_id', 'ASC')->select(['role_id', 'role_name']);
-        
+
         // If the logged-in user is a distributor, fetch only the sub-distributor roles
         if ($user->role_id === 2) {
             $query->where('role_id', 3);
         }
-        
+
         $data['userRoles'] = $query->get();
         $data['users'] = User::query()->where('role_id','!=',3)->get(['id','full_name']);
         if ($request->ajax()) {
@@ -109,7 +110,7 @@ class UserController extends Controller
         }
     }
 
-    
+
     public function updateStatus(Request $request): JsonResponse
     {
 
@@ -144,7 +145,7 @@ class UserController extends Controller
         $userId = (int) getLoggedInUserInfo('logged_session_data.id');
 
         $data['editModeData'] = $this->userService->getUserInfoById($userId);
-     
+
         return view('user.profile.edit', $data);
     }
 
@@ -187,11 +188,20 @@ class UserController extends Controller
         if (Hash::check($current_pass, $old_pass)) {
             if (!Hash::check($new_pass, $old_pass)) {
                 if ($new_pass == $confirm_pass) {
+
+                    // Log out all other devices except the current one
+                    //Auth::logoutOtherDevices($current_pass);
+
                     $userData->password = Hash::make($new_pass);
                     $userData->update();
 
-                    session()->flush();
+                    Auth::logout();
+                    Session::flush();
+                    Session::invalidate();
+                    Session::regenerateToken();
+
                     return redirect('/')->with('success', 'Password updated successfully.');
+                    //return back()->with('success', 'Password updated successfully.');
                 } else {
                     return back()->with('error', 'New password and confirm password does not matched');
                 }
