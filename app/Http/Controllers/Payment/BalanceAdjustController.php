@@ -29,7 +29,8 @@ class BalanceAdjustController extends Controller
             return $this->balanceAdjustService->getBalanceAdjustList($request);
         }
 
-        $data['users'] = User::query()->where(['active' => 'YES', 'role_id' => 2])->get();
+        //$data['users'] = User::query()->where(['active' => 'YES', 'role_id' => 2])->get();
+        $data['users'] = User::query()->where(['active' => 'YES'])->whereIn('role_id', [2, 3])->get();
 
         return view('payment.balanceAdjust.index', $data);
     }
@@ -37,7 +38,7 @@ class BalanceAdjustController extends Controller
     public function store(BalanceAdjustRequest $request): JsonResponse
     {
         Gate::authorize('payment.adjust.balance.index');
-        
+
         try {
 
             $storeBalanceInfo = $this->balanceAdjustService->storeAdjustBalance($request->fields());
