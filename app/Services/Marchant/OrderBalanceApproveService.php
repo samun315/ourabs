@@ -89,35 +89,36 @@ class OrderBalanceApproveService
             $account = Account::query()->where('user_id', $data['user_id'])->first();
 
             $gateway = OrderBalance::query()
-            ->leftJoin('payment_gateways','orders.payment_gateway_id','=','payment_gateways.id')
-            ->where('orders.id', $id)->first();
+                ->leftJoin('payment_gateways', 'orders.payment_gateway_id', '=', 'payment_gateways.id')
+                ->where('orders.id', $id)->first();
 
             $transactionHistory = [
                 'user_id' => $data['user_id'],
                 'type' => 'ORDER',
                 'refference' => $gateway?->gateway_name,
                 'amount' => $order->amount,
-                'before_balance' => $account?->current_balance,
+                'before_balance' => $account->current_balance ?? 0,
                 'refference_table' => 'orders',
                 'refference_id' => $id,
                 'created_by' => loggedInUserId(),
             ];
-   
+
             if (!empty($account)) {
                 $old_balance = $account?->current_balance;
                 if ($orderStatus['status'] == 'Paid') {
                     $data['current_balance'] = $old_balance + $data['current_balance'];
                     $transactionHistory['after_balance'] = $data['current_balance'];
-                } else {
-                    $data['current_balance'] = $old_balance - $data['current_balance'];
+                    $account->update($data);
                 }
- 
-                $account->update($data);
             } else {
-                Account::query()->create($data);
+                $newAccount = Account::query()->create($data);
+
+                if ($orderStatus['status'] == 'Paid') {
+                    $transactionHistory['after_balance'] = $newAccount->current_balance;
+                }
             }
 
-            if (!empty($transactionHistory)) {
+            if (!empty($transactionHistory) && $orderStatus['status'] == 'Paid') {
                 TransactionHistory::query()->create($transactionHistory);
             }
 
