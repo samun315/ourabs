@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\CheckBalanceTransferStatusController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\CdrController;
 use App\Http\Controllers\Api\InboundCallController;
+use App\Http\Controllers\Api\OrderWebhookController;
 
 
 // Route::group(['prefix' => '/callcenter'], function () {
@@ -22,3 +23,7 @@ use App\Http\Controllers\Api\InboundCallController;
 //     Route::post('/transfer', [CheckBalanceTransferStatusController::class, 'transferBalance'])->name('end-user.balance.transfer');
 //     Route::get('/transfer/history', [CheckBalanceTransferStatusController::class, 'getTransferBalanceHistory'])->name('end-user.balance.transfer.histroy');
 // });
+
+Route::group(['prefix' => 'webhook'], function(){
+    Route::post('/order-status', [OrderWebhookController::class, 'handle']);
+});
