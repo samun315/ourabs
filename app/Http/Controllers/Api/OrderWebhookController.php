@@ -68,7 +68,8 @@ class OrderWebhookController extends Controller
                 ->lockForUpdate()
                 ->first();
 
-            $beforeBalance = $account->current_balance;
+            $beforeBalance = $account->current_balance + $transfer->amount;
+            $afterBalance  = $account->current_balance;
 
             $fromUserInfo = User::find($transfer->request_by);
 
@@ -86,7 +87,7 @@ class OrderWebhookController extends Controller
             if ($validated['status'] == 2 && $account) {
 
 
-                $afterBalance  = $beforeBalance + $transfer->amount;
+
                 // Atomic update
                 $account->increment('current_balance', $transfer->amount);
 
