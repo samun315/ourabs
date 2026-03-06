@@ -113,7 +113,7 @@ class EndUserBalanceRequestService
                         "product_id" => $productId,
                         "quantity"   => $quantity,
                         "id_user"    => $data['imo_id'],
-                        "amount"     => 10
+                        "amount"     => $amount
                     ]
                 ]
             ];
