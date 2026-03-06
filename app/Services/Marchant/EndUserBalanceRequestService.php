@@ -87,7 +87,8 @@ class EndUserBalanceRequestService
                 ], 400);
             }
 
-            $quantity = $amount / 10;
+            //$quantity = $amount / 10;
+            $quantity = 1;
 
             $productIdMap = [
                 1 => "316b285c-eb4c-4d7b-b302-0715a3e41c1a",
