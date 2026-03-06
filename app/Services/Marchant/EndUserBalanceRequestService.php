@@ -89,11 +89,27 @@ class EndUserBalanceRequestService
 
             $quantity = $amount / 10;
 
+            $productIdMap = [
+                1 => "316b285c-eb4c-4d7b-b302-0715a3e41c1a",
+                10 => "4cfa4c27-d4a5-41bc-91e0-459547d393f7",
+                50 => "a195345c-7a8b-4659-b28a-ae6cd7ab01db",
+                100 => "422b5c0d-f1bd-4704-a8e4-87095868cb1c",
+                200 => "28e04953-4965-4db2-aa58-6c58a72127d0",
+                500 => "ea823835-85c3-43ef-a258-a9248ee6c3bd",
+                1000 => "cc60a49d-e80a-4dcb-9a18-f870aefd5ba0",
+                2000 => "f45d4fb4-8d2a-45d7-8a14-c059222472fd",
+                5000 => "58c0d287-6185-4e93-830c-e13366f26f99",
+                10000 => "4dcf4b3e-484e-43c2-aa4b-9db59fb968cc",
+                20000 => "922f7554-5775-435d-93f5-9c2a7f7ae5d5",
+            ];
+
+            $productId = $productIdMap[$amount];
+
             // Prepare API request
             $apiPayload = [
                 "items" => [
                     [
-                        "product_id" => '4cfa4c27-d4a5-41bc-91e0-459547d393f7',
+                        "product_id" => $productId,
                         "quantity"   => $quantity,
                         "id_user"    => $data['imo_id'],
                         "amount"     => 10
