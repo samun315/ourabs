@@ -4,7 +4,7 @@
         <!--begin::Copyright-->
         <div class="text-dark order-2 order-md-1">
             <span class="text-muted fw-bold me-1">2025©</span>
-            <a href="https://solutionspin.com" target="_blank" class="text-gray-800 text-hover-primary">OurAbs</a>
+            <a href="https://solutionspin.com" target="_blank" class="text-gray-800 text-hover-primary">ABS Family</a>
         </div>
         <!--end::Copyright-->
         <!--begin::Menu-->

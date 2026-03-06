@@ -4,22 +4,22 @@
 <!--begin::Head-->
 
 <head>
-    <title>OurAbs</title>
+    <title>ABS Family</title>
     <meta charset="utf-8" />
     <meta http-equiv="Content-Security-Policy"
         content="script-src 'self' 'nonce-{{ $cspNonce }}'; style-src 'self' 'nonce-{{ $cspNonce }}' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; object-src 'none'; frame-src 'none'; base-uri 'self';">
     <meta name="description" content="" />
-    <meta name="keywords" content="OurAbs, OurAbs, IMO Diamond, IMO Diamond Bangladesh" />
+    <meta name="keywords" content="ABS Family, ABS Family, IMO Diamond, IMO Diamond Bangladesh" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="OurAbs" />
+    <meta property="og:title" content="ABS Family" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
-    <meta property="og:site_name" content="OurAbs" />
+    <meta property="og:site_name" content="ABS Family" />
 
     <link rel="shortcut icon" href="{{ asset('assets/media/logos/favicon.svg') }}" type="image/svg+xml" />
 
@@ -100,7 +100,7 @@
 
                                 <!--begin::Subtitle-->
                                 <div class="text-gray-500 fw-semibold fs-6">
-                                    Sign In to OurAbs
+                                    Sign In to ABS Family
                                 </div>
                                 <!--end::Subtitle--->
                             </div>
