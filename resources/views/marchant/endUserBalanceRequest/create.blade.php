@@ -48,7 +48,10 @@
                             <div class="col-md-12">
                                 <label class="required fs-5 fw-bold mb-2">Diamonds</label>
                                 <div class="row">
-                                    @foreach ($diamonds as $diamond)
+                                    <div class="col-md-6 fv-row">
+                                        <input type="number" class="form-control form-control-solid" name="amount" id="diamond_amount">
+                                    </div>
+                                    {{-- @foreach ($diamonds as $diamond)
                                         <div class="col-md-6 fv-row">
                                             <label class="diamond-option text-left"
                                                 for="diamond_amount_{{ $diamond->diamond_amount_id }}">
@@ -62,7 +65,7 @@
                                                 </div>
                                             </label>
                                         </div>
-                                    @endforeach
+                                    @endforeach --}}
                                 </div>
                             </div>
 

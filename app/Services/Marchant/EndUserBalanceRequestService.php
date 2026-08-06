@@ -68,14 +68,7 @@ class EndUserBalanceRequestService
                 ], 400);
             }
 
-            $url = "https://bot.ahlna.co/api/orders/create/";
 
-            $headers = [
-                "accept: application/json",
-                "Authorization: Api-Key FT4TQAm_QWBTraJcAkS42KNE15x2jIO551-FXTetrgU",
-                "Content-Type: application/json",
-                "X-CSRFTOKEN: H8R9XdGUyeQw2BPIE5VYbt1toezPY2Pr5F8uhIpMQnTqf0d5Qj1cQxQGJo415cF3"
-            ];
             // Generate UUID
             $uuid = Str::uuid()->toString();
             Uuid::create(['uuid' => $uuid]);
@@ -90,50 +83,6 @@ class EndUserBalanceRequestService
             //$quantity = $amount / 10;
             $quantity = 1;
 
-            $productIdMap = [
-                1 => "316b285c-eb4c-4d7b-b302-0715a3e41c1a",
-                10 => "4cfa4c27-d4a5-41bc-91e0-459547d393f7",
-                50 => "a195345c-7a8b-4659-b28a-ae6cd7ab01db",
-                100 => "422b5c0d-f1bd-4704-a8e4-87095868cb1c",
-                200 => "28e04953-4965-4db2-aa58-6c58a72127d0",
-                500 => "ea823835-85c3-43ef-a258-a9248ee6c3bd",
-                1000 => "cc60a49d-e80a-4dcb-9a18-f870aefd5ba0",
-                2000 => "f45d4fb4-8d2a-45d7-8a14-c059222472fd",
-                5000 => "58c0d287-6185-4e93-830c-e13366f26f99",
-                10000 => "4dcf4b3e-484e-43c2-aa4b-9db59fb968cc",
-                20000 => "922f7554-5775-435d-93f5-9c2a7f7ae5d5",
-            ];
-
-            $productId = $productIdMap[$amount];
-
-            // Prepare API request
-            $apiPayload = [
-                "items" => [
-                    [
-                        "product_id" => $productId,
-                        "quantity"   => $quantity,
-                        "id_user"    => $data['imo_id'],
-                        "amount"     => $amount
-                    ]
-                ]
-            ];
-
-            $response = $this->fetchApiData(
-                $url,
-                $apiPayload,
-                $headers,
-                'POST'
-            );
-
-            $result = json_decode($response, true);
-
-            if (!isset($result['order_id']) || !isset($result['status'])) {
-                DB::rollBack();
-                return response()->json([
-                    'error' => 'API transaction failed',
-                    'response' => $result
-                ], 400);
-            }
 
             // Deduct balance
             $account->update([
@@ -141,26 +90,13 @@ class EndUserBalanceRequestService
                 'updated_by' => loggedInUserId()
             ]);
 
-            // Store API transaction
-            ApiDiamondTransaction::create([
-                'imo_id'     => $data['imo_id'],
-                'product' => 'imo',
-                'uuid'    => $uuid,
-                'user'    => 'soft.technology2024@gmail.com',
-                'pass'    => 'Ahnaf2018$',
-                'amount'  => $amount,
-                'order_id'   => $result['order_id'],
-                'result'     => $result['status'],
-                'api_key'    => 'FT4TQAm_QWBTraJcAkS42KNE15x2jIO551-FXTetrgU',
-                'created_by' => loggedInUserId()
-            ]);
 
             // Store user balance history
             $balance = EndUserBalance::create([
                 ...$data,
                 'user_id'  => $userId,
                 'status'   => 'Processing',
-                'order_id' => $result['order_id']
+                'order_id' => $uuid
             ]);
 
             DB::commit();
@@ -174,6 +110,128 @@ class EndUserBalanceRequestService
     }
 
     //**************start for old api*************//
+    // public function storeBalance(array $data): Model|JsonResponse
+    // {
+    //     DB::beginTransaction();
+    //     try {
+    //         $userId = $data['request_by'];
+    //         $amount = (int) $data['amount'];
+
+    //         $fromUserInfo = User::query()->where('id', $userId)->first();
+
+    //         $account = Account::query()->where('user_id', $userId)->first();
+
+    //         if (!$account || $amount > $account->current_balance) {
+    //             return response()->json([
+    //                 'error' => 'Insufficient balance'
+    //             ], 400);
+    //         }
+
+    //         $url = "https://bot.ahlna.co/api/orders/create/";
+
+    //         $headers = [
+    //             "accept: application/json",
+    //             "Authorization: Api-Key FT4TQAm_QWBTraJcAkS42KNE15x2jIO551-FXTetrgU",
+    //             "Content-Type: application/json",
+    //             "X-CSRFTOKEN: H8R9XdGUyeQw2BPIE5VYbt1toezPY2Pr5F8uhIpMQnTqf0d5Qj1cQxQGJo415cF3"
+    //         ];
+    //         // Generate UUID
+    //         $uuid = Str::uuid()->toString();
+    //         Uuid::create(['uuid' => $uuid]);
+
+    //         // Calculate quantity safely
+    //         if ($amount % 10 !== 0) {
+    //             return response()->json([
+    //                 'error' => 'Amount must be divisible by 10'
+    //             ], 400);
+    //         }
+
+    //         //$quantity = $amount / 10;
+    //         $quantity = 1;
+
+    //         $productIdMap = [
+    //             1 => "316b285c-eb4c-4d7b-b302-0715a3e41c1a",
+    //             10 => "4cfa4c27-d4a5-41bc-91e0-459547d393f7",
+    //             50 => "a195345c-7a8b-4659-b28a-ae6cd7ab01db",
+    //             100 => "422b5c0d-f1bd-4704-a8e4-87095868cb1c",
+    //             200 => "28e04953-4965-4db2-aa58-6c58a72127d0",
+    //             500 => "ea823835-85c3-43ef-a258-a9248ee6c3bd",
+    //             1000 => "cc60a49d-e80a-4dcb-9a18-f870aefd5ba0",
+    //             2000 => "f45d4fb4-8d2a-45d7-8a14-c059222472fd",
+    //             5000 => "58c0d287-6185-4e93-830c-e13366f26f99",
+    //             10000 => "4dcf4b3e-484e-43c2-aa4b-9db59fb968cc",
+    //             20000 => "922f7554-5775-435d-93f5-9c2a7f7ae5d5",
+    //         ];
+
+    //         $productId = $productIdMap[$amount];
+
+    //         // Prepare API request
+    //         $apiPayload = [
+    //             "items" => [
+    //                 [
+    //                     "product_id" => $productId,
+    //                     "quantity"   => $quantity,
+    //                     "id_user"    => $data['imo_id'],
+    //                     "amount"     => $amount
+    //                 ]
+    //             ]
+    //         ];
+
+    //         $response = $this->fetchApiData(
+    //             $url,
+    //             $apiPayload,
+    //             $headers,
+    //             'POST'
+    //         );
+
+    //         $result = json_decode($response, true);
+
+    //         if (!isset($result['order_id']) || !isset($result['status'])) {
+    //             DB::rollBack();
+    //             return response()->json([
+    //                 'error' => 'API transaction failed',
+    //                 'response' => $result
+    //             ], 400);
+    //         }
+
+    //         // Deduct balance
+    //         $account->update([
+    //             'current_balance' => $account->current_balance - $amount,
+    //             'updated_by' => loggedInUserId()
+    //         ]);
+
+    //         // Store API transaction
+    //         ApiDiamondTransaction::create([
+    //             'imo_id'     => $data['imo_id'],
+    //             'product' => 'imo',
+    //             'uuid'    => $uuid,
+    //             'user'    => 'soft.technology2024@gmail.com',
+    //             'pass'    => 'Ahnaf2018$',
+    //             'amount'  => $amount,
+    //             'order_id'   => $result['order_id'],
+    //             'result'     => $result['status'],
+    //             'api_key'    => 'FT4TQAm_QWBTraJcAkS42KNE15x2jIO551-FXTetrgU',
+    //             'created_by' => loggedInUserId()
+    //         ]);
+
+    //         // Store user balance history
+    //         $balance = EndUserBalance::create([
+    //             ...$data,
+    //             'user_id'  => $userId,
+    //             'status'   => 'Processing',
+    //             'order_id' => $result['order_id']
+    //         ]);
+
+    //         DB::commit();
+
+    //         return $balance;
+    //     } catch (Exception $exception) {
+    //         DB::rollBack();
+    //         report($exception);
+    //         return response()->json(['error' => 'Something went wrong'], 500);
+    //     }
+    // }
+
     // public function storeBalance(array $data): Model|JsonResponse
     // {
     //     DB::beginTransaction();
