@@ -23,7 +23,7 @@ class EndUserBalanceRequest extends FormRequest
     {
         return [
             'imo_id' => 'required',
-            'amount' => 'required',
+            'amount' => 'required|numeric|min:10|max:40000',
             // 'phone_number' => 'nullable',
         ];
     }

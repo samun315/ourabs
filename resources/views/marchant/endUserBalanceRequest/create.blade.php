@@ -20,6 +20,7 @@
             <div class="card">
                 <!--begin::Card body-->
                 <div class="card-body py-4">
+                    @include('message')
                     <form method="POST" action="{{ route('marchant.sub-distributor.balance.request.store') }}"
                         enctype="multipart/form-data">
                         @csrf
@@ -49,7 +50,12 @@
                                 <label class="required fs-5 fw-bold mb-2">Diamonds</label>
                                 <div class="row">
                                     <div class="col-md-6 fv-row">
-                                        <input type="number" class="form-control form-control-solid" name="amount" id="diamond_amount">
+                                        <input type="number" class="form-control form-control-solid @error('amount') is-invalid @enderror"
+                                            name="amount" id="diamond_amount" min="10" max="40000" required
+                                            placeholder="Enter Amount (Min 10, Max 40000)">
+                                        @error('amount')
+                                            <span class="text-danger mt-2">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                     {{-- @foreach ($diamonds as $diamond)
                                         <div class="col-md-6 fv-row">

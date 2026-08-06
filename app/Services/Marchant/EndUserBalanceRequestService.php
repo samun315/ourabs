@@ -51,7 +51,7 @@ class EndUserBalanceRequestService
             ->make(true);
     }
 
-    public function storeBalance(array $data): Model|JsonResponse
+    public function storeBalance(array $data): Model
     {
         DB::beginTransaction();
         try {
@@ -63,33 +63,26 @@ class EndUserBalanceRequestService
             $account = Account::query()->where('user_id', $userId)->first();
 
             if (!$account || $amount > $account->current_balance) {
-                return response()->json([
-                    'error' => 'Insufficient balance'
-                ], 400);
+                throw new Exception('Insufficient balance');
             }
-
 
             // Generate UUID
             $uuid = Str::uuid()->toString();
             Uuid::create(['uuid' => $uuid]);
 
             // Calculate quantity safely
-            if ($amount % 10 !== 0) {
-                return response()->json([
-                    'error' => 'Amount must be divisible by 10'
-                ], 400);
-            }
+            // if ($amount % 10 !== 0) {
+            //     throw new Exception('Amount must be divisible by 10');
+            // }
 
             //$quantity = $amount / 10;
-            $quantity = 1;
-
+            //$quantity = 1;
 
             // Deduct balance
             $account->update([
                 'current_balance' => $account->current_balance - $amount,
                 'updated_by' => loggedInUserId()
             ]);
-
 
             // Store user balance history
             $balance = EndUserBalance::create([
@@ -104,8 +97,7 @@ class EndUserBalanceRequestService
             return $balance;
         } catch (Exception $exception) {
             DB::rollBack();
-            report($exception);
-            return response()->json(['error' => 'Something went wrong'], 500);
+            throw $exception;
         }
     }
 
