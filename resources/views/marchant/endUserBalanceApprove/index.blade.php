@@ -72,7 +72,7 @@
 @section('page_script')
 
     <!-- begin::Page Custom Stylesheets(used by this page) -->
-    <script src="{{ asset('assets/custom/js/marchant/endUserBalanceRequest/index.js') }}"
+    <script src="{{ asset('assets/custom/js/marchant/endUserBalanceRequest/index.js') }}?v={{ filemtime(public_path('assets/custom/js/marchant/endUserBalanceRequest/index.js')) }}"
         {{ Sri::html('assets/custom/js/marchant/endUserBalanceRequest/index.js') }}></script>
         <script src="{{ asset('assets/custom/js/marchant/endUserBalanceRequest/page.js') }}"
         {{ Sri::html('assets/custom/js/marchant/endUserBalanceRequest/page.js') }}></script>
