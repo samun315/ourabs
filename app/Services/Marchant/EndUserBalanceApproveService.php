@@ -38,7 +38,7 @@ class EndUserBalanceApproveService
                         ->orWhere('end_user_balance_transfers.amount', 'like', "%$searchKeyword%")
                         ->orWhere('end_user_balance_transfers.status', 'like', "%$searchKeyword%");
                 });
-            })->select('end_user_balance_transfers.*', 'users.role_id', 'users.full_name', 'users.phone', 'users.email', 'user_roles.role_name')
+            })->select('end_user_balance_transfers.*', 'users.role_id', 'users.full_name', 'users.phone', 'user_roles.role_name')
             ->latest();
 
         return Datatables::of($query)
@@ -46,30 +46,11 @@ class EndUserBalanceApproveService
             ->addColumn('user', function ($row) {
                 $name = $row->full_name ?? '';
                 $phone = $row->phone ?? '';
-                $email = $row->email ?? '';
                 $role = $row->role_name ?? '';
-                $user = $name . '<br>' . $phone . '<br>' . $email . '<br> <p class="badge badge-success ">' . $role . '</p>';
+                $user = $name . '<br>' . $phone . '<br> <p class="badge badge-success ">' . $role . '</p>';
                 return $user;
             })
-            // ->addColumn('action', function ($row) {
-            //     $transferBtn = '';
-            //     $cancelBtn = '';
-
-            //     if ($row->status == 'Transferred' || $row->status == 'Cancelled') {
-            //         $transferBtn = '';
-            //         $cancelBtn = '';
-            //     } else {
-            //         $transferBtn = '<button type="button" data-id="' . $row->balance_transfer_id . '"  data-status="Transferred" class="btn btn-success btn-sm ms-lg-2 transferredBtn">Transfer</button>';
-            //         $cancelBtn = '<button type="button" data-id="' . $row->balance_transfer_id . '" data-status="Cancelled" class="btn btn-danger btn-sm ms-lg-2 cancelledBtn">Cancel</button>';
-            //     }
-
-            //     $button = '<div class="btn-group" role="group" aria-label="Basic example">
-            //     ' . $transferBtn . '
-            //     ' . $cancelBtn . '
-            //     </div>';
-            //     return $button;
-            // })
-            ->rawColumns([ 'user'])
+            ->rawColumns(['user'])
             ->make(true);
     }
 

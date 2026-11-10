@@ -50,12 +50,8 @@
                                     <tr class="text-start text-muted text-uppercase fw-bolder fs-7 gs-0">
                                         <th>#</th>
                                         <th>User</th>
-                                        <th>Imo Id</th>
-                                        {{-- <th>Phone</th> --}}
-                                        <th>Amount</th>
-                                        <th>Status</th>
+                                        <th class="text-center">Amount</th>
                                         <th>Date</th>
-                                        <th>Action</th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>

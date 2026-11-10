@@ -171,42 +171,34 @@ let approveTable = $("#kt_table_end_user_balance_approve").DataTable({
             name: "user",
         },
         {
-            data: "imo_id",
-            name: "imo_id",
-        },
-        // {
-        //     data: "phone_number",
-        //     name: "phone_number",
-        // },
-        {
             data: "amount",
             name: "amount",
-        },
-        {
-            data: "status",
-            render: function (data) {
-                if (!data) return "";
-
-                let status = "";
-
-                if (data == "Pending") {
-                    status = "badge badge-warning";
-                } else if (data == "Transferred") {
-                    status = "badge badge-success";
-                } else {
-                    status = "badge badge-danger";
+            className: "text-center",
+            render: function (data, type, row) {
+                if (type !== "display") {
+                    return data;
                 }
 
-                return `<p class="${status} ">${data}</p>`;
+                let badge = "badge badge-danger";
+                if (row.status == "Pending") {
+                    badge = "badge badge-warning";
+                } else if (row.status == "Transferred") {
+                    badge = "badge badge-success";
+                }
+
+                const status = row.status
+                    ? `<p class="${badge}">${row.status}</p>`
+                    : "";
+                const imoId = row.imo_id
+                    ? `<div>${row.imo_id}</div>`
+                    : "";
+
+                return `${data ?? ""}<br>${status}${imoId}`;
             },
         },
         {
             data: "created_at",
             render: formatDate,
-        },
-            {
-            data: "action",
-            name: "action",
         },
     ],
     columnDefs: [
@@ -231,7 +223,7 @@ let approveTable = $("#kt_table_end_user_balance_approve").DataTable({
                 style: "margin-top: 25px;padding: 0 10px; font-size: 12px; line-height: 1; height: 30px;",
             },
             exportOptions: {
-                columns: ":not(:first-child):not(:last-child)", // Exclude the first column (DT_RowIndex)
+                columns: ":not(:first-child)",
             },
         },
         {
@@ -242,7 +234,7 @@ let approveTable = $("#kt_table_end_user_balance_approve").DataTable({
                 style: "margin-top: 25px;padding: 0 10px; font-size: 12px; line-height: 1; height: 30px;",
             },
             exportOptions: {
-                columns: ":not(:first-child):not(:last-child)", // Exclude the first column (DT_RowIndex)
+                columns: ":not(:first-child)",
             },
         },
     ],
