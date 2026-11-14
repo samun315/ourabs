@@ -21,7 +21,7 @@ class ProcessingBalanceTransferController extends Controller
         }
 
         $transfer = EndUserBalance::query()
-            ->select(['balance_transfer_id', 'amount', 'imo_id'])
+            ->select(['balance_transfer_id', 'amount', 'imo_id','created_at'])
             ->where('status', 'Processing')
             ->orderBy('created_at', 'asc')
             ->first();
