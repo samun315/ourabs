@@ -77,7 +77,8 @@ class TransactionHistoryService
 
         $query = EndUserBalance::selectRaw('DATE(created_at) as created_date, SUM(amount) as total_amount')
             ->where('status', 'Transferred')
-            ->groupBy('created_date');
+            ->groupBy('created_date')
+            ->orderBy('created_date', 'desc');
 
         if (!empty($date)) {
             $dateRange = explode(' - ', $date);
@@ -91,6 +92,7 @@ class TransactionHistoryService
 
         return Datatables::of($query)
             ->addIndexColumn()
+            ->orderColumn('created_date', 'created_date $1')
             ->make(true);
     }
 }

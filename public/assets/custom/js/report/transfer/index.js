@@ -99,6 +99,7 @@ let table = $("#kt_table_transfer_report").DataTable({
         },
         {
             data: "created_date",
+            name: "created_date",
             render: formatDate,
         },
         {
@@ -106,6 +107,7 @@ let table = $("#kt_table_transfer_report").DataTable({
             name: "total_amount",
         },
     ],
+    order: [[1, "desc"]],
     columnDefs: [
         {
             targets: "_all",
