@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\CheckBalanceTransferStatusController;
 use App\Http\Controllers\Api\EndUserBalanceOrderStatusController;
 use App\Http\Controllers\Api\ProcessingBalanceTransferController;
+use App\Http\Controllers\Api\ResetStaleProcessingOrdersController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\OrderWebhookController;
 
@@ -25,6 +26,9 @@ Route::get('/end-user/balance/processing', [ProcessingBalanceTransferController:
 
 Route::post('/end-user/balance/order-status', [EndUserBalanceOrderStatusController::class, 'update'])
     ->name('end-user.balance.order-status');
+
+Route::get('/end-user/balance/reset-stale-processing', ResetStaleProcessingOrdersController::class)
+    ->name('end-user.balance.reset-stale-processing');
 
 
 
