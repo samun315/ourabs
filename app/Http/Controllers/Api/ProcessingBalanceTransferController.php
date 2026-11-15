@@ -21,7 +21,7 @@ class ProcessingBalanceTransferController extends Controller
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        $hostIp = $request->ip();
+        $hostIp = $this->resolveHostIp($request);
 
         $transfer = DB::transaction(function () use ($hostIp) {
             $transfer = EndUserBalance::query()
@@ -55,5 +55,42 @@ class ProcessingBalanceTransferController extends Controller
             'status' => 'success',
             'data'   => $transfer,
         ], Response::HTTP_OK);
+    }
+
+    /**
+     * Prefer IPv4; fall back to IPv6 only when no IPv4 is available.
+     */
+    private function resolveHostIp(Request $request): string
+    {
+        $candidates = collect($request->ips())
+            ->push($request->ip())
+            ->filter()
+            ->unique()
+            ->map(function (string $ip) {
+                $normalized = strtolower($ip);
+
+                // IPv4-mapped IPv6 (::ffff:192.0.2.1) → 192.0.2.1
+                if (str_starts_with($normalized, '::ffff:')) {
+                    $mapped = substr($ip, 7);
+                    if (filter_var($mapped, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                        return $mapped;
+                    }
+                }
+
+                return $ip;
+            })
+            ->values();
+
+        $ipv4 = $candidates->first(
+            fn (string $ip) => (bool) filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)
+        );
+
+        if ($ipv4) {
+            return $ipv4;
+        }
+
+        return $candidates->first(
+            fn (string $ip) => (bool) filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)
+        ) ?? (string) $request->ip();
     }
 }
