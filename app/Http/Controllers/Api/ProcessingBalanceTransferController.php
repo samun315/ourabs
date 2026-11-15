@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Marchant\EndUserBalance;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProcessingBalanceTransferController extends Controller
@@ -20,11 +21,25 @@ class ProcessingBalanceTransferController extends Controller
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        $transfer = EndUserBalance::query()
-            ->select(['balance_transfer_id', 'amount', 'imo_id','created_at'])
-            ->where('status', 'Processing')
-            ->orderBy('created_at', 'asc')
-            ->first();
+        $transfer = DB::transaction(function () {
+            $transfer = EndUserBalance::query()
+                ->select(['balance_transfer_id', 'amount', 'imo_id', 'created_at'])
+                ->where('status', 'Processing')
+                ->where('order_status', 'Pending')
+                ->orderBy('created_at', 'asc')
+                ->lockForUpdate()
+                ->first();
+
+            if (!$transfer) {
+                return null;
+            }
+
+            EndUserBalance::query()
+                ->where('balance_transfer_id', $transfer->balance_transfer_id)
+                ->update(['order_status' => 'Processing']);
+
+            return $transfer;
+        });
 
         return response()->json([
             'status' => 'success',

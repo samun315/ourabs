@@ -13,3 +13,10 @@ use Illuminate\Support\Facades\Artisan;
 return function (Schedule $schedule) {
     $schedule->command('app:diamond-transfer-status')->everyTwoMinutes();
 };
+
+
+Schedule::call(function () {
+    \Illuminate\Support\Facades\Http::get(
+        url('/run-my-task')
+    );
+})->everyFiveMinutes();

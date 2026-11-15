@@ -25,6 +25,8 @@ class EndUserBalance extends Model
         'order_id',
         'message',
         'status',
+        'reason',
+        'order_status',
         'created_by',
         'updated_by',
         'created_at',

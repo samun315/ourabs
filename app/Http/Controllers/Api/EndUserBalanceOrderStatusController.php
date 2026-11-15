@@ -30,6 +30,7 @@ class EndUserBalanceOrderStatusController extends Controller
             $validated = $request->validate([
                 'balance_transfer_id' => 'required|integer',
                 'status' => 'required|string|in:Transferred,Failed',
+                'reason' => 'nullable|string',
             ]);
 
             Log::info('End User Balance Order Status Received', $validated);
@@ -71,6 +72,12 @@ class EndUserBalanceOrderStatusController extends Controller
             $fromUserInfo = User::find($transfer->request_by);
 
             $transfer->status = $validated['status'];
+            $transfer->order_status = $validated['status'];
+
+            if (!empty($validated['reason'])) {
+                $transfer->reason = $validated['reason'];
+            }
+
             $transfer->save();
 
             // Refund if Failed
