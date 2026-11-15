@@ -27,6 +27,7 @@ class EndUserBalance extends Model
         'status',
         'reason',
         'order_status',
+        'host_ip',
         'created_by',
         'updated_by',
         'created_at',

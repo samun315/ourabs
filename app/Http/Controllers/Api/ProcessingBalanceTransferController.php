@@ -21,11 +21,18 @@ class ProcessingBalanceTransferController extends Controller
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        $transfer = DB::transaction(function () {
+        $hostIp = $request->ip();
+
+        $transfer = DB::transaction(function () use ($hostIp) {
             $transfer = EndUserBalance::query()
                 ->select(['balance_transfer_id', 'amount', 'imo_id', 'created_at'])
                 ->where('status', 'Processing')
                 ->where('order_status', 'Pending')
+                ->where(function ($query) use ($hostIp) {
+                    $query->whereNull('host_ip')
+                        ->orWhere('host_ip', $hostIp);
+                })
+                ->orderByRaw('CASE WHEN host_ip = ? THEN 0 ELSE 1 END', [$hostIp])
                 ->orderBy('created_at', 'asc')
                 ->lockForUpdate()
                 ->first();
@@ -36,7 +43,10 @@ class ProcessingBalanceTransferController extends Controller
 
             EndUserBalance::query()
                 ->where('balance_transfer_id', $transfer->balance_transfer_id)
-                ->update(['order_status' => 'Processing']);
+                ->update([
+                    'order_status' => 'Processing',
+                    'host_ip' => $hostIp,
+                ]);
 
             return $transfer;
         });
