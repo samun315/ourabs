@@ -39,7 +39,7 @@ class EndUserBalanceApproveService
                         ->orWhere('end_user_balance_transfers.status', 'like', "%$searchKeyword%");
                 });
             })->select('end_user_balance_transfers.*', 'users.role_id', 'users.full_name', 'users.phone', 'user_roles.role_name')
-            ->latest();
+            ->orderByDesc('end_user_balance_transfers.balance_transfer_id');
 
         return Datatables::of($query)
             ->addIndexColumn()
