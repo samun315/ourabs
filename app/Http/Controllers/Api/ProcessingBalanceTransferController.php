@@ -41,7 +41,7 @@ class ProcessingBalanceTransferController extends Controller
 
             $transfer = $query
                 ->orderBy('created_at', 'asc')
-                ->lockForUpdate()
+                ->lock('FOR UPDATE SKIP LOCKED')
                 ->first();
 
             if (!$transfer) {
@@ -54,9 +54,14 @@ class ProcessingBalanceTransferController extends Controller
                 $update['host_ip'] = $hostIp;
             }
 
-            EndUserBalance::query()
+            $affected = EndUserBalance::query()
                 ->where('balance_transfer_id', $transfer->balance_transfer_id)
+                ->where('order_status', 'Pending')
                 ->update($update);
+
+            if ($affected === 0) {
+                return null; // lost the race; do not return this order
+            }
 
             return $transfer;
         });
