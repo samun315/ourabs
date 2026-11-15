@@ -37,7 +37,7 @@ class EndUserBalanceRequestService
                         ->orWhere('status', 'like', "%$searchKeyword%");
                 });
                 $query->where('created_by', loggedInUserId());
-            })->latest();
+            })->orderByDesc('balance_transfer_id');
 
         return Datatables::of($query)
             ->addIndexColumn()
