@@ -30,7 +30,7 @@ class ResetStaleProcessingOrders extends Command
         $updated = EndUserBalance::query()
             ->where('status', 'Processing')
             ->where('order_status', 'Processing')
-            ->where('updated_at', '<', now()->subMinutes(5))
+            ->where('updated_at', '<', now()->subMinutes(3))
             ->update(['order_status' => 'Pending']);
 
         if ($updated > 0) {
