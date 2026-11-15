@@ -55,7 +55,7 @@
 @section('page_script')
 
     <!-- begin::Page Custom Stylesheets(used by this page) -->
-    <script src="{{ asset('assets/custom/js/report/transfer/index.js') }}"
+    <script src="{{ asset('assets/custom/js/report/transfer/index.js') }}?v={{ filemtime(public_path('assets/custom/js/report/transfer/index.js')) }}"
         {{ Sri::html('assets/custom/js/report/transfer/index.js') }}></script>
     <!--end::Page Custom Stylesheets(used by this page)-->
 
