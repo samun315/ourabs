@@ -24,15 +24,22 @@ class ProcessingBalanceTransferController extends Controller
         $hostIp = $this->resolveHostIp($request);
 
         $transfer = DB::transaction(function () use ($hostIp) {
-            $transfer = EndUserBalance::query()
+            $query = EndUserBalance::query()
                 ->select(['balance_transfer_id', 'amount', 'imo_id', 'created_at'])
                 ->where('status', 'Processing')
-                ->where('order_status', 'Pending')
-                ->where(function ($query) use ($hostIp) {
-                    $query->whereNull('host_ip')
+                ->where('order_status', 'Pending');
+
+            if ($hostIp) {
+                $query->where(function ($q) use ($hostIp) {
+                    $q->whereNull('host_ip')
                         ->orWhere('host_ip', $hostIp);
-                })
-                ->orderByRaw('CASE WHEN host_ip = ? THEN 0 ELSE 1 END', [$hostIp])
+                })->orderByRaw('CASE WHEN host_ip = ? THEN 0 ELSE 1 END', [$hostIp]);
+            } else {
+                // No IPv4: only unassigned orders, FIFO
+                $query->whereNull('host_ip');
+            }
+
+            $transfer = $query
                 ->orderBy('created_at', 'asc')
                 ->lockForUpdate()
                 ->first();
@@ -41,12 +48,15 @@ class ProcessingBalanceTransferController extends Controller
                 return null;
             }
 
+            $update = ['order_status' => 'Processing'];
+
+            if ($hostIp) {
+                $update['host_ip'] = $hostIp;
+            }
+
             EndUserBalance::query()
                 ->where('balance_transfer_id', $transfer->balance_transfer_id)
-                ->update([
-                    'order_status' => 'Processing',
-                    'host_ip' => $hostIp,
-                ]);
+                ->update($update);
 
             return $transfer;
         });
@@ -58,11 +68,11 @@ class ProcessingBalanceTransferController extends Controller
     }
 
     /**
-     * Prefer IPv4; fall back to IPv6 only when no IPv4 is available.
+     * Resolve IPv4 only. Returns null when no IPv4 is available (never stores IPv6).
      */
-    private function resolveHostIp(Request $request): string
+    private function resolveHostIp(Request $request): ?string
     {
-        $candidates = collect($request->ips())
+        return collect($request->ips())
             ->push($request->ip())
             ->filter()
             ->unique()
@@ -79,18 +89,6 @@ class ProcessingBalanceTransferController extends Controller
 
                 return $ip;
             })
-            ->values();
-
-        $ipv4 = $candidates->first(
-            fn (string $ip) => (bool) filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)
-        );
-
-        if ($ipv4) {
-            return $ipv4;
-        }
-
-        return $candidates->first(
-            fn (string $ip) => (bool) filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)
-        ) ?? (string) $request->ip();
+            ->first(fn (string $ip) => (bool) filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4));
     }
 }
