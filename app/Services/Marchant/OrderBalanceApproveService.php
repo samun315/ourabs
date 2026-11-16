@@ -30,7 +30,7 @@ class OrderBalanceApproveService
                     $q->where('status', 'like', "%$searchKeyword%");
                 });
             })->select('orders.*', 'users.role_id', 'users.full_name', 'users.phone', 'users.email', 'payment_gateways.gateway_name', 'payment_gateways.currency_code', 'payment_gateways.rate')
-            ->latest();
+            ->orderBy('orders.id', 'desc');
 
         // dd( $query);
 

@@ -33,7 +33,8 @@
                                         <label class="required fs-5 fw-bold mb-2">User</label>
                                         <select name="user_id" id="kt_user_id"
                                             class="form-select form-select-solid @error('user_id') is-invalid @enderror"
-                                            data-control="select2" data-placeholder="Select User" required>
+                                            data-control="select2" data-placeholder="Select User"
+                                            data-dropdown-parent="#showModal" required>
                                             <option value=""></option>
                                             @foreach ($users as $user)
                                                 <option value="{{ $user?->id }}"
