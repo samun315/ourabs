@@ -41,11 +41,11 @@ class EndUserBalanceRequestService
 
         return Datatables::of($query)
             ->addIndexColumn()
+            ->addColumn('bonus', function ($row) {
+                return $row->bonus ?? 0;
+            })
             ->addColumn('action', function ($row) {
-
-                $showBtn = '<button data-id="' . $row->balance_transfer_id . '" class="btn btn-success btn-sm ms-lg-2 showEndUserBalanceBtn" data-bs-toggle="modal" data-bs-target="#showModal">Show</button>';
-
-                return $showBtn;
+                return '<button type="button" data-id="' . $row->balance_transfer_id . '" class="btn-show showEndUserBalanceBtn"><i class="fas fa-eye"></i><span class="btn-show-text"> Show</span></button>';
             })
             ->rawColumns(['action'])
             ->make(true);

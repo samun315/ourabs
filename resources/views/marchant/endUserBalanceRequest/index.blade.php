@@ -1,5 +1,9 @@
 @extends('master')
 @section('title', 'End User Balance')
+@section('page_css')
+    <link href="{{ asset('assets/custom/css/endUserBalanceRequest/style.css') }}?v={{ filemtime(public_path('assets/custom/css/endUserBalanceRequest/style.css')) }}"
+        {{ Sri::html('assets/custom/css/endUserBalanceRequest/style.css') }} rel="stylesheet" type="text/css" />
+@endsection
 @section('content')
     <x-toolbar-component title="End User Balance Request List" :breadcrumbs="[
         ['label' => 'Home', 'url' => route('dashboard')],
@@ -14,7 +18,7 @@
             <!--begin::Card-->
             <div class="card">
                 <!--begin::Card header-->
-                <div class="card-header border-0 pt-6">
+                <div class="card-header border-0 pt-4 pb-0">
                     <!--begin::Card title-->
                     <div class="card-title">
                         <!--begin::Search-->
@@ -38,24 +42,30 @@
                 </div>
                 <!--end::Card header-->
                 <!--begin::Card body-->
-                <div class="card-body py-4">
+                <div class="card-body pt-3 pb-4">
                     @include('message')
                     <!--begin::Table-->
                     <div id="kt_table_users_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
                         <div class="table-responsive">
-                            <table class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer"
+                            <table class="table table-sm align-middle dataTable no-footer w-100"
                                 id="kt_table_end_user_balance">
                                 <!--begin::Table head-->
                                 <thead>
                                     <!--begin::Table row-->
-                                    <tr class="text-start text-muted text-uppercase fw-bolder fs-7 gs-0">
-                                        <th>#</th>
-                                        <th>Imo Id/Phone Number</th>
-                                        {{-- <th>Phone</th> --}}
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>IMO ID</th>
                                         <th>Amount</th>
                                         <th>Status</th>
-                                        <th>Date</th>
-                                        {{-- <th>Action</th> --}}
+                                        <th>Bonus</th>
+                                        <th>
+                                            <span class="d-none d-md-inline">Created Time</span>
+                                            <span class="d-md-none">Date</span>
+                                        </th>
+                                        <th>
+                                            <span class="d-none d-md-inline">Actions</span>
+                                            <span class="d-md-none">Act</span>
+                                        </th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -68,6 +78,7 @@
                 <!--end::Card body-->
             </div>
             <!--end::Card-->
+            @include('marchant.endUserBalanceRequest.modal.showBalanceModal')
         </div>
         <!--end::Container-->
     </div>
@@ -75,9 +86,14 @@
 
 @section('page_script')
 
-    <!-- begin::Page Custom Stylesheets(used by this page) -->
+    {{-- Excel + PDF export libraries --}}
+    <script src="{{ asset('assets/custom/js/marchant/endUserBalanceRequest/export-libs.js') }}?v={{ filemtime(public_path('assets/custom/js/marchant/endUserBalanceRequest/export-libs.js')) }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/export/jszip.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/export/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/export/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('assets/custom/js/marchant/endUserBalanceRequest/export-libs-init.js') }}?v={{ filemtime(public_path('assets/custom/js/marchant/endUserBalanceRequest/export-libs-init.js')) }}"></script>
+
     <script src="{{ asset('assets/custom/js/marchant/endUserBalanceRequest/index.js') }}?v={{ filemtime(public_path('assets/custom/js/marchant/endUserBalanceRequest/index.js')) }}"
         {{ Sri::html('assets/custom/js/marchant/endUserBalanceRequest/index.js') }}></script>
-    <!--end::Page Custom Stylesheets(used by this page)-->
 
 @endsection

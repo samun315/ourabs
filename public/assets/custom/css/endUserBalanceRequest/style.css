@@ -15,7 +15,6 @@
     color: #007bff;
     display: flex;
     justify-content: space-between;
-    /* Ensures checkmark is at the end */
     align-items: center;
     position: relative;
     width: 100%;
@@ -33,35 +32,381 @@ input:checked+.diamond-box {
     font-weight: bold;
 }
 
-
 input:checked+.diamond-box .checkmark {
     display: inline-block;
 }
-
 
 .diamond-text {
     flex-grow: 1;
-    /* Ensures the text takes all available space */
-}
-
-input:checked+.diamond-box .checkmark {
-    display: inline-block;
-}
-
-.table {
-    border-collapse: collapse;
-    width: 100%;
-}
-
-.table th,
-.table td {
-    border: 1px solid #ddd;
-    text-align: left;
-    padding: 8px;
 }
 
 #preview {
     display: none;
     width: 100%;
     max-height: 250px;
+}
+
+/* Compact end-user balance table */
+#kt_table_users_wrapper .table-responsive {
+    overflow-x: visible;
+}
+
+#kt_table_end_user_balance {
+    width: 100% !important;
+    table-layout: auto;
+    border-collapse: collapse;
+    margin: 0;
+}
+
+#kt_table_end_user_balance thead th,
+#kt_table_end_user_balance tbody td {
+    border: 1px solid #e5e7eb;
+    vertical-align: middle;
+    white-space: nowrap !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+}
+
+#kt_table_end_user_balance thead th {
+    background: #f9fafb;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: normal;
+    padding: 10px 12px !important;
+}
+
+#kt_table_end_user_balance tbody td {
+    padding: 8px 12px !important;
+    font-size: 13px;
+    color: #1f2937;
+    background: #fff;
+}
+
+#kt_table_end_user_balance .status-badge {
+    display: inline-block;
+    margin: 0;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #fff;
+    text-transform: uppercase;
+    white-space: nowrap !important;
+}
+
+#kt_table_end_user_balance .status-badge.transferred {
+    background: #4ade80;
+}
+
+#kt_table_end_user_balance .status-badge.cancelled,
+#kt_table_end_user_balance .status-badge.failed {
+    background: #ef4444;
+}
+
+#kt_table_end_user_balance .status-badge.pending,
+#kt_table_end_user_balance .status-badge.processing {
+    background: #f59e0b;
+}
+
+#kt_table_end_user_balance .btn-show {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: #fff;
+    background: #38bdf8;
+    border: none;
+    border-radius: 4px;
+    white-space: nowrap !important;
+}
+
+#kt_table_end_user_balance .btn-show:hover {
+    background: #0ea5e9;
+    color: #fff;
+}
+
+#kt_table_end_user_balance_wrapper .dataTables_length,
+#kt_table_end_user_balance_wrapper .dataTables_info,
+#kt_table_end_user_balance_wrapper .dataTables_paginate {
+    font-size: 13px;
+}
+
+#kt_table_end_user_balance_wrapper .dt-buttons,
+#kt_table_end_user_balance_approve_wrapper .dt-buttons {
+    display: inline-flex !important;
+    flex-wrap: wrap;
+    gap: 0;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+#kt_table_end_user_balance_wrapper .dt-button,
+#kt_table_end_user_balance_wrapper .end-user-export-btn,
+#kt_table_end_user_balance_approve_wrapper .dt-button,
+#kt_table_end_user_balance_approve_wrapper .end-user-export-btn {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    margin: 0 !important;
+    padding: 6px 14px !important;
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+    height: auto !important;
+    border: 0;
+}
+
+/* Order Information modal */
+#showModal .modal-dialog {
+    max-width: 520px;
+    width: calc(100% - 24px);
+    margin: 12px auto;
+}
+
+.end-user-order-modal {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.end-user-order-modal .modal-header,
+.end-user-order-modal .modal-body {
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.end-user-order-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #4b5563;
+    margin: 0;
+}
+
+.end-user-order-info {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.end-user-order-row {
+    display: grid;
+    grid-template-columns: minmax(90px, 130px) minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    padding: 12px 16px;
+    font-size: 14px;
+}
+
+.end-user-order-row:nth-child(odd) {
+    background: #f3f6f9;
+}
+
+.end-user-order-row:nth-child(even) {
+    background: #fff;
+}
+
+.end-user-order-label {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.end-user-order-value {
+    color: #111827;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    word-break: break-word;
+}
+
+.end-user-diamond-icon {
+    color: #60a5fa;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.end-user-order-info .status-badge {
+    display: inline-block;
+    margin: 0;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.end-user-order-info .status-badge.transferred {
+    background: #22c55e;
+}
+
+.end-user-order-info .status-badge.cancelled,
+.end-user-order-info .status-badge.failed {
+    background: #ef4444;
+}
+
+.end-user-order-info .status-badge.pending,
+.end-user-order-info .status-badge.processing {
+    background: #f59e0b;
+}
+
+/* Tablet */
+@media (max-width: 991.98px) {
+    #kt_table_end_user_balance thead th {
+        padding: 6px 8px !important;
+        font-size: 11px;
+    }
+
+    #kt_table_end_user_balance tbody td {
+        padding: 6px 8px !important;
+        font-size: 11px;
+    }
+
+    #kt_table_end_user_balance .status-badge {
+        padding: 3px 8px;
+        font-size: 10px;
+    }
+
+    #kt_table_end_user_balance .btn-show {
+        padding: 3px 8px;
+        font-size: 10px;
+        gap: 4px;
+    }
+
+    #kt_table_end_user_balance_wrapper .dataTables_length,
+    #kt_table_end_user_balance_wrapper .dataTables_info,
+    #kt_table_end_user_balance_wrapper .dataTables_paginate {
+        font-size: 12px;
+    }
+
+    .end-user-order-title {
+        font-size: 16px;
+    }
+
+    .end-user-order-row {
+        grid-template-columns: 100px minmax(0, 1fr);
+        gap: 10px;
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+}
+
+/* Mobile — same clean row layout as desktop, smaller type */
+@media (max-width: 767.98px) {
+    #kt_content_container.container-fluid {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .card-body.pt-3 {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+
+    #kt_table_users_wrapper .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #kt_table_end_user_balance {
+        width: 100% !important;
+        min-width: 0;
+    }
+
+    #kt_table_end_user_balance thead th {
+        padding: 5px 4px !important;
+        font-size: 9px;
+    }
+
+    #kt_table_end_user_balance tbody td {
+        padding: 5px 4px !important;
+        font-size: 9px;
+    }
+
+    #kt_table_end_user_balance thead th,
+    #kt_table_end_user_balance tbody td {
+        white-space: nowrap !important;
+        word-break: keep-all !important;
+        overflow-wrap: normal !important;
+    }
+
+    #kt_table_end_user_balance .sorting:before,
+    #kt_table_end_user_balance .sorting:after,
+    #kt_table_end_user_balance .sorting_asc:before,
+    #kt_table_end_user_balance .sorting_asc:after,
+    #kt_table_end_user_balance .sorting_desc:before,
+    #kt_table_end_user_balance .sorting_desc:after {
+        display: none !important;
+    }
+
+    #kt_table_end_user_balance .status-badge {
+        padding: 2px 6px;
+        font-size: 8px;
+        white-space: nowrap !important;
+    }
+
+    #kt_table_end_user_balance .btn-show {
+        padding: 2px 6px;
+        font-size: 8px;
+        gap: 3px;
+    }
+
+    #kt_table_end_user_balance .btn-show .btn-show-text {
+        display: inline;
+    }
+
+    #kt_table_end_user_balance_wrapper .row > [class*="col-"] {
+        width: 100%;
+        max-width: 100%;
+        flex: 0 0 100%;
+    }
+
+    #kt_table_end_user_balance_wrapper .dataTables_length,
+    #kt_table_end_user_balance_wrapper .dataTables_info,
+    #kt_table_end_user_balance_wrapper .dataTables_paginate {
+        font-size: 11px;
+    }
+
+    #kt_table_end_user_balance_wrapper .dataTables_paginate {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 8px;
+    }
+
+    #showModal .modal-dialog {
+        max-width: calc(100vw - 16px);
+        width: calc(100vw - 16px);
+        margin: 8px auto;
+    }
+
+    .end-user-order-modal .modal-header,
+    .end-user-order-modal .modal-body {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .end-user-order-title {
+        font-size: 15px;
+    }
+
+    .end-user-order-row {
+        grid-template-columns: 88px minmax(0, 1fr);
+        gap: 8px;
+        padding: 10px;
+        font-size: 12px;
+    }
+
+    .end-user-order-info .status-badge {
+        font-size: 10px;
+        padding: 3px 8px;
+        white-space: nowrap;
+    }
 }
