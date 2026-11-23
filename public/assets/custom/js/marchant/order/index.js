@@ -114,9 +114,71 @@ const formatDate = (data) => {
     return `${day} ${month}, ${date.getFullYear()} ,${hour}:${minute} ${amPm}`;
 };
 
+const formatTableDate = (data) => {
+    if (!data) return "";
+
+    const date = new Date(data);
+    if (Number.isNaN(date.getTime())) return data;
+
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    let hour = date.getHours();
+    const amPm = hour >= 12 ? "PM" : "AM";
+    hour = hour % 12 || 12;
+    const minute = date.getMinutes().toString().padStart(2, "0");
+
+    return `${year}-${month}-${day} ${hour.toString().padStart(2, "0")}:${minute} ${amPm}`;
+};
+
+const getOrderStatusBadgeHtml = (data) => {
+    if (!data) return "";
+
+    const statusKey = String(data).toLowerCase();
+    let badgeClass = "cancelled";
+
+    if (statusKey === "pending") {
+        badgeClass = "pending";
+    } else if (statusKey === "paid") {
+        badgeClass = "paid";
+    }
+
+    return `<span class="status-badge ${badgeClass}">${String(data).toUpperCase()}</span>`;
+};
+
+(function registerExportLibs() {
+    if (window.JSZip && $.fn.dataTable && $.fn.dataTable.Buttons) {
+        $.fn.dataTable.Buttons.jszip(window.JSZip);
+    }
+    if (window.pdfMake && $.fn.dataTable && $.fn.dataTable.Buttons) {
+        $.fn.dataTable.Buttons.pdfMake(window.pdfMake);
+    }
+    if ($.fn.dataTable && $.fn.dataTable.ext && $.fn.dataTable.ext.buttons) {
+        if ($.fn.dataTable.ext.buttons.excelHtml5) {
+            $.fn.dataTable.ext.buttons.excelHtml5.available = function () {
+                return typeof window.JSZip !== "undefined";
+            };
+        }
+        if ($.fn.dataTable.ext.buttons.pdfHtml5) {
+            $.fn.dataTable.ext.buttons.pdfHtml5.available = function () {
+                return typeof window.pdfMake !== "undefined";
+            };
+        }
+    }
+})();
+
+const exportBodyFormat = {
+    body: function (data) {
+        if (data == null) return "";
+        return String(data).replace(/<[^>]*>/g, "").trim();
+    },
+};
+
 let table = $("#kt_table_order").DataTable({
     processing: true,
     serverSide: true,
+    autoWidth: false,
+    scrollX: false,
     ajax: {
         url: BASE_URL + "/order/balance",
         data: function (d) {
@@ -125,40 +187,32 @@ let table = $("#kt_table_order").DataTable({
     },
     columns: [
         {
-            data: "DT_RowIndex",
-            name: "DT_RowIndex",
-            orderable: false,
-            searchable: false,
+            data: "id",
+            name: "id",
         },
         {
             data: "amount",
             name: "amount",
         },
         {
+            data: "diamond_quantity",
+            name: "diamond_quantity",
+        },
+        {
             data: "status",
             render: function (data) {
-                if (!data) return "";
-
-                let status = "";
-
-                if (data == "Pending") {
-                    status = "badge badge-warning";
-                } else if (data == "Paid") {
-                    status = "badge badge-success";
-                } else {
-                    status = "badge badge-danger";
-                }
-
-                return `<p class="${status} ">${data}</p>`;
+                return getOrderStatusBadgeHtml(data);
             },
         },
         {
             data: "created_at",
-            render: formatDate,
+            render: formatTableDate,
         },
         {
             data: "action",
             name: "action",
+            orderable: false,
+            searchable: false,
         },
     ],
     columnDefs: [
@@ -167,34 +221,52 @@ let table = $("#kt_table_order").DataTable({
             defaultContent: "",
         },
     ],
-    paging: true, // Enables pagination
-    pageLength: 10, // Show 5 records per page
-    lengthMenu: [10, 25, 50, 75, 100, 200], // Dropdown for selecting number of rows
+    paging: true,
+    pageLength: 20,
+    lengthMenu: [10, 20, 25, 50, 75, 100, 200],
     dom:
-        '<"row"<"col-sm-2"l><"col-sm-10 d-flex justify-content-end"B>>' + // Length menu & buttons
-        '<"row"<"col-sm-12"tr>>' + // Table rows
-        '<"row mt-2"<"col-sm-6"i><"col-sm-6 d-flex justify-content-end"p>>', // Pagination & info
+        '<"row align-items-center mb-2"<"col-6"l><"col-6 text-end"B>>' +
+        '<"row"<"col-sm-12"tr>>' +
+        '<"row mt-2"<"col-sm-6"i><"col-sm-6 d-flex justify-content-end"p>>',
     buttons: [
         {
-            extend: "excelHtml5",
             text: "Excel",
-            className: "btn btn-success btn-sm",
-            attr: {
-                style: "margin-top: 25px;padding: 0 10px; font-size: 12px; line-height: 1; height: 30px;",
-            },
+            className: "btn btn-success btn-sm order-export-btn",
+            title: "Order Balance List",
+            filename: "order_balance_list",
+            extension: ".xlsx",
             exportOptions: {
-                columns: ":not(:first-child):not(:last-child)", // Exclude the first column (DT_RowIndex)
+                columns: ":visible:not(:last-child)",
+                format: exportBodyFormat,
+            },
+            action: function (e, dt, node, config) {
+                if (!window.JSZip) {
+                    toastr.error("Excel library failed to load. Please refresh.");
+                    return;
+                }
+                $.fn.dataTable.Buttons.jszip(window.JSZip);
+                const excel = $.fn.dataTable.ext.buttons.excelHtml5;
+                excel.action.call(this, e, dt, node, $.extend({}, excel, config));
             },
         },
         {
-            extend: "pdfHtml5",
             text: "PDF",
-            className: "btn btn-danger btn-sm",
-            attr: {
-                style: "margin-top: 25px;padding: 0 10px; font-size: 12px; line-height: 1; height: 30px;",
-            },
+            className: "btn btn-danger btn-sm order-export-btn",
+            title: "Order Balance List",
+            filename: "order_balance_list",
+            extension: ".pdf",
             exportOptions: {
-                columns: ":not(:first-child):not(:last-child)", // Exclude the first column (DT_RowIndex)
+                columns: ":visible:not(:last-child)",
+                format: exportBodyFormat,
+            },
+            action: function (e, dt, node, config) {
+                if (!window.pdfMake) {
+                    toastr.error("PDF library failed to load. Please refresh.");
+                    return;
+                }
+                $.fn.dataTable.Buttons.pdfMake(window.pdfMake);
+                const pdf = $.fn.dataTable.ext.buttons.pdfHtml5;
+                pdf.action.call(this, e, dt, node, $.extend({}, pdf, config));
             },
         },
     ],
@@ -207,6 +279,7 @@ search.keyup(function () {
 $(document).on("click", ".showOrderBtn", function () {
     let id = $(this).attr("data-id");
     getOrderBalanceDetails(id);
+    $("#showModal").modal("show");
 });
 
 function getOrderBalanceDetails(id) {
@@ -263,116 +336,119 @@ function getOrderBalanceDetails(id) {
 // ORDER BALANCE APPROVAL START
 
 let serchId = $("#search");
+let paidTable = null;
 
-let paidTable = $("#kt_table_order_approval").DataTable({
-    processing: true,
-    serverSide: true,
-    ajax: {
-        url: BASE_URL + "/all/order/balance",
-        data: function (d) {
-            d.search = serchId.val();
-        },
-    },
-    columns: [
-        {
-            data: "DT_RowIndex",
-            name: "DT_RowIndex",
-            orderable: false,
-            searchable: false,
-        },
-        {
-            data: "user",
-            name: "user",
-        },
-        {
-            data: "gateway_name",
-            name: "gateway_name",
-        },
-        {
-            data: "amount",
-            render: function (data, type, row) {
-                if (!data) return "";
-
-                return `TK ${data} ${row.currency_code}`;
+if ($("#kt_table_order_approval").length) {
+    paidTable = $("#kt_table_order_approval").DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: BASE_URL + "/all/order/balance",
+            data: function (d) {
+                d.search = serchId.val();
             },
         },
-        {
-            data: "diamond_quantity",
-            render: function (data, type, row) {
-                if (!data) return "";
+        columns: [
+            {
+                data: "DT_RowIndex",
+                name: "DT_RowIndex",
+                orderable: false,
+                searchable: false,
+            },
+            {
+                data: "user",
+                name: "user",
+            },
+            {
+                data: "gateway_name",
+                name: "gateway_name",
+            },
+            {
+                data: "amount",
+                render: function (data, type, row) {
+                    if (!data) return "";
 
-                return `💎 ${data} <br/>(1 IMO Diamond = ${row.rate} ${row.currency_code} 💎)`;
+                    return `TK ${data} ${row.currency_code}`;
+                },
             },
-        },
-        {
-            data: "status",
-            render: function (data) {
-                if (!data) return "";
+            {
+                data: "diamond_quantity",
+                render: function (data, type, row) {
+                    if (!data) return "";
 
-                let status = "";
+                    return `💎 ${data} <br/>(1 IMO Diamond = ${row.rate} ${row.currency_code} 💎)`;
+                },
+            },
+            {
+                data: "status",
+                render: function (data) {
+                    if (!data) return "";
 
-                if (data == "Pending") {
-                    status = "badge badge-warning";
-                } else if (data == "Paid") {
-                    status = "badge badge-success";
-                } else {
-                    status = "badge badge-danger";
-                }
+                    let status = "";
 
-                return `<p class="${status} ">${data}</p>`;
-            },
-        },
-        {
-            data: "created_at",
-            render: formatDate,
-        },
-        {
-            data: "action",
-            name: "action",
-        },
-    ],
-    columnDefs: [
-        {
-            targets: "_all",
-            defaultContent: "",
-        },
-    ],
-    paging: true, // Enables pagination
-    pageLength: 10, // Show 5 records per page
-    lengthMenu: [10, 25, 50, 75, 100, 200], // Dropdown for selecting number of rows
-    dom:
-        '<"row"<"col-sm-2"l><"col-sm-10 d-flex justify-content-end"B>>' + // Length menu & buttons
-        '<"row"<"col-sm-12"tr>>' + // Table rows
-        '<"row mt-2"<"col-sm-6"i><"col-sm-6 d-flex justify-content-end"p>>', // Pagination & info
-    buttons: [
-        {
-            extend: "excelHtml5",
-            text: "Excel",
-            className: "btn btn-success btn-sm",
-            attr: {
-                style: "margin-top: 25px;padding: 0 10px; font-size: 12px; line-height: 1; height: 30px;",
-            },
-            exportOptions: {
-                columns: ":not(:first-child):not(:last-child)", // Exclude the first column (DT_RowIndex)
-            },
-        },
-        {
-            extend: "pdfHtml5",
-            text: "PDF",
-            className: "btn btn-danger btn-sm",
-            attr: {
-                style: "margin-top: 25px;padding: 0 10px; font-size: 12px; line-height: 1; height: 30px;",
-            },
-            exportOptions: {
-                columns: ":not(:first-child):not(:last-child)", // Exclude the first column (DT_RowIndex)
-            },
-        },
-    ],
-});
+                    if (data == "Pending") {
+                        status = "badge badge-warning";
+                    } else if (data == "Paid") {
+                        status = "badge badge-success";
+                    } else {
+                        status = "badge badge-danger";
+                    }
 
-serchId.keyup(function () {
-    paidTable.draw();
-});
+                    return `<p class="${status} ">${data}</p>`;
+                },
+            },
+            {
+                data: "created_at",
+                render: formatDate,
+            },
+            {
+                data: "action",
+                name: "action",
+            },
+        ],
+        columnDefs: [
+            {
+                targets: "_all",
+                defaultContent: "",
+            },
+        ],
+        paging: true,
+        pageLength: 10,
+        lengthMenu: [10, 25, 50, 75, 100, 200],
+        dom:
+            '<"row"<"col-sm-2"l><"col-sm-10 d-flex justify-content-end"B>>' +
+            '<"row"<"col-sm-12"tr>>' +
+            '<"row mt-2"<"col-sm-6"i><"col-sm-6 d-flex justify-content-end"p>>',
+        buttons: [
+            {
+                extend: "excelHtml5",
+                text: "Excel",
+                className: "btn btn-success btn-sm",
+                attr: {
+                    style: "margin-top: 25px;padding: 0 10px; font-size: 12px; line-height: 1; height: 30px;",
+                },
+                exportOptions: {
+                    columns: ":not(:first-child):not(:last-child)",
+                },
+            },
+            {
+                extend: "pdfHtml5",
+                text: "PDF",
+                className: "btn btn-danger btn-sm",
+                attr: {
+                    style: "margin-top: 25px;padding: 0 10px; font-size: 12px; line-height: 1; height: 30px;",
+                },
+                exportOptions: {
+                    columns: ":not(:first-child):not(:last-child)",
+                },
+            },
+        ],
+    });
+
+    serchId.keyup(function () {
+        paidTable.draw();
+    });
+}
 
 $(document).on("click", ".paidBtn,.cancelledBtn", function () {
     let id = $(this).attr("data-id");
@@ -406,7 +482,9 @@ function updateOrderBalanceRequestStatus(id, user_id, status, order_amount) {
                     success: function (response) {
                         if (response?.statusCode === 200) {
                             toastr.success(response?.message, "Success!");
-                            paidTable.draw();
+                            if (paidTable) {
+                                paidTable.draw();
+                            }
                         }
                     },
                     error: function (data) {

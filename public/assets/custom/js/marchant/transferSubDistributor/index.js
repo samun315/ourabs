@@ -71,7 +71,6 @@ const formatDate = (data) => {
     if (!data) return "";
 
     const date = new Date(data);
-    // Month and day as textual representations
     let monthNames = [
         "Jan",
         "Feb",
@@ -92,205 +91,279 @@ const formatDate = (data) => {
     let hour = date.getHours().toString().padStart(2, "0");
 
     let amPm = hour >= 12 ? "PM" : "AM";
-    hour = hour % 12 || 12; // Convert 0 to 12 for 12 AM
+    hour = hour % 12 || 12;
 
     let minute = date.getMinutes().toString().padStart(2, "0");
-    let second = date.getSeconds().toString().padStart(2, "0");
 
     return `${day} ${month}, ${date.getFullYear()} ,${hour}:${minute} ${amPm}`;
 };
 
-let table = $("#kt_table_transfer_balance").DataTable({
-    processing: true,
-    serverSide: true,
-    ajax: {
-        url: BASE_URL + "/sub-distributor/transfer/balance",
-        data: function (d) {
-            d.search = search.val();
-        },
+const formatTableDate = (data) => {
+    if (!data) return "";
+
+    const date = new Date(data);
+    if (Number.isNaN(date.getTime())) return data;
+
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    let hour = date.getHours();
+    const amPm = hour >= 12 ? "PM" : "AM";
+    hour = hour % 12 || 12;
+    const minute = date.getMinutes().toString().padStart(2, "0");
+
+    return `${year}-${month}-${day} ${hour.toString().padStart(2, "0")}:${minute} ${amPm}`;
+};
+
+const getTransferStatusBadgeHtml = (data) => {
+    if (!data) return "";
+
+    const statusKey = String(data).toLowerCase();
+    let badgeClass = "cancelled";
+
+    if (statusKey === "pending") {
+        badgeClass = "pending";
+    } else if (statusKey === "transferred") {
+        badgeClass = "transferred";
+    }
+
+    return `<span class="status-badge ${badgeClass}">${String(data).toUpperCase()}</span>`;
+};
+
+(function registerExportLibs() {
+    if (window.JSZip && $.fn.dataTable && $.fn.dataTable.Buttons) {
+        $.fn.dataTable.Buttons.jszip(window.JSZip);
+    }
+    if (window.pdfMake && $.fn.dataTable && $.fn.dataTable.Buttons) {
+        $.fn.dataTable.Buttons.pdfMake(window.pdfMake);
+    }
+    if ($.fn.dataTable && $.fn.dataTable.ext && $.fn.dataTable.ext.buttons) {
+        if ($.fn.dataTable.ext.buttons.excelHtml5) {
+            $.fn.dataTable.ext.buttons.excelHtml5.available = function () {
+                return typeof window.JSZip !== "undefined";
+            };
+        }
+        if ($.fn.dataTable.ext.buttons.pdfHtml5) {
+            $.fn.dataTable.ext.buttons.pdfHtml5.available = function () {
+                return typeof window.pdfMake !== "undefined";
+            };
+        }
+    }
+})();
+
+const exportBodyFormat = {
+    body: function (data) {
+        if (data == null) return "";
+        return String(data).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
     },
-    columns: [
-        {
-            data: "DT_RowIndex",
-            name: "DT_RowIndex",
-            orderable: false,
-            searchable: false,
-        },
-        {
-            data: "from_user",
-            name: "from_user",
-        },
-        {
-            data: "to_user",
-            name: "to_user",
-        },
-        {
-            data: "amount",
-            name: "amount",
-        },
-        {
-            data: "status",
-            render: function (data) {
-                if (!data) return "";
+};
 
-                let status = "";
+let table = null;
 
-                if (data == "Pending") {
-                    status = "badge badge-warning";
-                } else if (data == "Transferred") {
-                    status = "badge badge-success";
-                } else {
-                    status = "badge badge-danger";
-                }
+if ($("#kt_table_transfer_balance").length) {
+    table = $("#kt_table_transfer_balance").DataTable({
+        processing: true,
+        serverSide: true,
+        autoWidth: false,
+        scrollX: false,
+        ajax: {
+            url: BASE_URL + "/sub-distributor/transfer/balance",
+            data: function (d) {
+                d.search = search.val();
+            },
+        },
+        columns: [
+            {
+                data: "id",
+                name: "balance_transfers.id",
+            },
+            {
+                data: "from_user",
+                name: "from_user",
+                className: "user-cell",
+            },
+            {
+                data: "to_user",
+                name: "to_user",
+                className: "user-cell",
+            },
+            {
+                data: "amount",
+                name: "amount",
+            },
+            {
+                data: "status",
+                render: function (data) {
+                    return getTransferStatusBadgeHtml(data);
+                },
+            },
+            {
+                data: "created_at",
+                render: formatTableDate,
+            },
+        ],
+        columnDefs: [
+            {
+                targets: "_all",
+                defaultContent: "",
+            },
+        ],
+        paging: true,
+        pageLength: 20,
+        lengthMenu: [10, 20, 25, 50, 75, 100, 200],
+        dom:
+            '<"row align-items-center mb-2"<"col-6"l><"col-6 text-end"B>>' +
+            '<"row"<"col-sm-12"tr>>' +
+            '<"row mt-2"<"col-sm-6"i><"col-sm-6 d-flex justify-content-end"p>>',
+        buttons: [
+            {
+                text: "Excel",
+                className: "btn btn-success btn-sm transfer-export-btn",
+                title: "Sub Distributor Transfer Balance",
+                filename: "sub_distributor_transfer_balance",
+                extension: ".xlsx",
+                exportOptions: {
+                    columns: ":visible",
+                    format: exportBodyFormat,
+                },
+                action: function (e, dt, node, config) {
+                    if (!window.JSZip) {
+                        toastr.error("Excel library failed to load. Please refresh.");
+                        return;
+                    }
+                    $.fn.dataTable.Buttons.jszip(window.JSZip);
+                    const excel = $.fn.dataTable.ext.buttons.excelHtml5;
+                    excel.action.call(this, e, dt, node, $.extend({}, excel, config));
+                },
+            },
+            {
+                text: "PDF",
+                className: "btn btn-danger btn-sm transfer-export-btn",
+                title: "Sub Distributor Transfer Balance",
+                filename: "sub_distributor_transfer_balance",
+                extension: ".pdf",
+                exportOptions: {
+                    columns: ":visible",
+                    format: exportBodyFormat,
+                },
+                action: function (e, dt, node, config) {
+                    if (!window.pdfMake) {
+                        toastr.error("PDF library failed to load. Please refresh.");
+                        return;
+                    }
+                    $.fn.dataTable.Buttons.pdfMake(window.pdfMake);
+                    const pdf = $.fn.dataTable.ext.buttons.pdfHtml5;
+                    pdf.action.call(this, e, dt, node, $.extend({}, pdf, config));
+                },
+            },
+        ],
+    });
 
-                return `<p class="${status} ">${data}</p>`;
-            },
-        },
-        {
-            data: "created_at",
-            render: formatDate,
-        },
-    ],
-    columnDefs: [
-        {
-            targets: "_all",
-            defaultContent: "",
-        },
-    ],
-    paging: true, // Enables pagination
-    pageLength: 10, // Show 5 records per page
-    lengthMenu: [10, 25, 50, 75, 100, 200], // Dropdown for selecting number of rows
-    dom:
-        '<"row"<"col-sm-2"l><"col-sm-10 d-flex justify-content-end"B>>' + // Length menu & buttons
-        '<"row"<"col-sm-12"tr>>' + // Table rows
-        '<"row mt-2"<"col-sm-6"i><"col-sm-6 d-flex justify-content-end"p>>', // Pagination & info
-    buttons: [
-        {
-            extend: "excelHtml5",
-            text: "Excel",
-            className: "btn btn-success btn-sm",
-            attr: {
-                style: "margin-top: 25px;padding: 0 10px; font-size: 12px; line-height: 1; height: 30px;",
-            },
-            exportOptions: {
-                columns: ":not(:first-child)", // Exclude the first column (DT_RowIndex)
-            },
-        },
-        {
-            extend: "pdfHtml5",
-            text: "PDF",
-            className: "btn btn-danger btn-sm",
-            attr: {
-                style: "margin-top: 25px;padding: 0 10px; font-size: 12px; line-height: 1; height: 30px;",
-            },
-            exportOptions: {
-                columns: ":not(:first-child)", // Exclude the first column (DT_RowIndex)
-            },
-        },
-    ],
-});
-
-search.keyup(function () {
-    table.draw();
-});
+    search.keyup(function () {
+        table.draw();
+    });
+}
 
 // APPROVE BALANCE REQUEST START
 
 let serchId = $("#search");
+let approveTable = null;
 
-let approveTable = $("#kt_table_transfer_sub_approve").DataTable({
-    processing: true,
-    serverSide: true,
-    ajax: {
-        url: BASE_URL + "/all/sub-distributor/transfer/balance",
-        data: function (d) {
-            d.search = serchId.val();
-        },
-    },
-    columns: [
-        {
-            data: "DT_RowIndex",
-            name: "DT_RowIndex",
-            orderable: false,
-            searchable: false,
-        },
-        {
-            data: "from_user",
-            name: "from_user",
-        },
-        {
-            data: "to_user",
-            name: "to_user",
-        },
-        {
-            data: "amount",
-            name: "amount",
-        },
-        {
-            data: "status",
-            render: function (data) {
-                if (!data) return "";
-
-                let status = "";
-
-                if (data == "Pending") {
-                    status = "badge badge-warning";
-                } else if (data == "Transferred") {
-                    status = "badge badge-success";
-                } else {
-                    status = "badge badge-danger";
-                }
-
-                return `<p class="${status} ">${data}</p>`;
+if ($("#kt_table_transfer_sub_approve").length) {
+    approveTable = $("#kt_table_transfer_sub_approve").DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: BASE_URL + "/all/sub-distributor/transfer/balance",
+            data: function (d) {
+                d.search = serchId.val();
             },
         },
-        {
-            data: "created_at",
-            render: formatDate,
-        },
-    ],
-    columnDefs: [
-        {
-            targets: "_all",
-            defaultContent: "",
-        },
-    ],
-    paging: true, // Enables pagination
-    pageLength: 10, // Show 5 records per page
-    lengthMenu: [10, 25, 50, 75, 100, 200], // Dropdown for selecting number of rows
-    dom:
-        '<"row"<"col-sm-2"l><"col-sm-10 d-flex justify-content-end"B>>' + // Length menu & buttons
-        '<"row"<"col-sm-12"tr>>' + // Table rows
-        '<"row mt-2"<"col-sm-6"i><"col-sm-6 d-flex justify-content-end"p>>', // Pagination & info
-    buttons: [
-        {
-            extend: "excelHtml5",
-            text: "Excel",
-            className: "btn btn-success btn-sm",
-            attr: {
-                style: "margin-top: 25px;padding: 0 10px; font-size: 12px; line-height: 1; height: 30px;",
+        columns: [
+            {
+                data: "DT_RowIndex",
+                name: "DT_RowIndex",
+                orderable: false,
+                searchable: false,
             },
-            exportOptions: {
-                columns: ":not(:first-child):not(:last-child)", // Exclude the first column (DT_RowIndex)
+            {
+                data: "from_user",
+                name: "from_user",
             },
-        },
-        {
-            extend: "pdfHtml5",
-            text: "PDF",
-            className: "btn btn-danger btn-sm",
-            attr: {
-                style: "margin-top: 25px;padding: 0 10px; font-size: 12px; line-height: 1; height: 30px;",
+            {
+                data: "to_user",
+                name: "to_user",
             },
-            exportOptions: {
-                columns: ":not(:first-child):not(:last-child)", // Exclude the first column (DT_RowIndex)
+            {
+                data: "amount",
+                name: "amount",
             },
-        },
-    ],
-});
+            {
+                data: "status",
+                render: function (data) {
+                    if (!data) return "";
 
-serchId.keyup(function () {
-    approveTable.draw();
-});
+                    let status = "";
+
+                    if (data == "Pending") {
+                        status = "badge badge-warning";
+                    } else if (data == "Transferred") {
+                        status = "badge badge-success";
+                    } else {
+                        status = "badge badge-danger";
+                    }
+
+                    return `<p class="${status} ">${data}</p>`;
+                },
+            },
+            {
+                data: "created_at",
+                render: formatDate,
+            },
+        ],
+        columnDefs: [
+            {
+                targets: "_all",
+                defaultContent: "",
+            },
+        ],
+        paging: true,
+        pageLength: 10,
+        lengthMenu: [10, 25, 50, 75, 100, 200],
+        dom:
+            '<"row"<"col-sm-2"l><"col-sm-10 d-flex justify-content-end"B>>' +
+            '<"row"<"col-sm-12"tr>>' +
+            '<"row mt-2"<"col-sm-6"i><"col-sm-6 d-flex justify-content-end"p>>',
+        buttons: [
+            {
+                extend: "excelHtml5",
+                text: "Excel",
+                className: "btn btn-success btn-sm",
+                attr: {
+                    style: "margin-top: 25px;padding: 0 10px; font-size: 12px; line-height: 1; height: 30px;",
+                },
+                exportOptions: {
+                    columns: ":not(:first-child):not(:last-child)",
+                },
+            },
+            {
+                extend: "pdfHtml5",
+                text: "PDF",
+                className: "btn btn-danger btn-sm",
+                attr: {
+                    style: "margin-top: 25px;padding: 0 10px; font-size: 12px; line-height: 1; height: 30px;",
+                },
+                exportOptions: {
+                    columns: ":not(:first-child):not(:last-child)",
+                },
+            },
+        ],
+    });
+
+    serchId.keyup(function () {
+        approveTable.draw();
+    });
+}
 
 $(document).on("click", ".transferredBtn,.cancelledBtn", function () {
     let id = $(this).attr("data-id");
@@ -322,8 +395,10 @@ function updateTransferBalanceStatus(status, id) {
                     success: function (response) {
                         if (response?.statusCode === 200) {
                             toastr.success(response?.message, "Success!");
-                            approveTable.draw();
-                        } 
+                            if (approveTable) {
+                                approveTable.draw();
+                            }
+                        }
                     },
                     error: function (data) {
                         toastr.error(

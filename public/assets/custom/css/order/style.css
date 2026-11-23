@@ -15,7 +15,6 @@
     color: #007bff;
     display: flex;
     justify-content: space-between;
-    /* Ensures checkmark is at the end */
     align-items: center;
     position: relative;
     width: 100%;
@@ -33,35 +32,203 @@ input:checked+.payment-box {
     font-weight: bold;
 }
 
-
 input:checked+.payment-box .checkmark {
     display: inline-block;
 }
-
 
 .payment-text {
     flex-grow: 1;
-    /* Ensures the text takes all available space */
-}
-
-input:checked+.payment-box .checkmark {
-    display: inline-block;
-}
-
-.table {
-    border-collapse: collapse;
-    width: 100%;
-}
-
-.table th,
-.table td {
-    border: 1px solid #ddd;
-    text-align: left;
-    padding: 8px;
 }
 
 #preview {
     display: none;
     width: 100%;
     max-height: 250px;
+}
+
+/* Compact order balance table (matches end-user balance request) */
+#kt_table_users_wrapper .table-responsive {
+    overflow-x: visible;
+}
+
+#kt_table_order {
+    width: 100% !important;
+    table-layout: auto;
+    border-collapse: collapse;
+    margin: 0;
+}
+
+#kt_table_order thead th,
+#kt_table_order tbody td {
+    border: 1px solid #e5e7eb;
+    vertical-align: middle;
+    white-space: nowrap !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+}
+
+#kt_table_order thead th {
+    background: #f9fafb;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: normal;
+    padding: 10px 12px !important;
+}
+
+#kt_table_order tbody td {
+    padding: 8px 12px !important;
+    font-size: 13px;
+    color: #1f2937;
+    background: #fff;
+}
+
+#kt_table_order .status-badge {
+    display: inline-block;
+    margin: 0;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #fff;
+    text-transform: uppercase;
+    white-space: nowrap !important;
+}
+
+#kt_table_order .status-badge.paid {
+    background: #4ade80;
+}
+
+#kt_table_order .status-badge.cancelled,
+#kt_table_order .status-badge.failed {
+    background: #ef4444;
+}
+
+#kt_table_order .status-badge.pending {
+    background: #f59e0b;
+}
+
+#kt_table_order .order-diamond-icon {
+    color: #60a5fa;
+    font-size: 12px;
+    margin-left: 4px;
+}
+
+#kt_table_order .btn-show {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: #fff;
+    background: #38bdf8;
+    border: none;
+    border-radius: 4px;
+    white-space: nowrap !important;
+}
+
+#kt_table_order .btn-show:hover {
+    background: #0ea5e9;
+    color: #fff;
+}
+
+#kt_table_order_wrapper .dataTables_length,
+#kt_table_order_wrapper .dataTables_info,
+#kt_table_order_wrapper .dataTables_paginate {
+    font-size: 13px;
+}
+
+#kt_table_order_wrapper .dt-buttons {
+    display: inline-flex !important;
+    flex-wrap: wrap;
+    gap: 0;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+#kt_table_order_wrapper .dt-button,
+#kt_table_order_wrapper .order-export-btn {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    margin: 0 !important;
+    padding: 6px 14px !important;
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+    height: auto !important;
+    border: 0;
+}
+
+@media (max-width: 991.98px) {
+    #kt_table_order thead th,
+    #kt_table_order tbody td {
+        padding: 6px 8px !important;
+        font-size: 11px;
+    }
+
+    #kt_table_order .status-badge {
+        padding: 3px 8px;
+        font-size: 10px;
+    }
+
+    #kt_table_order .btn-show {
+        padding: 3px 8px;
+        font-size: 10px;
+        gap: 4px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    #kt_content_container.container-fluid {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .card-body.pt-3 {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+
+    #kt_table_users_wrapper .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #kt_table_order thead th,
+    #kt_table_order tbody td {
+        padding: 5px 4px !important;
+        font-size: 9px;
+        white-space: nowrap !important;
+    }
+
+    #kt_table_order .sorting:before,
+    #kt_table_order .sorting:after,
+    #kt_table_order .sorting_asc:before,
+    #kt_table_order .sorting_asc:after,
+    #kt_table_order .sorting_desc:before,
+    #kt_table_order .sorting_desc:after {
+        display: none !important;
+    }
+
+    #kt_table_order .status-badge {
+        padding: 2px 6px;
+        font-size: 8px;
+    }
+
+    #kt_table_order .btn-show {
+        padding: 2px 6px;
+        font-size: 8px;
+        gap: 3px;
+    }
+
+    #kt_table_order_wrapper .dataTables_paginate {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 8px;
+    }
 }

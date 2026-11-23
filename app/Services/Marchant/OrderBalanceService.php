@@ -33,13 +33,14 @@ class OrderBalanceService
 
         return Datatables::of($query)
             ->addIndexColumn()
-            ->addColumn('action', function ($row) {
-
-                $showBtn = '<button data-id="' . $row->id . '" class="btn btn-success btn-sm ms-lg-2 showOrderBtn" data-bs-toggle="modal" data-bs-target="#showModal">Show</button>';
-
-                return $showBtn;
+            ->editColumn('diamond_quantity', function ($row) {
+                $diamond = $row->diamond_quantity ?? 0;
+                return $diamond . ' <i class="fas fa-gem order-diamond-icon" title="Diamond"></i>';
             })
-            ->rawColumns(['action'])
+            ->addColumn('action', function ($row) {
+                return '<button type="button" data-id="' . $row->id . '" class="btn-show showOrderBtn"><i class="fas fa-eye"></i><span class="btn-show-text"> Show</span></button>';
+            })
+            ->rawColumns(['diamond_quantity', 'action'])
             ->make(true);
     }
 
