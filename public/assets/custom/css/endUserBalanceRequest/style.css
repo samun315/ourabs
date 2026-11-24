@@ -56,6 +56,7 @@ input:checked+.diamond-box .checkmark {
     table-layout: auto;
     border-collapse: collapse;
     margin: 0;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 #kt_table_end_user_balance thead th,
@@ -65,6 +66,10 @@ input:checked+.diamond-box .checkmark {
     white-space: nowrap !important;
     word-break: normal !important;
     overflow-wrap: normal !important;
+}
+
+#kt_table_end_user_balance tbody tr:last-child td {
+    border-bottom: 1px solid #e5e7eb !important;
 }
 
 #kt_table_end_user_balance thead th {
@@ -159,6 +164,88 @@ input:checked+.diamond-box .checkmark {
     line-height: 1.2 !important;
     height: auto !important;
     border: 0;
+}
+
+/* All end-user balance approve table */
+#kt_table_end_user_balance_approve {
+    width: 100% !important;
+    table-layout: auto;
+    border-collapse: collapse;
+    margin: 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+#kt_table_end_user_balance_approve thead th,
+#kt_table_end_user_balance_approve tbody td {
+    border: 1px solid #e5e7eb;
+    vertical-align: middle;
+    white-space: nowrap !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+}
+
+#kt_table_end_user_balance_approve tbody tr:last-child td {
+    border-bottom: 1px solid #e5e7eb !important;
+}
+
+#kt_table_end_user_balance_approve thead th {
+    background: #f9fafb;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: normal;
+    padding: 10px 12px !important;
+}
+
+#kt_table_end_user_balance_approve tbody td {
+    padding: 8px 12px !important;
+    font-size: 13px;
+    color: #1f2937;
+    background: #fff;
+}
+
+#kt_table_end_user_balance_approve tbody td.user-cell {
+    white-space: normal !important;
+    line-height: 1.35;
+}
+
+#kt_table_end_user_balance_approve tbody td.amount-cell {
+    white-space: normal !important;
+    line-height: 1.4;
+}
+
+#kt_table_end_user_balance_approve .status-badge {
+    display: inline-block;
+    margin: 4px 0 0;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #fff;
+    text-transform: uppercase;
+    white-space: nowrap !important;
+}
+
+#kt_table_end_user_balance_approve .status-badge.transferred {
+    background: #4ade80;
+}
+
+#kt_table_end_user_balance_approve .status-badge.cancelled,
+#kt_table_end_user_balance_approve .status-badge.failed {
+    background: #ef4444;
+}
+
+#kt_table_end_user_balance_approve .status-badge.pending,
+#kt_table_end_user_balance_approve .status-badge.processing {
+    background: #f59e0b;
+}
+
+#kt_table_end_user_balance_approve_wrapper .dataTables_length,
+#kt_table_end_user_balance_approve_wrapper .dataTables_info,
+#kt_table_end_user_balance_approve_wrapper .dataTables_paginate {
+    font-size: 13px;
 }
 
 /* Order Information modal */
@@ -259,17 +346,20 @@ input:checked+.diamond-box .checkmark {
 
 /* Tablet */
 @media (max-width: 991.98px) {
-    #kt_table_end_user_balance thead th {
+    #kt_table_end_user_balance thead th,
+    #kt_table_end_user_balance_approve thead th {
         padding: 6px 8px !important;
         font-size: 11px;
     }
 
-    #kt_table_end_user_balance tbody td {
+    #kt_table_end_user_balance tbody td,
+    #kt_table_end_user_balance_approve tbody td {
         padding: 6px 8px !important;
         font-size: 11px;
     }
 
-    #kt_table_end_user_balance .status-badge {
+    #kt_table_end_user_balance .status-badge,
+    #kt_table_end_user_balance_approve .status-badge {
         padding: 3px 8px;
         font-size: 10px;
     }
@@ -282,7 +372,10 @@ input:checked+.diamond-box .checkmark {
 
     #kt_table_end_user_balance_wrapper .dataTables_length,
     #kt_table_end_user_balance_wrapper .dataTables_info,
-    #kt_table_end_user_balance_wrapper .dataTables_paginate {
+    #kt_table_end_user_balance_wrapper .dataTables_paginate,
+    #kt_table_end_user_balance_approve_wrapper .dataTables_length,
+    #kt_table_end_user_balance_approve_wrapper .dataTables_info,
+    #kt_table_end_user_balance_approve_wrapper .dataTables_paginate {
         font-size: 12px;
     }
 
@@ -320,21 +413,30 @@ input:checked+.diamond-box .checkmark {
         min-width: 0;
     }
 
-    #kt_table_end_user_balance thead th {
+    #kt_table_end_user_balance thead th,
+    #kt_table_end_user_balance_approve thead th {
         padding: 5px 4px !important;
         font-size: 9px;
     }
 
-    #kt_table_end_user_balance tbody td {
+    #kt_table_end_user_balance tbody td,
+    #kt_table_end_user_balance_approve tbody td {
         padding: 5px 4px !important;
         font-size: 9px;
     }
 
     #kt_table_end_user_balance thead th,
-    #kt_table_end_user_balance tbody td {
+    #kt_table_end_user_balance tbody td,
+    #kt_table_end_user_balance_approve thead th,
+    #kt_table_end_user_balance_approve tbody td {
         white-space: nowrap !important;
         word-break: keep-all !important;
         overflow-wrap: normal !important;
+    }
+
+    #kt_table_end_user_balance_approve tbody td.user-cell,
+    #kt_table_end_user_balance_approve tbody td.amount-cell {
+        white-space: normal !important;
     }
 
     #kt_table_end_user_balance .sorting:before,
@@ -342,11 +444,18 @@ input:checked+.diamond-box .checkmark {
     #kt_table_end_user_balance .sorting_asc:before,
     #kt_table_end_user_balance .sorting_asc:after,
     #kt_table_end_user_balance .sorting_desc:before,
-    #kt_table_end_user_balance .sorting_desc:after {
+    #kt_table_end_user_balance .sorting_desc:after,
+    #kt_table_end_user_balance_approve .sorting:before,
+    #kt_table_end_user_balance_approve .sorting:after,
+    #kt_table_end_user_balance_approve .sorting_asc:before,
+    #kt_table_end_user_balance_approve .sorting_asc:after,
+    #kt_table_end_user_balance_approve .sorting_desc:before,
+    #kt_table_end_user_balance_approve .sorting_desc:after {
         display: none !important;
     }
 
-    #kt_table_end_user_balance .status-badge {
+    #kt_table_end_user_balance .status-badge,
+    #kt_table_end_user_balance_approve .status-badge {
         padding: 2px 6px;
         font-size: 8px;
         white-space: nowrap !important;

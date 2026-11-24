@@ -1,5 +1,9 @@
 @extends('master')
 @section('title', 'Total Diamonds')
+@section('page_css')
+    <link href="{{ asset('assets/custom/css/report/diamond/style.css') }}?v={{ filemtime(public_path('assets/custom/css/report/diamond/style.css')) }}"
+        rel="stylesheet" type="text/css" />
+@endsection
 @section('content')
     <x-toolbar-component title="Total Diamond list" :breadcrumbs="[
         ['label' => 'Home', 'url' => route('dashboard')],
@@ -13,9 +17,8 @@
             <!--begin::Card-->
             <div class="card">
                 <!--begin::Card body-->
-                <div class="card-body py-4">
+                <div class="card-body pt-3 pb-4">
                     <div class="row">
-
                         <div class="col-md-4">
                             <div class="d-flex flex-column mb-5 fv-row">
                                 <input type="text" class="form-control form-control-solid" name="search" id="search"
@@ -39,12 +42,12 @@
                     <!--begin::Table-->
                     <div id="kt_table_users_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
                         <div class="table-responsive">
-                            <table class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer"
+                            <table class="table table-sm align-middle dataTable no-footer w-100"
                                 id="kt_total_diamonds_table">
                                 <!--begin::Table head-->
                                 <thead>
                                     <!--begin::Table row-->
-                                    <tr class="text-start text-muted text-uppercase fw-bolder fs-7 gs-0">
+                                    <tr>
                                         <th>#</th>
                                         <th>User</th>
                                         <th>User Role</th>
@@ -68,9 +71,13 @@
 
 @section('page_script')
 
-    <!-- begin::Page Custom Stylesheets(used by this page) -->
-    <script src="{{ asset('assets/custom/js/report/diamond/index.js') }}"
+    <script src="{{ asset('assets/custom/js/marchant/endUserBalanceRequest/export-libs.js') }}?v={{ filemtime(public_path('assets/custom/js/marchant/endUserBalanceRequest/export-libs.js')) }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/export/jszip.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/export/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/export/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('assets/custom/js/marchant/endUserBalanceRequest/export-libs-init.js') }}?v={{ filemtime(public_path('assets/custom/js/marchant/endUserBalanceRequest/export-libs-init.js')) }}"></script>
+
+    <script src="{{ asset('assets/custom/js/report/diamond/index.js') }}?v={{ filemtime(public_path('assets/custom/js/report/diamond/index.js')) }}"
         {{ Sri::html('assets/custom/js/report/diamond/index.js') }}></script>
-    <!--end::Page Custom Stylesheets(used by this page)-->
 
 @endsection

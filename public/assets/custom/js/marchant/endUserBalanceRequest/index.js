@@ -142,113 +142,117 @@ const exportButtons = [
     },
 ];
 
-let table = $("#kt_table_end_user_balance").DataTable({
-    processing: true,
-    serverSide: true,
-    autoWidth: false,
-    scrollX: false,
-    ajax: {
-        url: BASE_URL + "/end-user/balance/request",
-        data: function (d) {
-            d.search = search.val();
-        },
-    },
-    columns: [
-        {
-            data: "balance_transfer_id",
-            name: "balance_transfer_id",
-            width: "8%",
-        },
-        {
-            data: "imo_id",
-            name: "imo_id",
-            width: "16%",
-        },
-        {
-            data: "amount",
-            name: "amount",
-            width: "10%",
-        },
-        {
-            data: "status",
-            width: "12%",
-            render: function (data) {
-                return getStatusBadgeHtml(data);
+let table = null;
+
+if ($("#kt_table_end_user_balance").length) {
+    table = $("#kt_table_end_user_balance").DataTable({
+        processing: true,
+        serverSide: true,
+        autoWidth: false,
+        scrollX: false,
+        ajax: {
+            url: BASE_URL + "/end-user/balance/request",
+            data: function (d) {
+                d.search = search.val();
             },
         },
-        {
-            data: "bonus",
-            name: "bonus",
-            orderable: false,
-            searchable: false,
-            width: "8%",
-            render: function (data) {
-                const value = data ?? 0;
-                return Number(value).toFixed(2);
+        columns: [
+            {
+                data: "balance_transfer_id",
+                name: "balance_transfer_id",
+                width: "8%",
             },
-        },
-        {
-            data: "created_at",
-            width: "18%",
-            render: function (data) {
-                return isMobileOrTablet() ? formatModalDate(data) : formatDate(data);
+            {
+                data: "imo_id",
+                name: "imo_id",
+                width: "16%",
             },
-        },
-        {
-            data: "action",
-            name: "action",
-            orderable: false,
-            searchable: false,
-            width: "10%",
-        },
-    ],
-    columnDefs: [
-        {
-            targets: "_all",
-            defaultContent: "",
-        },
-        {
-            // Hide Bonus on mobile so the row stays one clean line
-            targets: [4],
-            visible: !window.matchMedia("(max-width: 767.98px)").matches,
-        },
-    ],
-    paging: true,
-    pageLength: isMobileOrTablet() ? 10 : 20,
-    lengthMenu: [10, 20, 25, 50, 75, 100, 200],
-    dom:
-        '<"row align-items-center mb-2"<"col-6"l><"col-6 text-end"B>>' +
-        '<"row"<"col-sm-12"tr>>' +
-        '<"row mt-2"<"col-sm-6"i><"col-sm-6 d-flex justify-content-end"p>>',
-    buttons: exportButtons,
-});
+            {
+                data: "amount",
+                name: "amount",
+                width: "10%",
+            },
+            {
+                data: "status",
+                width: "12%",
+                render: function (data) {
+                    return getStatusBadgeHtml(data);
+                },
+            },
+            {
+                data: "bonus",
+                name: "bonus",
+                orderable: false,
+                searchable: false,
+                width: "8%",
+                render: function (data) {
+                    const value = data ?? 0;
+                    return Number(value).toFixed(2);
+                },
+            },
+            {
+                data: "created_at",
+                width: "18%",
+                render: function (data) {
+                    return isMobileOrTablet() ? formatModalDate(data) : formatDate(data);
+                },
+            },
+            {
+                data: "action",
+                name: "action",
+                orderable: false,
+                searchable: false,
+                width: "10%",
+            },
+        ],
+        columnDefs: [
+            {
+                targets: "_all",
+                defaultContent: "",
+            },
+            {
+                // Hide Bonus on mobile so the row stays one clean line
+                targets: [4],
+                visible: !window.matchMedia("(max-width: 767.98px)").matches,
+            },
+        ],
+        paging: true,
+        pageLength: isMobileOrTablet() ? 10 : 20,
+        lengthMenu: [10, 20, 25, 50, 75, 100, 200],
+        dom:
+            '<"row align-items-center mb-2"<"col-6"l><"col-6 text-end"B>>' +
+            '<"row"<"col-sm-12"tr>>' +
+            '<"row mt-2"<"col-sm-6"i><"col-sm-6 d-flex justify-content-end"p>>',
+        buttons: exportButtons,
+    });
 
-$(window).on("resize", function () {
-    const showBonus = !window.matchMedia("(max-width: 767.98px)").matches;
-    if (table.column(4).visible() !== showBonus) {
-        table.column(4).visible(showBonus, false);
-        table.columns.adjust().draw(false);
-    }
-});
+    $(window).on("resize", function () {
+        const showBonus = !window.matchMedia("(max-width: 767.98px)").matches;
+        if (table.column(4).visible() !== showBonus) {
+            table.column(4).visible(showBonus, false);
+            table.columns.adjust().draw(false);
+        }
+    });
 
-search.keyup(function () {
-    table.draw();
-});
+    search.keyup(function () {
+        table.draw();
+    });
 
-$(document).on("click", ".showEndUserBalanceBtn", function () {
-    const rowData = table.row($(this).closest("tr")).data();
+    $(document).on("click", ".showEndUserBalanceBtn", function () {
+        const rowData = table.row($(this).closest("tr")).data();
 
-    if (!rowData) {
-        return;
-    }
+        if (!rowData) {
+            return;
+        }
 
-    $("#modal_imo_id").text(rowData.imo_id ?? "");
-    $("#modal_amount").text(rowData.amount ?? "");
-    $("#modal_status").html(getStatusBadgeHtml(rowData.status));
-    $("#modal_created_on").text(formatModalDate(rowData.created_at));
+        $("#modal_imo_id").text(rowData.imo_id ?? "");
+        $("#modal_amount").text(rowData.amount ?? "");
+        $("#modal_status").html(getStatusBadgeHtml(rowData.status));
+        $("#modal_created_on").text(formatModalDate(rowData.created_at));
 
-    $("#showModal").modal("show");
-});
+        $("#showModal").modal("show");
+    });
+}
 
 // APPROVE BALANCE REQUEST START
 
@@ -259,6 +263,8 @@ if ($("#kt_table_end_user_balance_approve").length) {
     approveTable = $("#kt_table_end_user_balance_approve").DataTable({
         processing: true,
         serverSide: true,
+        autoWidth: false,
+        scrollX: false,
         ajax: {
             url: BASE_URL + "/all/end-user/balance",
             data: function (d) {
@@ -275,29 +281,19 @@ if ($("#kt_table_end_user_balance_approve").length) {
             {
                 data: "user",
                 name: "user",
+                className: "user-cell",
             },
             {
                 data: "amount",
                 name: "amount",
-                className: "text-center",
+                className: "text-center amount-cell",
                 render: function (data, type, row) {
                     if (type !== "display") {
                         return data;
                     }
 
-                    let badge = "badge badge-danger";
-                    if (row.status == "Pending") {
-                        badge = "badge badge-warning";
-                    } else if (row.status == "Transferred") {
-                        badge = "badge badge-success";
-                    }
-
-                    const status = row.status
-                        ? `<p class="${badge}">${row.status}</p>`
-                        : "";
-                    const imoId = row.imo_id
-                        ? `<div>${row.imo_id}</div>`
-                        : "";
+                    const status = row.status ? getStatusBadgeHtml(row.status) : "";
+                    const imoId = row.imo_id ? `<div>${row.imo_id}</div>` : "";
 
                     return `${data ?? ""}<br>${status}${imoId}`;
                 },
@@ -314,29 +310,61 @@ if ($("#kt_table_end_user_balance_approve").length) {
             },
         ],
         paging: true,
-        pageLength: 10,
-        lengthMenu: [10, 25, 50, 75, 100, 200],
+        pageLength: 20,
+        lengthMenu: [10, 20, 25, 50, 75, 100, 200],
         dom:
-            '<"row align-items-center"<"col-sm-6"l><"col-sm-6 d-flex justify-content-sm-end justify-content-start mt-2 mt-sm-0"B>>' +
+            '<"row align-items-center mb-2"<"col-6"l><"col-6 text-end"B>>' +
             '<"row"<"col-sm-12"tr>>' +
             '<"row mt-2"<"col-sm-6"i><"col-sm-6 d-flex justify-content-end"p>>',
         buttons: [
             {
-                extend: "excelHtml5",
-                text: '<i class="fas fa-file-excel"></i> Excel',
+                text: "Excel",
                 className: "btn btn-success btn-sm end-user-export-btn",
                 title: "End User Balance Approve",
+                filename: "end_user_balance_approve",
+                extension: ".xlsx",
                 exportOptions: {
                     columns: ":visible:not(:first-child)",
+                    format: {
+                        body: function (data) {
+                            if (data == null) return "";
+                            return String(data).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+                        },
+                    },
+                },
+                action: function (e, dt, node, config) {
+                    if (!window.JSZip) {
+                        toastr.error("Excel library failed to load. Please refresh.");
+                        return;
+                    }
+                    $.fn.dataTable.Buttons.jszip(window.JSZip);
+                    const excel = $.fn.dataTable.ext.buttons.excelHtml5;
+                    excel.action.call(this, e, dt, node, $.extend({}, excel, config));
                 },
             },
             {
-                extend: "pdfHtml5",
-                text: '<i class="fas fa-file-pdf"></i> PDF',
+                text: "PDF",
                 className: "btn btn-danger btn-sm end-user-export-btn",
                 title: "End User Balance Approve",
+                filename: "end_user_balance_approve",
+                extension: ".pdf",
                 exportOptions: {
                     columns: ":visible:not(:first-child)",
+                    format: {
+                        body: function (data) {
+                            if (data == null) return "";
+                            return String(data).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+                        },
+                    },
+                },
+                action: function (e, dt, node, config) {
+                    if (!window.pdfMake) {
+                        toastr.error("PDF library failed to load. Please refresh.");
+                        return;
+                    }
+                    $.fn.dataTable.Buttons.pdfMake(window.pdfMake);
+                    const pdf = $.fn.dataTable.ext.buttons.pdfHtml5;
+                    pdf.action.call(this, e, dt, node, $.extend({}, pdf, config));
                 },
             },
         ],

@@ -174,107 +174,111 @@ const exportBodyFormat = {
     },
 };
 
-let table = $("#kt_table_order").DataTable({
-    processing: true,
-    serverSide: true,
-    autoWidth: false,
-    scrollX: false,
-    ajax: {
-        url: BASE_URL + "/order/balance",
-        data: function (d) {
-            d.search = search.val();
-        },
-    },
-    columns: [
-        {
-            data: "id",
-            name: "id",
-        },
-        {
-            data: "amount",
-            name: "amount",
-        },
-        {
-            data: "diamond_quantity",
-            name: "diamond_quantity",
-        },
-        {
-            data: "status",
-            render: function (data) {
-                return getOrderStatusBadgeHtml(data);
-            },
-        },
-        {
-            data: "created_at",
-            render: formatTableDate,
-        },
-        {
-            data: "action",
-            name: "action",
-            orderable: false,
-            searchable: false,
-        },
-    ],
-    columnDefs: [
-        {
-            targets: "_all",
-            defaultContent: "",
-        },
-    ],
-    paging: true,
-    pageLength: 20,
-    lengthMenu: [10, 20, 25, 50, 75, 100, 200],
-    dom:
-        '<"row align-items-center mb-2"<"col-6"l><"col-6 text-end"B>>' +
-        '<"row"<"col-sm-12"tr>>' +
-        '<"row mt-2"<"col-sm-6"i><"col-sm-6 d-flex justify-content-end"p>>',
-    buttons: [
-        {
-            text: "Excel",
-            className: "btn btn-success btn-sm order-export-btn",
-            title: "Order Balance List",
-            filename: "order_balance_list",
-            extension: ".xlsx",
-            exportOptions: {
-                columns: ":visible:not(:last-child)",
-                format: exportBodyFormat,
-            },
-            action: function (e, dt, node, config) {
-                if (!window.JSZip) {
-                    toastr.error("Excel library failed to load. Please refresh.");
-                    return;
-                }
-                $.fn.dataTable.Buttons.jszip(window.JSZip);
-                const excel = $.fn.dataTable.ext.buttons.excelHtml5;
-                excel.action.call(this, e, dt, node, $.extend({}, excel, config));
-            },
-        },
-        {
-            text: "PDF",
-            className: "btn btn-danger btn-sm order-export-btn",
-            title: "Order Balance List",
-            filename: "order_balance_list",
-            extension: ".pdf",
-            exportOptions: {
-                columns: ":visible:not(:last-child)",
-                format: exportBodyFormat,
-            },
-            action: function (e, dt, node, config) {
-                if (!window.pdfMake) {
-                    toastr.error("PDF library failed to load. Please refresh.");
-                    return;
-                }
-                $.fn.dataTable.Buttons.pdfMake(window.pdfMake);
-                const pdf = $.fn.dataTable.ext.buttons.pdfHtml5;
-                pdf.action.call(this, e, dt, node, $.extend({}, pdf, config));
-            },
-        },
-    ],
-});
+let table = null;
 
-search.keyup(function () {
-    table.draw();
-});
+if ($("#kt_table_order").length) {
+    table = $("#kt_table_order").DataTable({
+        processing: true,
+        serverSide: true,
+        autoWidth: false,
+        scrollX: false,
+        ajax: {
+            url: BASE_URL + "/order/balance",
+            data: function (d) {
+                d.search = search.val();
+            },
+        },
+        columns: [
+            {
+                data: "id",
+                name: "id",
+            },
+            {
+                data: "amount",
+                name: "amount",
+            },
+            {
+                data: "diamond_quantity",
+                name: "diamond_quantity",
+            },
+            {
+                data: "status",
+                render: function (data) {
+                    return getOrderStatusBadgeHtml(data);
+                },
+            },
+            {
+                data: "created_at",
+                render: formatTableDate,
+            },
+            {
+                data: "action",
+                name: "action",
+                orderable: false,
+                searchable: false,
+            },
+        ],
+        columnDefs: [
+            {
+                targets: "_all",
+                defaultContent: "",
+            },
+        ],
+        paging: true,
+        pageLength: 20,
+        lengthMenu: [10, 20, 25, 50, 75, 100, 200],
+        dom:
+            '<"row align-items-center mb-2"<"col-6"l><"col-6 text-end"B>>' +
+            '<"row"<"col-sm-12"tr>>' +
+            '<"row mt-2"<"col-sm-6"i><"col-sm-6 d-flex justify-content-end"p>>',
+        buttons: [
+            {
+                text: "Excel",
+                className: "btn btn-success btn-sm order-export-btn",
+                title: "Order Balance List",
+                filename: "order_balance_list",
+                extension: ".xlsx",
+                exportOptions: {
+                    columns: ":visible:not(:last-child)",
+                    format: exportBodyFormat,
+                },
+                action: function (e, dt, node, config) {
+                    if (!window.JSZip) {
+                        toastr.error("Excel library failed to load. Please refresh.");
+                        return;
+                    }
+                    $.fn.dataTable.Buttons.jszip(window.JSZip);
+                    const excel = $.fn.dataTable.ext.buttons.excelHtml5;
+                    excel.action.call(this, e, dt, node, $.extend({}, excel, config));
+                },
+            },
+            {
+                text: "PDF",
+                className: "btn btn-danger btn-sm order-export-btn",
+                title: "Order Balance List",
+                filename: "order_balance_list",
+                extension: ".pdf",
+                exportOptions: {
+                    columns: ":visible:not(:last-child)",
+                    format: exportBodyFormat,
+                },
+                action: function (e, dt, node, config) {
+                    if (!window.pdfMake) {
+                        toastr.error("PDF library failed to load. Please refresh.");
+                        return;
+                    }
+                    $.fn.dataTable.Buttons.pdfMake(window.pdfMake);
+                    const pdf = $.fn.dataTable.ext.buttons.pdfHtml5;
+                    pdf.action.call(this, e, dt, node, $.extend({}, pdf, config));
+                },
+            },
+        ],
+    });
+
+    search.keyup(function () {
+        table.draw();
+    });
+}
 
 $(document).on("click", ".showOrderBtn", function () {
     let id = $(this).attr("data-id");
@@ -342,6 +346,8 @@ if ($("#kt_table_order_approval").length) {
     paidTable = $("#kt_table_order_approval").DataTable({
         processing: true,
         serverSide: true,
+        autoWidth: false,
+        scrollX: false,
         ajax: {
             url: BASE_URL + "/all/order/balance",
             data: function (d) {
@@ -358,6 +364,7 @@ if ($("#kt_table_order_approval").length) {
             {
                 data: "user",
                 name: "user",
+                className: "user-cell",
             },
             {
                 data: "gateway_name",
@@ -366,44 +373,42 @@ if ($("#kt_table_order_approval").length) {
             {
                 data: "amount",
                 render: function (data, type, row) {
+                    if (type !== "display") {
+                        return data;
+                    }
                     if (!data) return "";
-
-                    return `TK ${data} ${row.currency_code}`;
+                    return `TK ${data} ${row.currency_code ?? ""}`;
                 },
             },
             {
                 data: "diamond_quantity",
+                className: "diamond-cell",
                 render: function (data, type, row) {
+                    if (type !== "display") {
+                        return data;
+                    }
                     if (!data) return "";
-
-                    return `💎 ${data} <br/>(1 IMO Diamond = ${row.rate} ${row.currency_code} 💎)`;
+                    const rateNote = row.rate
+                        ? `<div class="text-muted" style="font-size:11px;">1 IMO Diamond = ${row.rate} ${row.currency_code ?? ""}</div>`
+                        : "";
+                    return `${data} <i class="fas fa-gem order-diamond-icon" title="Diamond"></i>${rateNote}`;
                 },
             },
             {
                 data: "status",
                 render: function (data) {
-                    if (!data) return "";
-
-                    let status = "";
-
-                    if (data == "Pending") {
-                        status = "badge badge-warning";
-                    } else if (data == "Paid") {
-                        status = "badge badge-success";
-                    } else {
-                        status = "badge badge-danger";
-                    }
-
-                    return `<p class="${status} ">${data}</p>`;
+                    return getOrderStatusBadgeHtml(data);
                 },
             },
             {
                 data: "created_at",
-                render: formatDate,
+                render: formatTableDate,
             },
             {
                 data: "action",
                 name: "action",
+                orderable: false,
+                searchable: false,
             },
         ],
         columnDefs: [
@@ -413,33 +418,51 @@ if ($("#kt_table_order_approval").length) {
             },
         ],
         paging: true,
-        pageLength: 10,
-        lengthMenu: [10, 25, 50, 75, 100, 200],
+        pageLength: 20,
+        lengthMenu: [10, 20, 25, 50, 75, 100, 200],
         dom:
-            '<"row"<"col-sm-2"l><"col-sm-10 d-flex justify-content-end"B>>' +
+            '<"row align-items-center mb-2"<"col-6"l><"col-6 text-end"B>>' +
             '<"row"<"col-sm-12"tr>>' +
             '<"row mt-2"<"col-sm-6"i><"col-sm-6 d-flex justify-content-end"p>>',
         buttons: [
             {
-                extend: "excelHtml5",
                 text: "Excel",
-                className: "btn btn-success btn-sm",
-                attr: {
-                    style: "margin-top: 25px;padding: 0 10px; font-size: 12px; line-height: 1; height: 30px;",
-                },
+                className: "btn btn-success btn-sm order-export-btn",
+                title: "Order Approval List",
+                filename: "order_approval_list",
+                extension: ".xlsx",
                 exportOptions: {
-                    columns: ":not(:first-child):not(:last-child)",
+                    columns: ":visible:not(:first-child):not(:last-child)",
+                    format: exportBodyFormat,
+                },
+                action: function (e, dt, node, config) {
+                    if (!window.JSZip) {
+                        toastr.error("Excel library failed to load. Please refresh.");
+                        return;
+                    }
+                    $.fn.dataTable.Buttons.jszip(window.JSZip);
+                    const excel = $.fn.dataTable.ext.buttons.excelHtml5;
+                    excel.action.call(this, e, dt, node, $.extend({}, excel, config));
                 },
             },
             {
-                extend: "pdfHtml5",
                 text: "PDF",
-                className: "btn btn-danger btn-sm",
-                attr: {
-                    style: "margin-top: 25px;padding: 0 10px; font-size: 12px; line-height: 1; height: 30px;",
-                },
+                className: "btn btn-danger btn-sm order-export-btn",
+                title: "Order Approval List",
+                filename: "order_approval_list",
+                extension: ".pdf",
                 exportOptions: {
-                    columns: ":not(:first-child):not(:last-child)",
+                    columns: ":visible:not(:first-child):not(:last-child)",
+                    format: exportBodyFormat,
+                },
+                action: function (e, dt, node, config) {
+                    if (!window.pdfMake) {
+                        toastr.error("PDF library failed to load. Please refresh.");
+                        return;
+                    }
+                    $.fn.dataTable.Buttons.pdfMake(window.pdfMake);
+                    const pdf = $.fn.dataTable.ext.buttons.pdfHtml5;
+                    pdf.action.call(this, e, dt, node, $.extend({}, pdf, config));
                 },
             },
         ],

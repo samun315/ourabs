@@ -4,27 +4,65 @@ let selectedForm = $("#submitForm");
 const BASE_URL = window.location.origin + "/payment/adjust/balance";
 
 let search = $("#search");
+let validate = null;
 
-let validate = selectedForm.validate({
-    rules: {
-        name: "required",
-    },
-    onsubmit: true,
-});
+if (selectedForm.length) {
+    validate = selectedForm.validate({
+        rules: {
+            name: "required",
+        },
+        onsubmit: true,
+    });
 
-$(".formReset").on("click", function () {
-    formReset();
-});
+    $(".formReset").on("click", function () {
+        formReset();
+    });
+
+    $("#openAdjustBalanceModal").on("click", function () {
+        openModal();
+    });
+
+    selectedForm.submit(function (event) {
+        event.preventDefault();
+
+        if (!validate.valid()) return;
+
+        loader(selectedForm, true);
+
+        let formData = new FormData($("form#submitForm")[0]);
+
+        // Setup CSRF token
+        setCSRFToken();
+
+        $(".error").remove();
+
+        $.ajax({
+            url: BASE_URL + "/store",
+            data: formData,
+            type: "POST",
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                if (response?.statusCode == 200 || response?.statusCode == 201) {
+                    $("#showModal").modal("hide");
+                    formReset();
+                    toastr.success(response?.message);
+                    if (table) {
+                        table.draw();
+                    }
+                }
+            },
+            error: handleError,
+        });
+    });
+}
 
 function formReset() {
     $("#submitForm").trigger("reset");
     $("#kt_type").val("").trigger("change");
     $("#kt_user_id").val("").trigger("change");
 }
-
-$("#openAdjustBalanceModal").on("click", function () {
-    openModal();
-});
 
 function openModal() {
     loader(selectedForm, false);
@@ -34,164 +72,166 @@ function openModal() {
     $("#showModal").modal("show");
 }
 
-selectedForm.submit(function (event) {
-    event.preventDefault();
-
-    if (!validate.valid()) return;
-
-    loader(selectedForm, true);
-
-    let formData = new FormData($("form#submitForm")[0]);
-
-    // Setup CSRF token
-    setCSRFToken();
-
-    $(".error").remove();
-
-    $.ajax({
-        url: BASE_URL+'/store',
-        data: formData,
-        type: "POST", // Always use POST for FormData, append _method for PUT
-        cache: false,
-        contentType: false,
-        processData: false,
-        success: function (response) {
-            console.log(response);
-            
-            if (response?.statusCode == 200 || response?.statusCode == 201) {
-                $("#showModal").modal("hide");
-                formReset();
-                toastr.success(response?.message);
-                table.draw();
-            }
-        },
-        error: handleError,
-    });
-});
-
-
-const formatDate = (data) => {
+const formatTableDate = (data) => {
     if (!data) return "";
 
     const date = new Date(data);
-    // Month and day as textual representations
-    let monthNames = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-    ];
+    if (Number.isNaN(date.getTime())) return data;
 
-    let month = monthNames[date.getMonth()];
-    let day = date.getDate().toString().padStart(2, "0");
-    let hour = date.getHours().toString().padStart(2, "0");
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    let hour = date.getHours();
+    const amPm = hour >= 12 ? "PM" : "AM";
+    hour = hour % 12 || 12;
+    const minute = date.getMinutes().toString().padStart(2, "0");
 
-    let amPm = hour >= 12 ? "PM" : "AM";
-    hour = hour % 12 || 12; // Convert 0 to 12 for 12 AM
-
-    let minute = date.getMinutes().toString().padStart(2, "0");
-    let second = date.getSeconds().toString().padStart(2, "0");
-
-    return `${day} ${month}, ${date.getFullYear()} ,${hour}:${minute} ${amPm}`;
+    return `${year}-${month}-${day} ${hour.toString().padStart(2, "0")}:${minute} ${amPm}`;
 };
 
-let table = $("#kt_table_balance_adjust").DataTable({
-    processing: true,
-    serverSide: true,
-    ajax: {
-        url: BASE_URL + "/",
-        data: function (d) {
-            d.search = search.val();
-        },
+const getAdjustTypeBadgeHtml = (data) => {
+    if (!data) return "";
+
+    const typeKey = String(data).toLowerCase();
+    const isDebit = typeKey === "debit" || typeKey === "minus";
+    const label = isDebit ? "MINUS" : "ADD";
+    const badgeClass = isDebit ? "minus" : "add";
+
+    return `<span class="type-badge ${badgeClass}">${label}</span>`;
+};
+
+(function registerExportLibs() {
+    if (window.JSZip && $.fn.dataTable && $.fn.dataTable.Buttons) {
+        $.fn.dataTable.Buttons.jszip(window.JSZip);
+    }
+    if (window.pdfMake && $.fn.dataTable && $.fn.dataTable.Buttons) {
+        $.fn.dataTable.Buttons.pdfMake(window.pdfMake);
+    }
+    if ($.fn.dataTable && $.fn.dataTable.ext && $.fn.dataTable.ext.buttons) {
+        if ($.fn.dataTable.ext.buttons.excelHtml5) {
+            $.fn.dataTable.ext.buttons.excelHtml5.available = function () {
+                return typeof window.JSZip !== "undefined";
+            };
+        }
+        if ($.fn.dataTable.ext.buttons.pdfHtml5) {
+            $.fn.dataTable.ext.buttons.pdfHtml5.available = function () {
+                return typeof window.pdfMake !== "undefined";
+            };
+        }
+    }
+})();
+
+const exportBodyFormat = {
+    body: function (data) {
+        if (data == null) return "";
+        return String(data).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
     },
-    columns: [
-        {
-            data: "DT_RowIndex",
-            name: "DT_RowIndex",
-            orderable: false,
-            searchable: false,
-        },
-        {
-            data: "user",
-            name: "user",
-        },
-        {
-            data: "balance",
-            name: "balance",
-        },
-        {
-            data: "type",
-            render: function (data, type, row) {
-                if (!data) return "";
-                let types = '';
-                let status = '';
-                if (data == 'debit') {
-                    types ='MINUS';
-                    status ='text-danger';
-                } else {
-                     types ='ADD';
-                    status ='text-success';
-                }
-                return `<p class="${status}">${types}</p>`;
-            },
-        },
-        {
-            data: "created_at",
-            render: formatDate,
-        },
-    ],
-    columnDefs: [
-        {
-            targets: "_all",
-            defaultContent: "",
-        },
-    ],
-    paging: true, // Enables pagination
-    pageLength: 10, // Show 5 records per page
-    lengthMenu: [10, 25, 50, 75, 100, 200], // Dropdown for selecting number of rows
-    dom:
-        '<"row"<"col-sm-2"l><"col-sm-10 d-flex justify-content-end"B>>' + // Length menu & buttons
-        '<"row"<"col-sm-12"tr>>' + // Table rows
-        '<"row mt-2"<"col-sm-6"i><"col-sm-6 d-flex justify-content-end"p>>', // Pagination & info
-    buttons: [
-        {
-            extend: "excelHtml5",
-            text: "Excel",
-            className: "btn btn-success btn-sm",
-            attr: {
-                style: "margin-top: 25px;padding: 0 10px; font-size: 12px; line-height: 1; height: 30px;",
-            },
-            exportOptions: {
-                columns: ":not(:first-child)", // Exclude the first column (DT_RowIndex)
-            },
-        },
-        {
-            extend: "pdfHtml5",
-            text: "PDF",
-            className: "btn btn-danger btn-sm",
-            attr: {
-                style: "margin-top: 25px;padding: 0 10px; font-size: 12px; line-height: 1; height: 30px;",
-            },
-            exportOptions: {
-                columns: ":not(:first-child)", // Exclude the first column (DT_RowIndex)
-            },
-        },
-    ],
-});
+};
 
-search.keyup(function () {
-    table.draw();
-});
+let table = null;
 
-$("#kt_user_id").on("change",function () {
+if ($("#kt_table_balance_adjust").length) {
+    table = $("#kt_table_balance_adjust").DataTable({
+        processing: true,
+        serverSide: true,
+        autoWidth: false,
+        scrollX: false,
+        ajax: {
+            url: BASE_URL + "/",
+            data: function (d) {
+                d.search = search.val();
+            },
+        },
+        columns: [
+            {
+                data: "DT_RowIndex",
+                name: "DT_RowIndex",
+                orderable: false,
+                searchable: false,
+            },
+            {
+                data: "user",
+                name: "user",
+                className: "user-cell",
+            },
+            {
+                data: "balance",
+                name: "balance",
+            },
+            {
+                data: "type",
+                render: function (data) {
+                    return getAdjustTypeBadgeHtml(data);
+                },
+            },
+            {
+                data: "created_at",
+                render: formatTableDate,
+            },
+        ],
+        columnDefs: [
+            {
+                targets: "_all",
+                defaultContent: "",
+            },
+        ],
+        paging: true,
+        pageLength: 20,
+        lengthMenu: [10, 20, 25, 50, 75, 100, 200],
+        dom:
+            '<"row align-items-center mb-2"<"col-6"l><"col-6 text-end"B>>' +
+            '<"row"<"col-sm-12"tr>>' +
+            '<"row mt-2"<"col-sm-6"i><"col-sm-6 d-flex justify-content-end"p>>',
+        buttons: [
+            {
+                text: "Excel",
+                className: "btn btn-success btn-sm adjust-export-btn",
+                title: "Adjust Balance",
+                filename: "adjust_balance",
+                extension: ".xlsx",
+                exportOptions: {
+                    columns: ":visible:not(:first-child)",
+                    format: exportBodyFormat,
+                },
+                action: function (e, dt, node, config) {
+                    if (!window.JSZip) {
+                        toastr.error("Excel library failed to load. Please refresh.");
+                        return;
+                    }
+                    $.fn.dataTable.Buttons.jszip(window.JSZip);
+                    const excel = $.fn.dataTable.ext.buttons.excelHtml5;
+                    excel.action.call(this, e, dt, node, $.extend({}, excel, config));
+                },
+            },
+            {
+                text: "PDF",
+                className: "btn btn-danger btn-sm adjust-export-btn",
+                title: "Adjust Balance",
+                filename: "adjust_balance",
+                extension: ".pdf",
+                exportOptions: {
+                    columns: ":visible:not(:first-child)",
+                    format: exportBodyFormat,
+                },
+                action: function (e, dt, node, config) {
+                    if (!window.pdfMake) {
+                        toastr.error("PDF library failed to load. Please refresh.");
+                        return;
+                    }
+                    $.fn.dataTable.Buttons.pdfMake(window.pdfMake);
+                    const pdf = $.fn.dataTable.ext.buttons.pdfHtml5;
+                    pdf.action.call(this, e, dt, node, $.extend({}, pdf, config));
+                },
+            },
+        ],
+    });
+
+    search.keyup(function () {
+        table.draw();
+    });
+}
+
+$("#kt_user_id").on("change", function () {
     let user_id = $(this).val();
     $.ajax({
         url: BASE_URL + "/get-account-data/" + user_id,
@@ -211,12 +251,12 @@ $("#kt_user_id").on("change",function () {
     });
 });
 
-$("#kt_balance").on("keyup",function(){
+$("#kt_balance").on("keyup", function () {
     let currentBalance = parseFloat($("#kt_current_balance").val()) || 0;
 
     let enteredAmount = parseFloat($(this).val()) || 0;
 
-    if ($("#kt_type").val() == 'minus' && enteredAmount > currentBalance) {
-        toastr.error('This user has insufficient balance to his account', "Error!");
+    if ($("#kt_type").val() == "minus" && enteredAmount > currentBalance) {
+        toastr.error("This user has insufficient balance to his account", "Error!");
     }
 });

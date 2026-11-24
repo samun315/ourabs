@@ -4,26 +4,64 @@ let selectedForm = $("#submitForm");
 const BASE_URL = window.location.origin + "/marchant";
 
 let search = $("#search");
+let validate = null;
 
-let validate = selectedForm.validate({
-    rules: {
-        name: "required",
-    },
-    onsubmit: true,
-});
+if (selectedForm.length) {
+    validate = selectedForm.validate({
+        rules: {
+            name: "required",
+        },
+        onsubmit: true,
+    });
 
-$(".formReset").on("click", function () {
-    formReset();
-});
+    $(".formReset").on("click", function () {
+        formReset();
+    });
+
+    $("#openTransferBalanceModal").on("click", function () {
+        openModal();
+    });
+
+    selectedForm.submit(function (event) {
+        event.preventDefault();
+
+        if (!validate.valid()) return;
+
+        loader(selectedForm, true);
+
+        let formData = new FormData($("form#submitForm")[0]);
+
+        // Setup CSRF token
+        setCSRFToken();
+
+        $(".error").remove();
+
+        let transferId = $("#kt_transfer_balance_id").val();
+        let url = "";
+        if (transferId) {
+            url = BASE_URL + "/sub-distributor/transfer/balance/update/" + transferId;
+            formData.append("_method", "PUT");
+        } else {
+            url = BASE_URL + "/sub-distributor/transfer/balance/store";
+        }
+
+        $.ajax({
+            url: url,
+            data: formData,
+            type: "POST", // Always use POST for FormData, append _method for PUT
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: handleSuccessWithModal,
+            error: handleError,
+        });
+    });
+}
 
 function formReset() {
     $("#submitForm").trigger("reset");
     $("#kt_transfer_to_user").val("").trigger("change");
 }
-
-$("#openTransferBalanceModal").on("click", function () {
-    openModal();
-});
 
 function openModal() {
     formReset();
@@ -31,41 +69,6 @@ function openModal() {
     $("#kt_transfer_balance_id").val(null);
     $("#showModal").modal("show");
 }
-
-selectedForm.submit(function (event) {
-    event.preventDefault();
-
-    if (!validate.valid()) return;
-
-    loader(selectedForm, true);
-
-    let formData = new FormData($("form#submitForm")[0]);
-
-    // Setup CSRF token
-    setCSRFToken();
-
-    $(".error").remove();
-
-    let transferId = $("#kt_transfer_balance_id").val();
-    let url = "";
-    if (transferId) {
-        url = BASE_URL + "/sub-distributor/transfer/balance/update/" + transferId;
-        formData.append("_method", "PUT");
-    } else {
-        url = BASE_URL + "/sub-distributor/transfer/balance/store";
-    }
-
-    $.ajax({
-        url: url,
-        data: formData,
-        type: "POST", // Always use POST for FormData, append _method for PUT
-        cache: false,
-        contentType: false,
-        processData: false,
-        success: handleSuccessWithModal,
-        error: handleError,
-    });
-});
 
 const formatDate = (data) => {
     if (!data) return "";
@@ -273,6 +276,8 @@ if ($("#kt_table_transfer_sub_approve").length) {
     approveTable = $("#kt_table_transfer_sub_approve").DataTable({
         processing: true,
         serverSide: true,
+        autoWidth: false,
+        scrollX: false,
         ajax: {
             url: BASE_URL + "/all/sub-distributor/transfer/balance",
             data: function (d) {
@@ -289,10 +294,12 @@ if ($("#kt_table_transfer_sub_approve").length) {
             {
                 data: "from_user",
                 name: "from_user",
+                className: "user-cell",
             },
             {
                 data: "to_user",
                 name: "to_user",
+                className: "user-cell",
             },
             {
                 data: "amount",
@@ -301,24 +308,12 @@ if ($("#kt_table_transfer_sub_approve").length) {
             {
                 data: "status",
                 render: function (data) {
-                    if (!data) return "";
-
-                    let status = "";
-
-                    if (data == "Pending") {
-                        status = "badge badge-warning";
-                    } else if (data == "Transferred") {
-                        status = "badge badge-success";
-                    } else {
-                        status = "badge badge-danger";
-                    }
-
-                    return `<p class="${status} ">${data}</p>`;
+                    return getTransferStatusBadgeHtml(data);
                 },
             },
             {
                 data: "created_at",
-                render: formatDate,
+                render: formatTableDate,
             },
         ],
         columnDefs: [
@@ -328,33 +323,51 @@ if ($("#kt_table_transfer_sub_approve").length) {
             },
         ],
         paging: true,
-        pageLength: 10,
-        lengthMenu: [10, 25, 50, 75, 100, 200],
+        pageLength: 20,
+        lengthMenu: [10, 20, 25, 50, 75, 100, 200],
         dom:
-            '<"row"<"col-sm-2"l><"col-sm-10 d-flex justify-content-end"B>>' +
+            '<"row align-items-center mb-2"<"col-6"l><"col-6 text-end"B>>' +
             '<"row"<"col-sm-12"tr>>' +
             '<"row mt-2"<"col-sm-6"i><"col-sm-6 d-flex justify-content-end"p>>',
         buttons: [
             {
-                extend: "excelHtml5",
                 text: "Excel",
-                className: "btn btn-success btn-sm",
-                attr: {
-                    style: "margin-top: 25px;padding: 0 10px; font-size: 12px; line-height: 1; height: 30px;",
-                },
+                className: "btn btn-success btn-sm transfer-export-btn",
+                title: "All Sub Distributor Transfer Balance",
+                filename: "all_sub_distributor_transfer_balance",
+                extension: ".xlsx",
                 exportOptions: {
-                    columns: ":not(:first-child):not(:last-child)",
+                    columns: ":visible:not(:first-child)",
+                    format: exportBodyFormat,
+                },
+                action: function (e, dt, node, config) {
+                    if (!window.JSZip) {
+                        toastr.error("Excel library failed to load. Please refresh.");
+                        return;
+                    }
+                    $.fn.dataTable.Buttons.jszip(window.JSZip);
+                    const excel = $.fn.dataTable.ext.buttons.excelHtml5;
+                    excel.action.call(this, e, dt, node, $.extend({}, excel, config));
                 },
             },
             {
-                extend: "pdfHtml5",
                 text: "PDF",
-                className: "btn btn-danger btn-sm",
-                attr: {
-                    style: "margin-top: 25px;padding: 0 10px; font-size: 12px; line-height: 1; height: 30px;",
-                },
+                className: "btn btn-danger btn-sm transfer-export-btn",
+                title: "All Sub Distributor Transfer Balance",
+                filename: "all_sub_distributor_transfer_balance",
+                extension: ".pdf",
                 exportOptions: {
-                    columns: ":not(:first-child):not(:last-child)",
+                    columns: ":visible:not(:first-child)",
+                    format: exportBodyFormat,
+                },
+                action: function (e, dt, node, config) {
+                    if (!window.pdfMake) {
+                        toastr.error("PDF library failed to load. Please refresh.");
+                        return;
+                    }
+                    $.fn.dataTable.Buttons.pdfMake(window.pdfMake);
+                    const pdf = $.fn.dataTable.ext.buttons.pdfHtml5;
+                    pdf.action.call(this, e, dt, node, $.extend({}, pdf, config));
                 },
             },
         ],

@@ -1,5 +1,9 @@
 @extends('master')
 @section('title', 'Transaction History')
+@section('page_css')
+    <link href="{{ asset('assets/custom/css/report/transactionHistory/style.css') }}?v={{ filemtime(public_path('assets/custom/css/report/transactionHistory/style.css')) }}"
+        rel="stylesheet" type="text/css" />
+@endsection
 @section('content')
     <x-toolbar-component title="Transaction History list" :breadcrumbs="[
         ['label' => 'Home', 'url' => route('dashboard')],
@@ -13,7 +17,7 @@
             <!--begin::Card-->
             <div class="card">
                 <!--begin::Card body-->
-                <div class="card-body py-4">
+                <div class="card-body pt-3 pb-4">
                     <form id="kt_filter_form_register">
                         <div class="row">
 
@@ -39,12 +43,12 @@
                     <!--begin::Table-->
                     <div id="kt_table_users_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
                         <div class="table-responsive">
-                            <table class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer"
+                            <table class="table table-sm align-middle dataTable no-footer w-100"
                                 id="kt_table_transaction_history">
                                 <!--begin::Table head-->
                                 <thead>
                                     <!--begin::Table row-->
-                                    <tr class="text-start text-muted text-uppercase fw-bolder fs-7 gs-0">
+                                    <tr>
                                         <th>#</th>
                                         <th>User</th>
                                         <th>Type</th>
@@ -52,7 +56,10 @@
                                         <th>Amount</th>
                                         <th>Before Balance</th>
                                         <th>After Balance</th>
-                                        <th>Date Time</th>
+                                        <th>
+                                            <span class="d-none d-md-inline">Date Time</span>
+                                            <span class="d-md-none">Date</span>
+                                        </th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -72,9 +79,13 @@
 
 @section('page_script')
 
-    <!-- begin::Page Custom Stylesheets(used by this page) -->
-    <script src="{{ asset('assets/custom/js/report/transactionHistory/index.js') }}"
+    <script src="{{ asset('assets/custom/js/marchant/endUserBalanceRequest/export-libs.js') }}?v={{ filemtime(public_path('assets/custom/js/marchant/endUserBalanceRequest/export-libs.js')) }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/export/jszip.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/export/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/export/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('assets/custom/js/marchant/endUserBalanceRequest/export-libs-init.js') }}?v={{ filemtime(public_path('assets/custom/js/marchant/endUserBalanceRequest/export-libs-init.js')) }}"></script>
+
+    <script src="{{ asset('assets/custom/js/report/transactionHistory/index.js') }}?v={{ filemtime(public_path('assets/custom/js/report/transactionHistory/index.js')) }}"
         {{ Sri::html('assets/custom/js/report/transactionHistory/index.js') }}></script>
-    <!--end::Page Custom Stylesheets(used by this page)-->
 
 @endsection
