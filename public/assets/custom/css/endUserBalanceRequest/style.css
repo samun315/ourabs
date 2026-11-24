@@ -116,7 +116,8 @@ input:checked+.diamond-box .checkmark {
     background: #f59e0b;
 }
 
-#kt_table_end_user_balance .btn-show {
+#kt_table_end_user_balance .btn-show,
+#kt_table_end_user_balance_approve .btn-show {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -131,7 +132,8 @@ input:checked+.diamond-box .checkmark {
     white-space: nowrap !important;
 }
 
-#kt_table_end_user_balance .btn-show:hover {
+#kt_table_end_user_balance .btn-show:hover,
+#kt_table_end_user_balance_approve .btn-show:hover {
     background: #0ea5e9;
     color: #fff;
 }
@@ -364,7 +366,8 @@ input:checked+.diamond-box .checkmark {
         font-size: 10px;
     }
 
-    #kt_table_end_user_balance .btn-show {
+    #kt_table_end_user_balance .btn-show,
+    #kt_table_end_user_balance_approve .btn-show {
         padding: 3px 8px;
         font-size: 10px;
         gap: 4px;
@@ -461,7 +464,8 @@ input:checked+.diamond-box .checkmark {
         white-space: nowrap !important;
     }
 
-    #kt_table_end_user_balance .btn-show {
+    #kt_table_end_user_balance .btn-show,
+    #kt_table_end_user_balance_approve .btn-show {
         padding: 2px 6px;
         font-size: 8px;
         gap: 3px;

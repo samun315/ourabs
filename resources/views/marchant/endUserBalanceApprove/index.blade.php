@@ -59,6 +59,10 @@
                                             <span class="d-none d-md-inline">Date Time</span>
                                             <span class="d-md-none">Date</span>
                                         </th>
+                                        <th>
+                                            <span class="d-none d-md-inline">Action</span>
+                                            <span class="d-md-none">Act</span>
+                                        </th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -71,6 +75,7 @@
                 <!--end::Card body-->
             </div>
             <!--end::Card-->
+            @include('marchant.endUserBalanceRequest.modal.showBalanceModal')
         </div>
         <!--end::Container-->
     </div>

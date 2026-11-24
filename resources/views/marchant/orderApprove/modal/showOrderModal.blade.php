@@ -24,22 +24,20 @@
                             <td>TK <span class="bd_amount"></span> <span class="kt_currency"></span></td>
                         </tr>
                         <tr>
+                            <td class="ps-2">Diamond</td>
+                            <td>
+                                <i class="fas fa-gem text-primary"></i> <span class="diamond_amount"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="ps-2">Rate</td>
+                            <td>
+                                <span class="rate-box"></span>
+                            </td>
+                        </tr>
+                        <tr>
                             <td class="ps-2">Gateway</td>
                             <td class="gateway_name_column"></td>
-                        </tr>
-                        <tr>
-                            <td class="ps-2">Currency</td>
-                            <td>
-                                Rate : 💎 1 IMO Diamond = <span class="rate-box"></span> <span
-                                    class="kt_currency"></span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="ps-2">Amount <span class="kt_currency"></span> to IMO Diamond</td>
-                            <td>
-                                Amount <span class="kt_currency">BDT</span> <span class="bd_amount"></span>
-                                TK = 💎 <span class="diamond_amount"></span> IMO Diamond
-                            </td>
                         </tr>
                         <tr>
                             <td class="ps-2">Transaction Id</td>

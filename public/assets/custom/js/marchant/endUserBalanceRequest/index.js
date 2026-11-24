@@ -237,27 +237,47 @@ if ($("#kt_table_end_user_balance").length) {
     search.keyup(function () {
         table.draw();
     });
-
-    $(document).on("click", ".showEndUserBalanceBtn", function () {
-        const rowData = table.row($(this).closest("tr")).data();
-
-        if (!rowData) {
-            return;
-        }
-
-        $("#modal_imo_id").text(rowData.imo_id ?? "");
-        $("#modal_amount").text(rowData.amount ?? "");
-        $("#modal_status").html(getStatusBadgeHtml(rowData.status));
-        $("#modal_created_on").text(formatModalDate(rowData.created_at));
-
-        $("#showModal").modal("show");
-    });
 }
 
 // APPROVE BALANCE REQUEST START
 
 let serchId = $("#search");
 let approveTable = null;
+
+$(document).on("click", ".showEndUserBalanceBtn", function () {
+    const $tr = $(this).closest("tr");
+    let rowData = null;
+    let isApprovePage = false;
+
+    if (table && $tr.closest("#kt_table_end_user_balance").length) {
+        rowData = table.row($tr).data();
+    } else if (approveTable && $tr.closest("#kt_table_end_user_balance_approve").length) {
+        rowData = approveTable.row($tr).data();
+        isApprovePage = true;
+    }
+
+    if (!rowData) {
+        return;
+    }
+
+    $("#modal_order_id").text(rowData.balance_transfer_id ?? "");
+    $("#modal_imo_id").text(rowData.imo_id ?? "");
+    $("#modal_amount").text(rowData.amount ?? "");
+    $("#modal_status").html(getStatusBadgeHtml(rowData.status));
+    $("#modal_created_on").text(formatModalDate(rowData.created_at));
+
+    if (isApprovePage) {
+        $("#modal_bot_status").html(getStatusBadgeHtml(rowData.order_status));
+        $("#modal_bot").text(rowData.host_ip ?? "");
+        $(".end-user-bot-only").show();
+    } else {
+        $("#modal_bot_status").empty();
+        $("#modal_bot").text("");
+        $(".end-user-bot-only").hide();
+    }
+
+    $("#showModal").modal("show");
+});
 
 if ($("#kt_table_end_user_balance_approve").length) {
     approveTable = $("#kt_table_end_user_balance_approve").DataTable({
@@ -302,6 +322,12 @@ if ($("#kt_table_end_user_balance_approve").length) {
                 data: "created_at",
                 render: formatDate,
             },
+            {
+                data: "action",
+                name: "action",
+                orderable: false,
+                searchable: false,
+            },
         ],
         columnDefs: [
             {
@@ -324,7 +350,7 @@ if ($("#kt_table_end_user_balance_approve").length) {
                 filename: "end_user_balance_approve",
                 extension: ".xlsx",
                 exportOptions: {
-                    columns: ":visible:not(:first-child)",
+                    columns: ":visible:not(:first-child):not(:last-child)",
                     format: {
                         body: function (data) {
                             if (data == null) return "";
@@ -349,7 +375,7 @@ if ($("#kt_table_end_user_balance_approve").length) {
                 filename: "end_user_balance_approve",
                 extension: ".pdf",
                 exportOptions: {
-                    columns: ":visible:not(:first-child)",
+                    columns: ":visible:not(:first-child):not(:last-child)",
                     format: {
                         body: function (data) {
                             if (data == null) return "";
