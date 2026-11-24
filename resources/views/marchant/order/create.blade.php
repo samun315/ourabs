@@ -1,7 +1,7 @@
 @extends('master')
 @section('title', 'Add Balance')
 @section('page_css')
-    <link href="{{ asset('assets/custom/css/order/style.css') }}"
+    <link href="{{ asset('assets/custom/css/order/style.css') }}?v={{ filemtime(public_path('assets/custom/css/order/style.css')) }}"
         {{ Sri::html('assets/custom/css/order/style.css') }} rel="stylesheet" type="text/css" />
 @endsection
 @section('content')
