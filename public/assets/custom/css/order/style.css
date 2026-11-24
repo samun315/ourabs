@@ -1,7 +1,11 @@
 .payment-option {
-    display: block;
+    display: block !important;
+    width: 100%;
+    max-width: 100%;
     cursor: pointer;
-    margin-bottom: 10px;
+    margin: 0 0 10px;
+    float: none !important;
+    clear: both;
 }
 
 .payment-box {
@@ -13,31 +17,47 @@
     transition: 0.3s;
     border: 2px solid transparent;
     color: #007bff;
-    display: flex;
+    display: flex !important;
     justify-content: space-between;
     align-items: center;
     position: relative;
     width: 100%;
+    box-sizing: border-box;
 }
 
-input:checked+.payment-box {
-    background: #eee;
+input:checked + .payment-box {
+    background: #fff;
     border-color: #007bff;
 }
 
-.checkmark {
+.payment-option .checkmark {
     display: none;
     font-size: 18px;
     color: rgb(185, 185, 207);
     font-weight: bold;
+    flex-shrink: 0;
 }
 
-input:checked+.payment-box .checkmark {
+input:checked + .payment-box .checkmark {
     display: inline-block;
 }
 
 .payment-text {
     flex-grow: 1;
+    min-width: 0;
+}
+
+@media (max-width: 767.98px) {
+    .payment-option {
+        display: block !important;
+        width: 100% !important;
+        margin-bottom: 10px;
+    }
+
+    .payment-box {
+        width: 100% !important;
+        display: flex !important;
+    }
 }
 
 #preview {
