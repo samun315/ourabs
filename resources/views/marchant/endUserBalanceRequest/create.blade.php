@@ -1,8 +1,8 @@
 @extends('master')
 @section('title', 'Add End User Balance')
 @section('page_css')
-    <link href="{{ asset('assets/custom/css/endUserBalanceRequest/style.css') }}"
-        {{ Sri::html('assets/custom/css/endUserBalanceRequest/style.css') }} rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/custom/css/endUserBalanceRequest/style.css') }}?v={{ filemtime(public_path('assets/custom/css/endUserBalanceRequest/style.css')) }}"
+        rel="stylesheet" type="text/css" />
 @endsection
 @section('content')
     <x-toolbar-component title="Add End User Balance" :breadcrumbs="[
