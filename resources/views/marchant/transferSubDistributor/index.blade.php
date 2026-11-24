@@ -55,13 +55,17 @@
                                     <!--begin::Table row-->
                                     <tr>
                                         <th>ID</th>
-                                        <th>From User</th>
-                                        <th>To User</th>
+                                        <th>From</th>
+                                        <th>To </th>
                                         <th>Amount</th>
                                         <th>Status</th>
                                         <th>
                                             <span class="d-none d-md-inline">Created Time</span>
                                             <span class="d-md-none">Date</span>
+                                        </th>
+                                        <th>
+                                            <span class="d-none d-md-inline">Actions</span>
+                                            <span class="d-md-none">Act</span>
                                         </th>
                                     </tr>
                                     <!--end::Table row-->
@@ -78,6 +82,7 @@
             {{-- begin:: Balance Request modal --}}
             @include('marchant.transferSubDistributor.modal.addTransferModal')
             {{-- end:: Balance Request modal --}}
+            @include('marchant.transferSubDistributor.modal.showTransferModal')
         </div>
         <!--end::Container-->
     </div>

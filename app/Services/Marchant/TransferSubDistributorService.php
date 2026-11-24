@@ -48,22 +48,15 @@ class TransferSubDistributorService
             ->addColumn('from_user', function ($row) {
                 $from_name = $row->fu_name ?? '';
                 $from_phone = $row->fu_phone ?? '';
-                $from_email = $row->fu_email ?? '';
-                $from_user = $from_name . '<br>' . $from_phone . '<br>' . $from_email;
-                return $from_user;
+                return $from_name . '<br>' . $from_phone;
             })
             ->addColumn('to_user', function ($row) {
                 $to_name = $row->tu_name ?? '';
                 $to_phone = $row->tu_phone ?? '';
-                $to_email = $row->tu_email ?? '';
-                $to_user = $to_name . '<br>' . $to_phone . '<br>' . $to_email;
-                return $to_user;
+                return $to_name . '<br>' . $to_phone;
             })
             ->addColumn('action', function ($row) {
-
-                $showBtn = '<button data-id="' . $row->id . '" class="btn btn-success btn-sm ms-lg-2 showOrderBtn" data-bs-toggle="modal" data-bs-target="#showModal">Show</button>';
-
-                return $showBtn;
+                return '<button type="button" data-id="' . $row->id . '" class="btn-show showTransferBalanceBtn"><i class="fas fa-eye"></i><span class="btn-show-text"> Show</span></button>';
             })
             ->rawColumns(['action', 'from_user', 'to_user'])
             ->make(true);

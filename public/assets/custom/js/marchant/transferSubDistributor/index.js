@@ -118,6 +118,23 @@ const formatTableDate = (data) => {
     return `${year}-${month}-${day} ${hour.toString().padStart(2, "0")}:${minute} ${amPm}`;
 };
 
+const formatModalDate = (data) => {
+    if (!data) return "";
+
+    const date = new Date(data);
+    if (Number.isNaN(date.getTime())) return data;
+
+    const year = date.getFullYear().toString().slice(-2);
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    let hour = date.getHours();
+    const amPm = hour >= 12 ? "PM" : "AM";
+    hour = hour % 12 || 12;
+    const minute = date.getMinutes().toString().padStart(2, "0");
+
+    return `${day}-${month}-${year} ${hour.toString().padStart(2, "0")}:${minute} ${amPm}`;
+};
+
 const getTransferStatusBadgeHtml = (data) => {
     if (!data) return "";
 
@@ -204,6 +221,12 @@ if ($("#kt_table_transfer_balance").length) {
                 data: "created_at",
                 render: formatTableDate,
             },
+            {
+                data: "action",
+                name: "action",
+                orderable: false,
+                searchable: false,
+            },
         ],
         columnDefs: [
             {
@@ -266,6 +289,27 @@ if ($("#kt_table_transfer_balance").length) {
         table.draw();
     });
 }
+
+$(document).on("click", ".showTransferBalanceBtn", function () {
+    const $tr = $(this).closest("tr");
+    if (!table || !$tr.closest("#kt_table_transfer_balance").length) {
+        return;
+    }
+
+    const rowData = table.row($tr).data();
+    if (!rowData) {
+        return;
+    }
+
+    $("#modal_transfer_id").text(rowData.id ?? "");
+    $("#modal_from_user").html(rowData.from_user ?? "");
+    $("#modal_to_user").html(rowData.to_user ?? "");
+    $("#modal_amount").text(rowData.amount ?? "");
+    $("#modal_status").html(getTransferStatusBadgeHtml(rowData.status));
+    $("#modal_created_on").text(formatModalDate(rowData.created_at));
+
+    $("#showTransferDetailModal").modal("show");
+});
 
 // APPROVE BALANCE REQUEST START
 
