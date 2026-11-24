@@ -91,7 +91,6 @@
     <script src="{{ asset('assets/plugins/custom/datatables/export/vfs_fonts.js') }}"></script>
     <script src="{{ asset('assets/custom/js/marchant/endUserBalanceRequest/export-libs-init.js') }}?v={{ filemtime(public_path('assets/custom/js/marchant/endUserBalanceRequest/export-libs-init.js')) }}"></script>
 
-    <script src="{{ asset('assets/custom/js/marchant/transferSubDistributor/index.js') }}?v={{ filemtime(public_path('assets/custom/js/marchant/transferSubDistributor/index.js')) }}"
-        {{ Sri::html('assets/custom/js/marchant/transferSubDistributor/index.js') }}></script>
+    <script src="{{ asset('assets/custom/js/marchant/transferSubDistributor/index.js') }}?v={{ filemtime(public_path('assets/custom/js/marchant/transferSubDistributor/index.js')) }}"></script>
 
 @endsection

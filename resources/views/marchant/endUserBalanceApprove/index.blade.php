@@ -89,9 +89,7 @@
     <script src="{{ asset('assets/plugins/custom/datatables/export/vfs_fonts.js') }}"></script>
     <script src="{{ asset('assets/custom/js/marchant/endUserBalanceRequest/export-libs-init.js') }}?v={{ filemtime(public_path('assets/custom/js/marchant/endUserBalanceRequest/export-libs-init.js')) }}"></script>
 
-    <script src="{{ asset('assets/custom/js/marchant/endUserBalanceRequest/index.js') }}?v={{ filemtime(public_path('assets/custom/js/marchant/endUserBalanceRequest/index.js')) }}"
-        {{ Sri::html('assets/custom/js/marchant/endUserBalanceRequest/index.js') }}></script>
-    <script src="{{ asset('assets/custom/js/marchant/endUserBalanceRequest/page.js') }}?v={{ filemtime(public_path('assets/custom/js/marchant/endUserBalanceRequest/page.js')) }}"
-        {{ Sri::html('assets/custom/js/marchant/endUserBalanceRequest/page.js') }}></script>
+    <script src="{{ asset('assets/custom/js/marchant/endUserBalanceRequest/index.js') }}?v={{ filemtime(public_path('assets/custom/js/marchant/endUserBalanceRequest/index.js')) }}"></script>
+    <script src="{{ asset('assets/custom/js/marchant/endUserBalanceRequest/page.js') }}?v={{ filemtime(public_path('assets/custom/js/marchant/endUserBalanceRequest/page.js')) }}"></script>
 
 @endsection

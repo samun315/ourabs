@@ -100,7 +100,6 @@
     <script src="{{ asset('assets/custom/js/marchant/endUserBalanceRequest/export-libs-init.js') }}?v={{ filemtime(public_path('assets/custom/js/marchant/endUserBalanceRequest/export-libs-init.js')) }}"></script>
 
     <script src="{{ asset('assets/custom/js/marchant/order/index.js') }}?v={{ filemtime(public_path('assets/custom/js/marchant/order/index.js')) }}"></script>
-    <script src="{{ asset('assets/custom/js/marchant/endUserBalanceRequest/page.js') }}?v={{ filemtime(public_path('assets/custom/js/marchant/endUserBalanceRequest/page.js')) }}"
-        {{ Sri::html('assets/custom/js/marchant/endUserBalanceRequest/page.js') }}></script>
+    <script src="{{ asset('assets/custom/js/marchant/endUserBalanceRequest/page.js') }}?v={{ filemtime(public_path('assets/custom/js/marchant/endUserBalanceRequest/page.js')) }}"></script>
 
 @endsection
