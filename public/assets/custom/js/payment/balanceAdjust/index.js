@@ -89,6 +89,23 @@ const formatTableDate = (data) => {
     return `${year}-${month}-${day} ${hour.toString().padStart(2, "0")}:${minute} ${amPm}`;
 };
 
+const formatModalDate = (data) => {
+    if (!data) return "";
+
+    const date = new Date(data);
+    if (Number.isNaN(date.getTime())) return data;
+
+    const year = date.getFullYear().toString().slice(-2);
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    let hour = date.getHours();
+    const amPm = hour >= 12 ? "PM" : "AM";
+    hour = hour % 12 || 12;
+    const minute = date.getMinutes().toString().padStart(2, "0");
+
+    return `${day}-${month}-${year} ${hour.toString().padStart(2, "0")}:${minute} ${amPm}`;
+};
+
 const getAdjustTypeBadgeHtml = (data) => {
     if (!data) return "";
 
@@ -98,6 +115,19 @@ const getAdjustTypeBadgeHtml = (data) => {
     const badgeClass = isDebit ? "minus" : "add";
 
     return `<span class="type-badge ${badgeClass}">${label}</span>`;
+};
+
+const getAdjustStatusBadgeHtml = (data) => {
+    if (!data) return "";
+
+    const typeKey = String(data).toLowerCase();
+    const isAdd = typeKey === "add" || typeKey === "credit";
+
+    if (isAdd) {
+        return `<span class="status-badge transferred">TRANSFERRED</span>`;
+    }
+
+    return `<span class="status-badge minus">MINUS</span>`;
 };
 
 (function registerExportLibs() {
@@ -168,6 +198,12 @@ if ($("#kt_table_balance_adjust").length) {
                 data: "created_at",
                 render: formatTableDate,
             },
+            {
+                data: "action",
+                name: "action",
+                orderable: false,
+                searchable: false,
+            },
         ],
         columnDefs: [
             {
@@ -230,6 +266,26 @@ if ($("#kt_table_balance_adjust").length) {
         table.draw();
     });
 }
+
+$(document).on("click", ".showBalanceAdjustBtn", function () {
+    const $tr = $(this).closest("tr");
+    if (!table || !$tr.closest("#kt_table_balance_adjust").length) {
+        return;
+    }
+
+    const rowData = table.row($tr).data();
+    if (!rowData) {
+        return;
+    }
+
+    $("#modal_adjust_id").text(rowData.id ?? "");
+    $("#modal_adjust_user").html(rowData.user ?? "");
+    $("#modal_adjust_amount").text(rowData.balance ?? "");
+    $("#modal_adjust_type").html(getAdjustStatusBadgeHtml(rowData.type));
+    $("#modal_adjust_created_on").text(formatModalDate(rowData.created_at));
+
+    $("#showBalanceAdjustDetailModal").modal("show");
+});
 
 $("#kt_user_id").on("change", function () {
     let user_id = $(this).val();

@@ -100,7 +100,10 @@ class BalanceAdjustService
                 $user = $name . '<br>' . $phone . '<br>' . $email;
                 return $user;
             })
-            ->rawColumns(['user'])
+            ->addColumn('action', function ($row) {
+                return '<button type="button" data-id="' . $row->id . '" class="btn-show showBalanceAdjustBtn"><i class="fas fa-eye"></i><span class="btn-show-text"> Show</span></button>';
+            })
+            ->rawColumns(['user', 'action'])
             ->make(true);
     }
 }

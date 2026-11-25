@@ -59,6 +59,10 @@
                                             <span class="d-none d-md-inline">Date Time</span>
                                             <span class="d-md-none">Date</span>
                                         </th>
+                                        <th>
+                                            <span class="d-none d-md-inline">Actions</span>
+                                            <span class="d-md-none">Act</span>
+                                        </th>
                                     </tr>
                                     <!--end::Table row-->
                                 </thead>
@@ -74,6 +78,7 @@
             {{-- begin:: Adjust Balance modal --}}
             @include('payment.balanceAdjust.modal.balanceAdjustModal')
             {{-- end:: Adjust Balance modal --}}
+            @include('payment.balanceAdjust.modal.showBalanceAdjustModal')
         </div>
         <!--end::Container-->
     </div>
